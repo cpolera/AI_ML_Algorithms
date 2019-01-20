@@ -1,0 +1,25 @@
+[
+  {
+    "firstName": "A",
+    "lastName": "B",
+    "age": 53,
+    "address": {
+      "street": "easy street"
+    }
+  },
+  {
+    "firstName": "A",
+    "lastName": "B",
+    "address": {
+      "street": "easy street"
+    }
+  },
+  {
+    "firstName": "A",
+    "lastName": "B",
+    "age": 53,
+    "address": {
+      "street": "easy street"
+    }
+  }
+]
