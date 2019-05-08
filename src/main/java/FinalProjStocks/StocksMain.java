@@ -12,7 +12,7 @@ import java.util.Arrays;
 import java.util.Collections;
 
 public class StocksMain {
-    public static Stock[] jsonToStockArray;
+    public static FinalProjStocks.Stock[] jsonToStockArray;
     static int sampleExtractionSize = 10;
     Stock[] jsonToStockArray_cgc;
     Stock[] jsonToStockArray_msft;
@@ -218,7 +218,7 @@ public class StocksMain {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
 
-        jsonToStockArray = objectMapper.readValue(new File("src/FinalProjStocks/CRON.json"), Stock[].class);
+        jsonToStockArray = objectMapper.readValue(new File("src/main/java/FinalProjStocks/CRON.json"), Stock[].class);
         //jsonToStockArray_cgc = objectMapper.readValue(new File("src/FinalProjStocks/CGC.json"), Stock[].class);
         //jsonToStockArray_msft = objectMapper.readValue(new File("src/FinalProjStocks/MSFT.json"), Stock[].class);
 

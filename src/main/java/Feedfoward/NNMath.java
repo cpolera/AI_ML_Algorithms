@@ -23,4 +23,5 @@ public class NNMath {
 
         return xVal;
     }
+    
 }
