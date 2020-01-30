@@ -5,12 +5,12 @@ public class Main {
 
     public static void main(String args[]) {
         Network network = new Network();
-        //network.setupNetworkAndRunExample();
-        NNObj[] nnObjs = createSymbolList_EXAMPLE();
-        NNObj[] nnObjs1 = createTestSymbols();
-
+//        network.setupNetworkAndRunExample();
+        NNObj[] trainingSet = createSymbolList_EXAMPLE();
+        NNObj[] testSymbols = createTestSymbols();
+        network.trainingCount = 10000;
         network.desiredError = 0.1;
-        network.setupNetwork(5, 1, nnObjs, nnObjs1);
+        network.setupNetwork(5, 1, trainingSet, testSymbols);
     }
 
 //update to take any number of inputs
@@ -23,13 +23,15 @@ public class Main {
 
         Symbol.incr = 0;
 
-        int[] plusIntoVals = new int[]{0, 0, 1, 0, 0,
+        int[] plusIntoVals = new int[]{
+                0, 0, 1, 0, 0,
                 0, 0, 1, 0, 0,
                 1, 1, 1, 1, 1,
                 0, 0, 1, 0, 0,
                 0, 0, 1, 0, 0};
 
-        int[] xIntoVals = new int[]{1, 0, 0, 0, 1,
+        int[] xIntoVals = new int[]{
+                1, 0, 0, 0, 1,
                 0, 1, 0, 1, 0,
                 0, 0, 1, 0, 0,
                 0, 1, 0, 1, 0,

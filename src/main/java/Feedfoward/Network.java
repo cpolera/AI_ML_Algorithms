@@ -9,7 +9,7 @@ public class Network {
     //assumptions
     public double desiredError = 0.01;
     public double TSSE = 0.02;
-    public double acceptablePassRate = 0.9;
+    public double acceptablePassRate = 0.95;
     public double learningRate = 0.5;//n
     public int trainingCount = 10000;
     public double biasVal = 1;
@@ -267,9 +267,9 @@ public class Network {
             if (outputNeuron instanceof OutputNeuron) {
                 System.out.println("Output:" + outputNeuron.tempOutput);
                 predictionValueActual[totalCount_RESETBEFOREPREDICITION] = outputNeuron.tempOutput;
-                ((Stock) testObjs[counter00]).predictedPrice = outputNeuron.tempOutput;
+//                ((Stock) testObjs[counter00]).predictedPrice = outputNeuron.tempOutput;//TODO uncomment for stocks
                 predictionValueExpected[totalCount_RESETBEFOREPREDICITION] = ((OutputNeuron) outputNeuron).target;
-                predictionDate[counter00] = ((Stock) testObjs[totalCount_RESETBEFOREPREDICITION]).getDate();
+//                predictionDate[counter00] = ((Stock) testObjs[totalCount_RESETBEFOREPREDICITION]).getDate(); //TODO uncomment for stocks
 
                 if (checkOutputAgainstTarget_TESTING((OutputNeuron) outputNeuron)) {
                     System.out.print("-----------------------------------PASSED");
