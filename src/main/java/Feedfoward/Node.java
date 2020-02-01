@@ -29,35 +29,32 @@ public class Node {
         outputConnections.add(connection);
     }
 
-    private double calulateNet() {
-        return calculateNet(true);
-    }
-
     private double calculateNet(boolean save) {
         //net = bias*Wbias + SUM incoming outputs*their weight
-        double calcBiasVal = this.biasWeight * biasVal;
+        double nodeBiasCalc = this.biasWeight * biasVal;
 
-        double tempVal;
+        double returnValue;
         double sum = 0;
 
         //THIS IS SUM OF INCOMING INPUTS AKA PREVIOUS LAYER OUTPUTS
-        for (Connection connection : inputConnections) {
-            if (connection.inputNode != null) {
+        for (Connection connection : inputConnections) {//Go through each incoming connection
+            if (connection.inputNode != null) {//Logic for Input nodes specifically
                 sum += connection.getWeight() * connection.inputNode.inputValue;//Connection weight * input val if connection is to input
-            } else {
+            } else {//Logic for hidden neuron inputs
                 double outputVal = connection.getInputNeuron().outputVal;//Get outputVal of the hidden neuron
-                if (connection.getInputNeuron().tempOutput > -1) {//TODO NOT SURE IF CORRECT
-                    outputVal = connection.getInputNeuron().tempOutput;//IF TESTING, GET TEMP OUTPUT
+                if (connection.getInputNeuron().tempOutput > -1) {
+                    outputVal = connection.getInputNeuron().tempOutput;//IF TESTING, GET TEMP OUTPUT INSTEAD//TODO Probably log when skipped
                 }
                 sum += connection.getWeight() * outputVal; //Connection weight * output of the hidden neuron to next layer
             }
         }
 
-        tempVal = calcBiasVal + sum;
-        if (save)
-            this.net = calcBiasVal + sum;
+        returnValue = nodeBiasCalc + sum;
+        if (save) {
+            this.net = returnValue;//Update node net value. THIS IS NOT OUTPUT
+        }
 
-        return tempVal;
+        return returnValue;
     }
 
     public double calculateNodeOutput(Boolean save, Boolean test) {
@@ -109,4 +106,5 @@ public class Node {
         }
 
     }
+
 }

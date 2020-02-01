@@ -2,7 +2,6 @@ package FinalProjStocks;
 
 import Feedfoward.NNMath;
 import Feedfoward.NNObj;
-import Feedfoward.SetValues;
 
 public class Stock extends NNObj {
     public static double highest = 0;
@@ -76,7 +75,7 @@ public class Stock extends NNObj {
             this.dVals = new double[]{(open1 / factor), (high1 / factor), (low1 / factor), (previousDayClose1 / factor), (volume1 / factor)};
             this.dVals_targets = new double[]{closePrediction1 / factor};
 
-            setValues = new SetValues(dVals, dVals_targets);
+//            setValues = new SetValues(dVals, dVals_targets);
         }
 
         if (high > highest) {

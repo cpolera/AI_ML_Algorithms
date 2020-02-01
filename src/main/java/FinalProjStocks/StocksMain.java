@@ -29,6 +29,7 @@ public class StocksMain {
     public StocksMain() {
     }
 
+    ////WHAT A FREAKING MESS
     public static void main(String[] args) throws IOException {
         StocksMain stocksMain = new StocksMain();
         stocksMain.parseJSON();
@@ -59,7 +60,7 @@ public class StocksMain {
         network.biasVal = 1;
         network.howManyToTest = 1;
         stocksMain.periodSize_Input = 5;//TEST USING MOST RECENT INSTEAD OF FULL YEAR
-        network.setupNetwork();
+//        network.setupNetwork();//TODO REMOVED METHOD
 
 //        Stock[] stocks = new Stock[1];
 //        Stock stock = new Stock("date", 10.8, 100800, 10, 13, 9);

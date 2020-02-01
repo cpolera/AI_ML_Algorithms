@@ -1,6 +1,8 @@
 package Feedfoward;
 
 
+import com.google.gson.Gson;
+
 public class Main {
 
     public static void main(String args[]) {
@@ -11,6 +13,12 @@ public class Main {
         network.trainingCount = 10000;
         network.desiredError = 0.1;
         network.setupNetwork(5, 1, trainingSet, testSymbols);
+
+
+        Gson gson = new Gson();
+
+        network = new Network();
+        System.out.println(gson.toJson(network));
     }
 
 //update to take any number of inputs
@@ -37,7 +45,7 @@ public class Main {
                 0, 1, 0, 1, 0,
                 1, 0, 0, 0, 1};
 
-        int[] OintoVals = new int[]{
+        int[] oIntoVals = new int[]{
                 1, 1, 1, 1, 1,
                 1, 0, 0, 0, 1,
                 1, 0, 0, 0, 1,
@@ -45,7 +53,7 @@ public class Main {
                 1, 1, 1, 1, 1
         };
 
-        Symbol[] symbols = new Symbol[]{new Symbol(plusIntoVals, new int[]{0, 0, 1}, "PLUS"), new Symbol(xIntoVals, new int[]{0, 1, 0}, "X"), new Symbol(OintoVals, new int[]{1, 0, 0}, "O")};
+        Symbol[] symbols = new Symbol[]{new Symbol(plusIntoVals, new int[]{0, 0, 1}, "PLUS"), new Symbol(xIntoVals, new int[]{0, 1, 0}, "X"), new Symbol(oIntoVals, new int[]{1, 0, 0}, "O")};
 
         return symbols;
     }
