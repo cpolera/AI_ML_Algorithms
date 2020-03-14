@@ -5,7 +5,7 @@ public class Connection {
     double weight;
     Node inputNeuron;
     Node outputNeuron;
-    InputNode inputNode;
+    InputNode inputNode;//NOT SAME AS A HIDDEN NODE
 
     public Connection(Node input, Node output) {
         this.inputNeuron = input;

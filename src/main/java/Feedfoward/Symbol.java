@@ -2,7 +2,7 @@ package Feedfoward;
 
 public class Symbol extends NNObj {
 
-
+    protected int[] vals;
     static int incr = 0;
 
     public Symbol(int[] newVals, int[] targetVals, String desc) {
