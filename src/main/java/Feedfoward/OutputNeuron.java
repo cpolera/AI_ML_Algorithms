@@ -2,7 +2,7 @@ package Feedfoward;
 
 public class OutputNeuron extends Node {
 
-    double target;
+    public double target;
 
     public OutputNeuron(double biasVal, double biasWeight, double target) {
         this.biasVal = biasVal;

@@ -1,24 +1,24 @@
 package Feedfoward;
 
+import Feedfoward.Network.Network;
 
-import com.google.gson.Gson;
+import java.io.IOException;
 
 public class Main {
 
-    public static void main(String args[]) {
+    public static void main(String args[]) throws IOException {
         Network network = new Network();
 //        network.setupNetworkAndRunExample();
+        Logger logger = new Logger(network);
         NNObj[] trainingSet = createSymbolList_EXAMPLE();
         NNObj[] testSymbols = createTestSymbols();
-        network.trainingCount = 10000;
+        network.trainingCount = 100;
         network.desiredError = 0.1;
-        network.setupNetwork(5, 1, trainingSet, testSymbols);
+        network.setupNetwork(25, 2, trainingSet, testSymbols, true);
 
+        logger.closeWriter();
+        logger.showNetwork();
 
-        Gson gson = new Gson();
-
-        network = new Network();
-        System.out.println(gson.toJson(network));
     }
 
 //update to take any number of inputs
@@ -27,7 +27,7 @@ public class Main {
     //update training method to handle any number of inputs/ same with testing
 
 
-    private static Symbol[] createSymbolList_EXAMPLE() {
+    public static Symbol[] createSymbolList_EXAMPLE() {
 
         Symbol.incr = 0;
 
@@ -58,7 +58,7 @@ public class Main {
         return symbols;
     }
 
-    private static Symbol[] createTestSymbols() {
+    public static Symbol[] createTestSymbols() {
 
         Symbol.incr = 0;
 

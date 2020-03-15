@@ -1,66 +1,81 @@
-package Feedfoward;
+package Feedfoward.Network;
 
+import Feedfoward.*;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 
 public class Network {
-    //assumptions
-    public double desiredError = 0.01;
-    public double TSSE = 0.02;
-    public double acceptablePassRate = 0.95;
-    public double learningRate = 0.5;//n
-    public int trainingCount = 10000;
-    public double biasVal = 1;
-    public int hiddenNeuronCount = 3;
-    public int hiddenNeuronLayersCount = 1;
-    public int howManyToTest = 5;
-    public int totalCount_RESETBEFOREPREDICITION = 0;
-    double RMSE = 0.1;
+    transient int epoch = 0;
+
+    public transient double desiredError = 0.01;
+    public transient double TSSE = 0.02;
+    public transient double RMSE = 0.1;
+    public transient double acceptablePassRate = 0.95;
+    public transient double learningRate = 0.5;//n
+    public transient int trainingCount = 10000;
+    public transient int howManyToTest = 5;//TODO is this needed?
+    public transient int testCount = 20;
+
+    transient public double biasVal = 1;
+    transient public int hiddenNeuronCount = 3;
+    transient public int hiddenNeuronLayersCount = 1;
+    transient private int totalCount_RESETBEFOREPREDICITION = 0;
+    transient private int passCount = 0;
+    transient private int failCount = 0;
+    private int passCountTotal = 0;
+    private int failCountTotal = 0;
+    private int testCountTotal = 0;
+    private int trainCountTotal = 0;
+
+    private transient int minTrainingFactor = 1;
+    private transient double[] predictionValueActual;
+    private transient double[] predictionValueExpected;
+    private int totalCountTraining = 0;
+
+    private transient ArrayList<Double[]> trainingDesired = new ArrayList<>();
+    private transient ArrayList<Double[]> trainingActual = new ArrayList<>();
+    private transient NNObj[] _trainingObjs;
+    private transient NNObj[] _testObjs;
+    private InputNode[] inputNodes;
+
     Node[][] nodes;
-    int epoch = 1;
-    InputNode[] inputNodes;
-    int testCount = 20;
-    int passCount = 0;
-    int failCount = 0;
-    int passCountTotal = 0;
-    int failCountTotal = 0;
-    int testCountTotal = 0;
-    int trainCountTotal = 0;
-    Random random = new Random();
-    NNObj[] _trainingObjs;
-    NNObj[] _testObjs;
-    int minTrainingFactor = 1;
-    double[] predictionValueActual;
-    double[] predictionValueExpected;
-    int totalCountTraining = 0;
-    private ArrayList<Double[]> trainingDesired = new ArrayList<>();
-    private ArrayList<Double[]> trainingActual = new ArrayList<>();
+
+    private transient Random random = new Random();
 
 
+    public Node[] getHiddenLayerNodes(int i){return nodes[i];}
 
     public Network() {
     }
-
 
     public Network(NNObj[] trainingObjs, NNObj[] testObjs) {
         this._trainingObjs = trainingObjs;
         this. _testObjs = testObjs;
     }
 
-    public void setupNetwork(NNObj[] trainingObjs, NNObj[] testingObj) {
+    public void setupNetwork(NNObj[] trainingObjs, NNObj[] testingObj, boolean run) throws IOException {
 
         _trainingObjs = trainingObjs;
         _testObjs = testingObj;
 
         setupNetworkBase(hiddenNeuronLayersCount, hiddenNeuronCount, biasVal);
         //use list of inputs/expected outputs for running training/testing
+        Logger.logStaticVals();
+        Logger.logInputs();
+
+        if(run) {runNetworkTrainingAndTesting();}
+    }
+
+    public void runNetworkTrainingAndTesting() throws IOException {
         boolean endTesting = false;
         int testingCount = 0;
         while (!endTesting) {//Train/test until meets threshold
             passCount = 0;
             failCount = 0;
-            trainNetwork();
+            trainNetwork(null);
 
             testNetwork(null);
             if (testingCount >= howManyToTest || 1.0 * passCount / (passCount + failCount) > acceptablePassRate) {
@@ -70,12 +85,10 @@ public class Network {
             passCountTotal += passCount;
             failCountTotal += failCount;
         }
-
     }
 
     public void predictOutput(NNObj[] objs) {
 
-        _testObjs = objs;
         System.out.println("PREDICTING OUTCOME==========================================================");
         int temp = this.testCount;
         this.testCount = 1;
@@ -83,11 +96,11 @@ public class Network {
         this.testCount = temp;
     }
 
-    public void setupNetwork(int hiddenNeuronCount, int neuronLayers, NNObj[] trainingObjs, NNObj[] testingObjs) {
+    public void setupNetwork(int hiddenNeuronCount, int neuronLayers, NNObj[] trainingObjs, NNObj[] testingObjs, boolean run) throws IOException {
         this.hiddenNeuronCount = hiddenNeuronCount;
         this.hiddenNeuronLayersCount = neuronLayers;
 
-        setupNetwork(trainingObjs, testingObjs);
+        setupNetwork(trainingObjs, testingObjs, run);
     }
 
     private void setRMSE() {
@@ -110,14 +123,19 @@ public class Network {
     }
 
     //NETWORK ALREADY KNOWS WHAT TRAINING OBJS ARE. DONT NEED TO PASS THEM IN
-    public void trainNetwork() {
+    /**
+     * Method to train the Network. Can pass in an Integer. If null, then use the currently set trainingCount
+     * @param trainingCountManual
+     */
+    public void trainNetwork(Integer trainingCountManual) throws IOException {
 
+        int trainingCountUse = trainingCountManual == null ? trainingCount : trainingCountManual;
         //XXX dunno why this broke things
 //        while(TSSE >= desiredError && totalCountTraining < trainingCount/minTrainingFactor){
-        for (int i = 0; i < trainingCount; i++) {//Run training sets this many times
+        for (int i = 0; i < trainingCountUse; i++) {//Run training sets this many times
 
             for (NNObj nnObj : _trainingObjs) {//Run each training set
-                if (TSSE <= desiredError && i > trainingCount / minTrainingFactor) {
+                if (TSSE <= desiredError && i > trainingCountUse / minTrainingFactor) {
                     //break; //TODO y tho?
                 }
 
@@ -131,10 +149,10 @@ public class Network {
 
                 //updateTSSE();
                 setRMSE();
-
+                epoch++;
                 trainCountTotal++;//LOGGER ____ USE AS COUNTER FOR FILE WRITE
-
-           }
+                Logger.log();
+            }
 //            }
             System.out.println("RMSE: " + RMSE + " | TSSE: " + TSSE);
         }
@@ -143,46 +161,11 @@ public class Network {
         System.out.println("//*****************END TRAINING*******************//");
     }
 
-
-//    public void testNetwork() {
-//
-//        for (int nC = 0; nC < nodes.length; nC++) {
-//            for (Node node : nodes[nC]) {
-//                node.calculateNodeOutput(false, true);
-//            }
-//        }
-//
-//        printInputValues();
-//
-//        boolean tester = true;
-//        for (Node outputNeuron : nodes[nodes.length - 1]) {
-//            if (outputNeuron instanceof OutputNeuron) {
-//                System.out.println("Output:" + outputNeuron.tempOutput);
-//
-//                if (checkOutputAgainstTarget_TESTING((OutputNeuron) outputNeuron)) {
-//                    System.out.print("-----------------------------------PASSED");
-//                } else {
-//                    tester = false;
-//                    System.out.print("-----------------------------------FAILED");
-//                }
-//            }
-//            System.out.println("");
-//        }
-//
-//        if (!tester) {
-//            System.out.println("THIS TEST HAS FAILED ON ONE OR MORE OUTPUTS");
-//        } else {
-//            System.out.println("!!!!!!!!!!!!!!!!!PASSED TEST!!!!!!!!!!!!!!!!!!!!!!!!");
-//        }
-//        System.out.println("");
-//
-//    }
-
     public void updateTSSE() {
         updatePatternSum();
     }
 
-    //WHAT DOES THIS DOOOOOOOOO?
+    //WHAT DOES THIS DOOOOOOOOO? //THINK THIS IS ACTUALLY IMPORTANT ONCE I IMPLEMENT UPDATING TSSE
     private void updatePatternSum() {
         Double[] desired = new Double[nodes[nodes.length - 1].length];
         Double[] actual = new Double[nodes[nodes.length - 1].length];
@@ -224,11 +207,12 @@ public class Network {
             predictionValueActual = new double[objsToUse.length];
             predictionValueExpected = new double[objsToUse.length];
 
-            int counter = 0;
             for (NNObj testObj : objsToUse) {
                 //System.out.println(setValues.nnObj.desc);
                 testNetworkHelper(testObj);
-                counter++;
+                //TODO THIS SHOULD BE A SEPARATE THING
+//                Logger.log();
+
             }
         }
 
@@ -303,16 +287,6 @@ public class Network {
         System.out.println("");
     }
 
-
-
-    private void printInputValues() {
-        System.out.print("INPUT VALUES");
-        for (InputNode inputNode : inputNodes) {
-            System.out.print(" : " + inputNode.inputValue);
-        }
-        System.out.println("----");
-    }
-
     private boolean checkOutputAgainstTarget_TESTING(OutputNeuron outputNeuron) {
 
         double outputTempVal = outputNeuron.tempOutput;
@@ -324,16 +298,6 @@ public class Network {
             return true;
         } else {
             return false;
-        }
-
-    }
-
-
-    public void resetNodeTempOutputs() {
-        for (int nC = 0; nC < nodes.length; nC++) {
-            for (Node node : nodes[nC]) {
-                node.tempOutput = -1;
-            }
         }
 
     }
@@ -357,9 +321,12 @@ public class Network {
         setupConnections();
 
         //setRMSE();
-
     }
 
+    /**
+     * Assumes that biasVal is a static value for all nodes initially
+     * @param biasVal
+     */
     private void createHiddenNeurons(double biasVal) {
         for (int nC = 0; nC < hiddenNeuronLayersCount; nC++) {
             Node[] tempNodes = new Node[hiddenNeuronCount];
@@ -383,7 +350,7 @@ public class Network {
         int count = 0;
         OutputNeuron[] outputNeurons = new OutputNeuron[size];
         while (count < size) {
-            outputNeurons[count] = new OutputNeuron(biasVal, randomDouble(), 0.9);//TODO CHANGE BACK TO RANDOM DOUBLE FOR SECOND PARAM
+            outputNeurons[count] = new OutputNeuron(biasVal, randomDouble(), 0.9);//TODO why is target 0.9?????????????????????????????????!!!!!!!
             count++;
         }
 
@@ -430,7 +397,7 @@ public class Network {
         return sum;
     }
 
-    public void updateErrorSignals() {
+    private void updateErrorSignals() {
         for (int nC = nodes.length - 1; nC >= 0; nC--) {
             for (int i = nodes[nC].length - 1; i >= 0; i--) {
                 if (nodes[nC][i] instanceof OutputNeuron) {
@@ -444,16 +411,15 @@ public class Network {
 
     }
 
-    public void updateWeights() {
-        for (int nC = 0; nC < nodes.length; nC++) {
-            for (Node node : nodes[nC]) {
+    private void updateWeights() {
+        for (Node[] value : nodes) {
+            for (Node node : value) {
                 node.updateWeights(learningRate);
             }
-            epoch++;
         }
     }
 
-    public double randomDouble() {
+    private double randomDouble() {
         double d = random.nextDouble();
 //        d = d * 0.99 *100;
 //        int temp = (int) d;
@@ -466,4 +432,16 @@ public class Network {
         return d;
 
     }
+
+    public NNObj[] getTrainingObjs(){
+        return _trainingObjs;
+    }
+
+    public NNObj[] getTestingObjs(){
+        return _testObjs;
+    }
+
+    public int getEpoch(){return epoch;}
+
+    public Node[][] getNodes(){return nodes;}
 }
