@@ -1,7 +1,7 @@
 package FinalProjStocks;
 
 import Feedfoward.NNMath;
-import Feedfoward.Network;
+import Feedfoward.Network.Network;
 import Markov.RunMarkov;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;

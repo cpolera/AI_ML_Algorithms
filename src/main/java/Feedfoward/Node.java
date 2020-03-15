@@ -1,24 +1,33 @@
 package Feedfoward;
 
+import com.google.gson.annotations.Expose;
+
 import java.util.ArrayList;
 
 public class Node {
 
-    double biasVal;
-    double biasWeight;
+    @Expose double biasVal;
+    @Expose double biasWeight;
     double net = 0;
-    double outputVal;
+    @Expose
+    public double outputVal;
     ArrayList<Connection> inputConnections = new ArrayList<>();
     ArrayList<Connection> outputConnections = new ArrayList<>();
-    double sigma;
-    double tempOutput = -1;
+    @Expose double sigma;
+    public double tempOutput = -1;
+    private transient static int idCounter = 0;
+    @Expose private int id;
 
     public Node(double biasVal, double biasWeight) {
         this.biasVal = biasVal;
         this.biasWeight = biasWeight;
+        this.id=idCounter;
+        idCounter++;
     }
 
     public Node() {
+        this.id=idCounter;
+        idCounter++;
     }
 
     public void addInputConnection(Connection connection) {
