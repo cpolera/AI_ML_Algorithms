@@ -1,11 +1,8 @@
 package Logging;
 
 
-import Feedfoward.Main;
-import Feedfoward.NNObj;
+import Feedfoward.*;
 import Feedfoward.Network.Network;
-import Feedfoward.Node;
-import Feedfoward.OutputNeuron;
 import com.google.gson.Gson;
 
 import java.io.IOException;
@@ -24,6 +21,7 @@ public class LoggerMainTest {
         NNObj[] trainingSet = Main.createSymbolList_EXAMPLE();
         NNObj[] testSymbols = Main.createTestSymbols();
         Network network = new Network();
+        Logger logger = new Logger(network);
         network.setupNetwork(trainingSet, testSymbols, false);
 
         Node[] nodes = network.getHiddenLayerNodes(0);
