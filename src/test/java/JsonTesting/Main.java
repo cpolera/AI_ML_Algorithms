@@ -1,6 +1,6 @@
 package JsonTesting;
 
-import Feedfoward.Network.Network;
+import algorithms.Feedfoward.Network.Network;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
