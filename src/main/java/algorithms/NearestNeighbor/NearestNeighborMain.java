@@ -19,7 +19,6 @@ public class NearestNeighborMain {
     static double[] xVals = new double[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15}; //16
 
     static ArrayList<ObjectNN> neighbors = new ArrayList<>();
-    static ArrayList<String> classes2 = new ArrayList<>();
 
     static int k = 5;
     static ObjectNN[] unknownObjects;
@@ -45,51 +44,45 @@ public class NearestNeighborMain {
             updateDistances(neighbors, unknownObject); // O(n) - updates all nodes with distance to current iterable yikes
             Collections.sort(neighbors);
 
-            //Grab closest ones // O(k)
             ArrayList<ObjectNN> nearestNeighbors = new ArrayList<>();
+            ArrayList<String> foundClassifications = new ArrayList<>();
             for (int i = 0; i < k; i++) {
+                //Grab closest ones // O(k)
                 nearestNeighbors.add(neighbors.get(i));
-            } // Result: list of closest neighbors
+                // Get each classification store it separately?!
+                foundClassifications.add(neighbors.get(i).classPlaceholder);
+            } // Result: list of closest neighbors and list of each neighbors' classification
 
-            //---
-            //figure out count of unique classifiers and use one with most
-            int counter = 0;
-            for (ObjectNN objectNN : nearestNeighbors) { // O(k)
-                classes2.add(counter, (objectNN.classPlaceholder));
-                counter++;
-            } // Result: list of each neighbors' classification in a new list!
+            HashSet<String> conversionSet = new HashSet<>(foundClassifications); // Believe this just compresses list
+            foundClassifications = new ArrayList<>(conversionSet); // gets list back?
 
-            HashSet<String> conversionSet = new HashSet<>(classes2); // Believe this compresses list quickly with counts
-            classes2 = new ArrayList<>(conversionSet); // gets list back?
-
-            int[] classCount = new int[classes2.size()]; // Number of unique classifiers
+            int[] classifierCounts = new int[foundClassifications.size()]; // Number of unique classifiers
 
             // For each unique classifier found at nearby neighbor
-            for (int i = 0; i < classes2.size(); i++) { // O(k)
-                int count1 = 0;
+            for (int i = 0; i < foundClassifications.size(); i++) { // O(k)
+                int classifierCount = 0;
                 // For each neighbor nearby
                 for (ObjectNN objectNN : nearestNeighbors) { // O(k)
                     // add count if classifier matches given classifier?!
-                    if (objectNN.classPlaceholder.equals(classes2.get(i))) {
-                        count1++;
+                    if (objectNN.classPlaceholder.equals(foundClassifications.get(i))) {
+                        classifierCount++;
                     }
                 }
-                classCount[i] = count1;
+                classifierCounts[i] = classifierCount; // map count to classifier index
             }
 
             // go through each count and find largest?!!
-            int finalIndex = 0;
-            for (int i = 1; i < classCount.length; i++) { // O(k)
-                if (classCount[i] > classCount[finalIndex]) {
-                    finalIndex = i;
+            int indexOfLargestCount = 0;
+            for (int i = 1; i < classifierCounts.length; i++) { // O(k)
+                if (classifierCounts[i] > classifierCounts[indexOfLargestCount]) {
+                    indexOfLargestCount = i;
                 }
             }
 
-            unknownObject.classPlaceholder = classes2.get(finalIndex);
-            //--
+            unknownObject.classPlaceholder = foundClassifications.get(indexOfLargestCount);
+
             System.out.println("The class of the unknown object is: " + unknownObject.classPlaceholder);
             System.out.println("xVAl " + unknownObject.vector.x + "yVAl " + unknownObject.vector.y);
-
         }
 
     }
