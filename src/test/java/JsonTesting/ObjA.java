@@ -1,4 +1,4 @@
-package JSONTESTING;
+package JsonTesting;
 
 public class ObjA {
 

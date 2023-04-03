@@ -1,4 +1,4 @@
-package JSONTESTING;
+package JsonTesting;
 
 import Feedfoward.Network.Network;
 import com.google.gson.Gson;
