@@ -1,5 +1,7 @@
 package NearestNeighbor;
 
+import common.Vector;
+
 public class ObjectNN implements Comparable {
 
     public Vector vector;

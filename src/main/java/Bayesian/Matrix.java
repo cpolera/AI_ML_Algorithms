@@ -1,12 +1,19 @@
 package Bayesian;
 
-import NearestNeighbor.Vector;
+import common.Vector;
 
 public class Matrix {
 
     double[][] matrix;
     double determinant;
 
+    /**
+     * Constructor to build a matrix based on given rows and columns.
+     * All values are set to 0 to start with
+     *
+     * @param rows
+     * @param columns
+     */
     public Matrix(int rows, int columns) {
         matrix = new double[rows][columns];
 
@@ -17,10 +24,15 @@ public class Matrix {
         }
     }
 
-    public Matrix(Vector vectors) {
+    /**
+     * Constructor to generate a Matrix object from a given vector
+     *
+     * @param vector
+     */
+    public Matrix(Vector vector) {
         matrix = new double[2][1];
-        matrix[0][0] = vectors.x;
-        matrix[1][0] = vectors.y;
+        matrix[0][0] = vector.x;
+        matrix[1][0] = vector.y;
     }
 
     public Matrix transposeMatrix() {
@@ -71,7 +83,7 @@ public class Matrix {
         System.out.println();
     }
 
-    public Matrix multiplyMatrix(Matrix secondMatrix) {
+    public Matrix multiplyByMatrix(Matrix secondMatrix) {
         Matrix product = new Matrix(matrix.length, secondMatrix.matrix[0].length);
 
         for (int i = 0; i < product.matrix.length; i++) {
@@ -89,7 +101,7 @@ public class Matrix {
         return product;
     }
 
-    public Matrix multiplyMatrix_Constant(double constant) {
+    public Matrix multiplyByConstant(double constant) {
         Matrix tempMatrix = new Matrix(matrix.length, matrix[0].length);
         for (int i = 0; i < matrix.length; i++) {
             for (int j = 0; j < matrix[0].length; j++) {
@@ -119,6 +131,6 @@ public class Matrix {
         System.out.println("Inverse pre determinant");
         tempMat.printMatrix();
 
-        return tempMat.multiplyMatrix_Constant(tempDeterminant);
+        return tempMat.multiplyByConstant(tempDeterminant);
     }
 }

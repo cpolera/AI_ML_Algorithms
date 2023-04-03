@@ -1,4 +1,4 @@
-package NearestNeighbor;
+package common;
 
 public class Vector {
 

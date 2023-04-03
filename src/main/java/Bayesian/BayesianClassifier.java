@@ -1,22 +1,20 @@
 package Bayesian;
 
-import NearestNeighbor.Vector;
+import common.Vector;
 
-public class BayesianClass {
-
+public class BayesianClassifier {
 
     Vector[] coords;
     Vector calculatedMean;
     Matrix covarianceMatrix = new Matrix(2, 2);
     Matrix inverseCovariance;
 
-    public BayesianClass() {
-    }
+    public BayesianClassifier() {}
 
-    public BayesianClass(Vector[] vectors) {
+    public BayesianClassifier(Vector[] vectors) {
         coords = vectors;
         setCalculatedMean();
-        calculateCovarienceMatrix();
+        calculateCovarianceMatrix();
         inverseCovariance = covarianceMatrix.inverseMatrix();
     }
 
@@ -32,34 +30,35 @@ public class BayesianClass {
         calculatedMean = new Vector(x / coords.length, y / coords.length);
     }
 
-    public void calculateCovarienceMatrix() {
+    public void calculateCovarianceMatrix() {
         Matrix calcMeanMatrix = new Matrix(calculatedMean);
         Matrix tempSum = new Matrix(2, 2);
-        for (int i = 0; i < coords.length; i++) {
+        for (Vector coord : coords) {
             //ai - uj
-            Matrix aSubi = new Matrix(coords[i]);
+            Matrix aSubI = new Matrix(coord);
 
-            Matrix lessMean = aSubi.subtractMatrix(calcMeanMatrix);
+            Matrix lessMean = aSubI.subtractMatrix(calcMeanMatrix);
 
-            //multiply ai - uj with its transpose
+            //multiply a sub i - uj with its transpose
             Matrix lessMeanTranspose = lessMean.transposeMatrix();
 
-            tempSum = tempSum.addMatrix(lessMean.multiplyMatrix(lessMeanTranspose));
+            tempSum = tempSum.addMatrix(lessMean.multiplyByMatrix(lessMeanTranspose));
         }
         System.out.println("The sum of ai - uj: ");
         tempSum.printMatrix();
 
-        covarianceMatrix = tempSum.multiplyMatrix_Constant(1.0 / coords.length);
+        covarianceMatrix = tempSum.multiplyByConstant(1.0 / coords.length);
         System.out.println("The sum of ai - uj divided by count");
         covarianceMatrix.printMatrix();
     }
 
-    public void printClass() {
-        System.out.println("Coords: ");
+    public String toString() {
+        String retString = "Coords: " + System.lineSeparator();
         for (Vector coord : coords) {
-            System.out.println(coord);
+            retString += coord + System.lineSeparator();
         }
 
-        System.out.println("Calculated Mean: " + calculatedMean);
+        retString += "Calculated Mean: " + calculatedMean + System.lineSeparator();
+        return retString;
     }
 }

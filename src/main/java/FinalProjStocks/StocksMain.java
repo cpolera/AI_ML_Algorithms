@@ -49,6 +49,7 @@ public class StocksMain {
         //stocksMain.createStockGroupTesting_TrainingLists();
 
         Network network = new Network(stocksMain.trainingGroup, stocksMain.testingGroup);
+
         //Network network = new Network(stocksMain.trainingStockGroups, stocksMain.testingStockGroups);
         network.trainingCount = 1000;
         network.hiddenNeuronCount = 10;

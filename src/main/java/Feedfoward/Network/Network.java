@@ -51,9 +51,11 @@ public class Network {
     public Network() {
     }
 
-    public Network(NNObj[] trainingObjs, NNObj[] testObjs) {
+    public Network(NNObj[] trainingObjs, NNObj[] testObjs) throws IOException {
         this._trainingObjs = trainingObjs;
         this. _testObjs = testObjs;
+        new Logger(this);
+        setupNetwork(10, 1, trainingObjs, testObjs, true);
     }
 
     public void setupNetwork(NNObj[] trainingObjs, NNObj[] testingObj, boolean run) throws IOException {
