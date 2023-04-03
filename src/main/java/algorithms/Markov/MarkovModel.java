@@ -4,80 +4,18 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Random;
 
-public class RunMarkov {
+public class MarkovModel {
 
     //list of words
-    static String[] listOfWords = new String[]{"steam", "meet", "team", "mates", "seat", "tea", "same", "tame", "mess", "stats"};
+    String[] listOfWords = new String[]{"steam", "meet", "team", "mates", "seat", "tea", "same", "tame", "mess", "stats"};
     //get unique letters
-    static ArrayList<String> letters = new ArrayList<>();
-    static int[][] grid;
-    static int largestCount = 0;
+    ArrayList<String> letters = new ArrayList<>();
+    int[][] grid;
+    int largestCount = 0;
 
+    public MarkovModel() {}
 
-    public static void main(String[] args) {
-
-        createLetterArray();
-
-        createGrid();
-
-        for (int i = 10; i > 0; i--) {
-            System.out.println();
-            System.out.println(createWord());
-        }
-
-//
-//        0.3	0.53	0.17	0.395604396	0.285714286	0.318681319	0.233333333	0.35	0.416666667
-//        30	53	17	36	26	29	14	21	25
-//        H	H	H	S	S	S	B	B	B
-//        100			91			60
-//        HS	HH	HB	SS	SH	SB	BB	BH	BS
-
-
-        double BB = 0.233333333;
-        double BS = 0.416666667;
-        double BH = 0.35;
-        double SB = 0.318681319;
-        double SS = 0.395604396;
-        double SH = 0.285714286;
-        double HB = 0.17;
-        double HH = 0.53;
-        double HS = 0.3;
-
-
-        ArrayList<String> states = new ArrayList<>();
-        states.add("B");
-        states.add("S");
-        states.add("H");
-        double[][] probablities = new double[3][3];
-        probablities[0] = new double[]{BB, BS, BH};
-        probablities[1] = new double[]{SB, SS, SH};
-        probablities[2] = new double[]{HB, HS, HH};
-
-
-        Random random = new Random();
-        int ranIntStart = random.nextInt(3);
-        getNextLetter(ranIntStart);
-
-        for (int i = 50; i > 0; i--) {
-            System.out.print(" " + states.get(ranIntStart));
-
-            double tempRan = random.nextDouble();
-            double cumulative = 0.0;
-            int counter = 0;
-            boolean found = false;
-            for (double d : probablities[ranIntStart]) {
-                cumulative += d;
-                if (tempRan < cumulative && !found) {
-                    ranIntStart = counter;
-                    found = true;
-                }
-                counter++;
-            }
-        }
-
-    }
-
-    public static String predictTrade(String previousTrade) {
+    public String predictTrade(String previousTrade) {
         double BB = 0.233333333;
         double BS = 0.416666667;
         double BH = 0.35;
@@ -129,7 +67,7 @@ public class RunMarkov {
     }
 
 
-    private static String createWord() {
+    public String createWord() {
         int letterIndex = getFirstLetter();
         String newWord = letters.get(letterIndex);
 
@@ -148,7 +86,7 @@ public class RunMarkov {
         return newWord;
     }
 
-    private static int getNextLetter(int letterIndex) {
+    public int getNextLetter(int letterIndex) {
 
         Random random = new Random();
         int totalWithoutBlank = grid[letterIndex][letters.size()] - grid[letterIndex][letters.size() - 1];
@@ -165,7 +103,7 @@ public class RunMarkov {
         return 0;
     }
 
-    private static int getFirstLetter() {
+    private int getFirstLetter() {
         Random random = new Random();
         int index = random.nextInt(grid[letters.size() - 1][letters.size()]);
 
@@ -180,7 +118,7 @@ public class RunMarkov {
         return 0;
     }
 
-    private static int getLastLetter(int currentLetterIndex) {
+    private int getLastLetter(int currentLetterIndex) {
         Random random = new Random();
         int index = random.nextInt(grid[letters.size() - 1][letters.size()]);
         System.out.println();
@@ -199,7 +137,7 @@ public class RunMarkov {
         return 0;
     }
 
-    private static void createLetterArray() {
+    public void createLetterArray() {
         for (String word : listOfWords) {
             for (char character : word.toCharArray()) {
                 letters.add(Character.toString(character));
@@ -215,7 +153,7 @@ public class RunMarkov {
         }
     }
 
-    public static void createGrid() {
+    public void createGrid() {
         grid = new int[letters.size()][letters.size() + 1];//increase size to include row totals
 
         for (int i = 0; i < grid[0].length - 1; i++) {
@@ -249,7 +187,7 @@ public class RunMarkov {
         }
     }
 
-    public static int checkLastLetter(String letter) {
+    public int checkLastLetter(String letter) {
         int count = 0;
 
         for (String word : listOfWords) {
@@ -261,7 +199,7 @@ public class RunMarkov {
         return count;
     }
 
-    public static int checkFirstLetter(String letter) {
+    public int checkFirstLetter(String letter) {
         int count = 0;
 
         for (String word : listOfWords) {
@@ -273,12 +211,12 @@ public class RunMarkov {
         return count;
     }
 
-    public static void removeDuplicates() {
+    public void removeDuplicates() {
         HashSet<String> conversionSet = new HashSet<>(letters);
         letters = new ArrayList<>(conversionSet);
     }
 
-    public static int checkLetterCombinationAllWords(String firstLetter, String secondLetter) {
+    public int checkLetterCombinationAllWords(String firstLetter, String secondLetter) {
         int count = 0;
 
         for (String word : listOfWords) {
@@ -288,7 +226,7 @@ public class RunMarkov {
         return count;
     }
 
-    public static int checkLetterCombination(String firstLetter, String secondLetter, String word) {
+    public int checkLetterCombination(String firstLetter, String secondLetter, String word) {
         int count = 0;
 
         char[] characters = word.toCharArray();

@@ -1,7 +1,6 @@
 package common.Logging;
 
 
-import Feedfoward.*;
 import algorithms.Feedfoward.*;
 import algorithms.Feedfoward.Network.Network;
 import com.google.gson.Gson;

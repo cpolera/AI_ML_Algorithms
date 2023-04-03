@@ -1,6 +1,5 @@
 package algorithms.Feedfoward.Network;
 
-import Feedfoward.*;
 import algorithms.Feedfoward.*;
 
 import java.io.IOException;
