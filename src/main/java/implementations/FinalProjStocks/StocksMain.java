@@ -220,7 +220,10 @@ public class StocksMain {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
 
-        jsonToStockArray = objectMapper.readValue(new File("src/main/java/FinalProjStocks/CRON.json"), Stock[].class);
+        jsonToStockArray = objectMapper.readValue(
+                new File("src/main/java/implementations/FinalProjStocks/data/CRON.json"),
+                Stock[].class
+        );
         //jsonToStockArray_cgc = objectMapper.readValue(new File("src/FinalProjStocks/CGC.json"), Stock[].class);
         //jsonToStockArray_msft = objectMapper.readValue(new File("src/FinalProjStocks/MSFT.json"), Stock[].class);
 
