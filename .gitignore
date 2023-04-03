@@ -1,3 +1,4 @@
-.idea
+.idea/
 target
 /src/main/logs/
+/.idea/

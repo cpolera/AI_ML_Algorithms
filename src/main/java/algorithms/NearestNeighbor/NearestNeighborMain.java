@@ -4,6 +4,8 @@ import common.Vector;
 import java.io.IOException;
 import java.util.*;
 
+import static algorithms.NearestNeighbor.NearestNeighborRunner.classifyData;
+
 /**
  * Classification algorithm also known as k-nearest neighbors algorithm
  */
@@ -17,34 +19,10 @@ public class NearestNeighborMain {
 //        initData();
 //        initData(50);
         initDataSpecific();
-        classifyData();
+        classifyData(neighbors, k);
     }
 
-    public static void classifyData(){
-        // Go through each node
-        for (ObjectNN vertex : neighbors) { // O(n)
-            ObjectNN.focusedNode = vertex;
-            ArrayList<ObjectNN> listToOrder = new ArrayList<>(neighbors);
-            Collections.sort(listToOrder);
 
-            // Get neighbors within distance
-            HashMap<String, Integer> map = new HashMap<>();
-            for(int i=1; i < k+1; i++){ // ignore first since its self, and find k total
-                map.merge(listToOrder.get(i).classification, 1, Integer::sum);
-            }
-
-            int max = Collections.max(map.values());
-            for (Map.Entry<String, Integer> entry : map.entrySet()) {
-                if (entry.getValue() == max) {
-                    ObjectNN.focusedNode.classification = entry.getKey(); // Ignores ties
-                    break;
-                }
-            }
-
-            System.out.println("The class of the unknown object is: " + ObjectNN.focusedNode.classification);
-            System.out.println("xVAl " + ObjectNN.focusedNode.vector.x + "yVAl " + ObjectNN.focusedNode.vector.y);
-        }
-    }
 
     public static void initData() {
         // Test datasets
