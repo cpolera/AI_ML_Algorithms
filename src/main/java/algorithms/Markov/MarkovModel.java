@@ -7,13 +7,15 @@ import java.util.Random;
 public class MarkovModel {
 
     //list of words
-    String[] listOfWords = new String[]{"steam", "meet", "team", "mates", "seat", "tea", "same", "tame", "mess", "stats"};
+    String[] listOfWords;
     //get unique letters
     ArrayList<String> letters = new ArrayList<>();
     int[][] grid;
     int largestCount = 0;
 
-    public MarkovModel() {}
+    public MarkovModel(String[] listOfWords) {
+        this.listOfWords = listOfWords;
+    }
 
     public String createWord() {
         int letterIndex = getFirstLetter();

@@ -3,11 +3,11 @@ package algorithms.Markov;
 import java.util.ArrayList;
 import java.util.Random;
 
-import static algorithms.Markov.MarkovModel.*;
-
 public class MarkovMain {
     public static void main(String[] args) {
-        MarkovModel markovModel = new MarkovModel();
+        String[] listOfWords = new String[]{"steam", "meet", "team", "mates", "seat", "tea", "same", "tame", "mess", "stats"};
+
+        MarkovModel markovModel = new MarkovModel(listOfWords);
         markovModel.createLetterArray();
 
         markovModel.createGrid();
@@ -40,10 +40,10 @@ public class MarkovMain {
         states.add("B");
         states.add("S");
         states.add("H");
-        double[][] probablities = new double[3][3];
-        probablities[0] = new double[]{BB, BS, BH};
-        probablities[1] = new double[]{SB, SS, SH};
-        probablities[2] = new double[]{HB, HS, HH};
+        double[][] probabilities = new double[3][3];
+        probabilities[0] = new double[]{BB, BS, BH};
+        probabilities[1] = new double[]{SB, SS, SH};
+        probabilities[2] = new double[]{HB, HS, HH};
 
 
         Random random = new Random();
@@ -57,7 +57,7 @@ public class MarkovMain {
             double cumulative = 0.0;
             int counter = 0;
             boolean found = false;
-            for (double d : probablities[ranIntStart]) {
+            for (double d : probabilities[ranIntStart]) {
                 cumulative += d;
                 if (tempRan < cumulative && !found) {
                     ranIntStart = counter;
