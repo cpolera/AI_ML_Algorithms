@@ -7,9 +7,10 @@ import common.Vector;
  *
  * Comparable is so that Collection.sort() will work to sort by distances from target
  */
-public class ObjectNN {
+public class ObjectNN implements Comparable {
 
     public static int idIncr = 0;
+    public static ObjectNN focusedNode;
 
     public Vector vector;
     public String classification;
@@ -23,10 +24,27 @@ public class ObjectNN {
         this.classification = classification;
     }
 
+    public ObjectNN(Vector vector, String classification) {
+        this.id = idIncr;
+        idIncr++;
+        this.vector = vector;
+        this.classification = classification;
+    }
+
     public double calcDistance(ObjectNN other) {
         double deltaX = vector.y - other.vector.y;
         double deltaY = vector.x - other.vector.x;
         this.distanceFromTarget = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
         return distanceFromTarget;
+    }
+
+    public int comparison(ObjectNN objNN) {
+        return Double.compare(calcDistance(focusedNode), objNN.calcDistance(focusedNode));
+//        return Double.compare(this.distanceFromTarget, objNN.distanceFromTarget);
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        return comparison((ObjectNN) o);
     }
 }
