@@ -2,9 +2,9 @@ package implementations.FinalProjStocks;
 
 import algorithms.Feedfoward.NNMath;
 import algorithms.Feedfoward.Network.Network;
-import algorithms.Markov.MarkovModel;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import implementations.FinalProjStocks.utils.TradesUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -168,10 +168,8 @@ public class StocksMain {
                 prevStateIdeal = "B";
                 prevState = "H";
             }
-
-            MarkovModel mm = new MarkovModel();
-            String tempMMSug = mm.predictTrade(prevState);
-            String tempMMIdeal = mm.predictTrade(prevStateIdeal);
+            String tempMMSug = TradesUtil.predictTrade(prevState);
+            String tempMMIdeal = TradesUtil.predictTrade(prevStateIdeal);
 
             totalSugPortfolioVal = (averageShareCostSug + nominalPriceChange) * sugSharesTotal;
             totalIdealPortfolioVal = (averageShareCostIdeal + nominalPriceChange) * idealSharesTotal;
