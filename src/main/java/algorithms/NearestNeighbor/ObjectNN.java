@@ -2,6 +2,11 @@ package algorithms.NearestNeighbor;
 
 import common.Vector;
 
+/**
+ * Object that will be classified
+ *
+ * Comparable is so that Collection.sort() will work to sort by distances from target
+ */
 public class ObjectNN implements Comparable {
 
     public Vector vector;
