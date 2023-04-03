@@ -65,7 +65,7 @@ public class StockNNTemp {
 
         for (ObjectNN unknownObject : unknownObjects) {
             updateDistances(neighbors, unknownObject);
-            Collections.sort(neighbors);
+//            Collections.sort(neighbors);
 
             //Grab closest ones
             nearestNeighbors = new ArrayList<>();
@@ -77,7 +77,7 @@ public class StockNNTemp {
             //figure out count of unique classifiers and use one with most
             int counter = 0;
             for (ObjectNN objectNN : nearestNeighbors) {
-                classes2.add(counter, (objectNN.classPlaceholder));
+                classes2.add(counter, (objectNN.classification));
                 counter++;
             }
 
@@ -89,7 +89,7 @@ public class StockNNTemp {
             for (int i = 0; i < classes2.size(); i++) {
                 int count1 = 0;
                 for (ObjectNN objectNN : nearestNeighbors) {
-                    if (objectNN.classPlaceholder.equals(classes2.get(i))) {
+                    if (objectNN.classification.equals(classes2.get(i))) {
                         count1++;
                     }
                 }
@@ -103,9 +103,9 @@ public class StockNNTemp {
                 }
             }
 
-            unknownObject.classPlaceholder = classes2.get(finalIndex);
+            unknownObject.classification = classes2.get(finalIndex);
 
-            System.out.println("The class of the unknown object is: " + unknownObject.classPlaceholder);
+            System.out.println("The class of the unknown object is: " + unknownObject.classification);
             System.out.println("xVAl " + unknownObject.vector.x + "yVAl " + unknownObject.vector.y);
 
         }
