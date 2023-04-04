@@ -26,11 +26,11 @@ public class NetworkTrainer {
 //        while(network.TSSE >= network.desiredError && network.trainCountTotal < trainingCount/minTrainingFactor){ // TODO: this truncates mid cycle. Should we ever do this?
             // Run the training sets x trainingCount
             for (int i = 0; i < trainingCount; i++) {
-                System.out.println("Training cycle: " + i); // TODO: LOGGER
+                Logger.log("Training cycle: " + i, 4); // TODO: LOGGER
                 // Run each training set
                 for (NNObj nnObj : trainingObjs) {
-                    System.out.println("Input: " + Arrays.toString(nnObj.getInputVals())); // TODO: LOGGER
-                    System.out.println("Expected Outputs: " + Arrays.toString(nnObj.getOutputVals())); // TODO: LOGGER
+                    Logger.log("Input: " + Arrays.toString(nnObj.getInputVals()), 5); // TODO: LOGGER
+                    Logger.log("Expected Outputs: " + Arrays.toString(nnObj.getOutputVals()), 5); // TODO: LOGGER
                     network.setValuesInNetwork(nnObj);
                     network.calculateNodeOutputs(true, false);
 
@@ -45,17 +45,17 @@ public class NetworkTrainer {
                 }
             }
             // After running all training sets this time, show RMSE and TSSE
-            System.out.println("RMSE: " + network.RMSE + " | TSSE: " + network.TSSE);
+            Logger.log("RMSE: " + network.RMSE + " | TSSE: " + network.TSSE, 4);
 //        }
 
-        System.out.println("//*****************END TRAINING*******************//");
+        Logger.log("//*****************END TRAINING*******************//", 1);
     }
 
     private void updateErrorSignals() {
         for (int nC = network.nodes.length - 1; nC >= 0; nC--) {
             for (int i = network.nodes[nC].length - 1; i >= 0; i--) {
                 network.nodes[nC][i].calculateError();
-                //System.out.println(nodes[nC][i].sigma);
+                //Logger.log(nodes[nC][i].sigma, 5);
             }
         }
     }

@@ -12,14 +12,10 @@ import io.github.cdimascio.dotenv.Dotenv;
 
 public class FeedForwardMain {
 
-    public static void main(String args[]) throws IOException {
+    public static void main(String[] args) throws IOException {
         Dotenv.configure().systemProperties().load();
         Network network = new Network();
         Logger logger = new Logger(network);
-        logger.log("This is a test with no level");
-        logger.log("This is a test 1", 1);
-        logger.log("This is a test 2", 2);
-        logger.log("This is a test 3", 3);
         NNObj[] trainingSet = createSymbolList_EXAMPLE();
         NNObj[] testSymbols = createTestSymbols();
         network.trainingCount = 100;
@@ -28,7 +24,6 @@ public class FeedForwardMain {
 
         logger.closeWriter();
         logger.showNetwork();
-
     }
 
     // update to handle multiple layers of hidden neurons - TODO: need to validate still

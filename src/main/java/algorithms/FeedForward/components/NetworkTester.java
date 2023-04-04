@@ -1,5 +1,7 @@
 package algorithms.FeedForward.components;
 
+import algorithms.FeedForward.Logger;
+
 import java.util.Arrays;
 
 public class NetworkTester {
@@ -30,37 +32,37 @@ public class NetworkTester {
             System.out.println("Cycle Pass: " + network.cyclePassCount + " | Cycle Fail: " + network.cycleFailCount);
             predictionIndex++;
         }
-        System.out.println("//*****************END TESTING*******************//");
+        Logger.log("//*****************END TESTING*******************//", 1);
     }
 
     public void validateOutput(NNObj nnObj, int predictionIndex) {
-        System.out.println("Input values: " + Arrays.toString(nnObj.getInputVals()));
-        System.out.println("Validating output...");
+        Logger.log("Input values: " + Arrays.toString(nnObj.getInputVals()), 5);
+        Logger.log("Validating output...", 4);
         int failedNeuronsCount = 0;
         for (Node outputNeuron : network.getOutputLayerNodes()) {
             if (outputNeuron instanceof OutputNeuron) {
-                System.out.print("Output: " + outputNeuron.tempOutput); // TODO: Logger
+                String logPrepend = "Output: " + outputNeuron.tempOutput;
                 predictionValueActual[predictionIndex] = outputNeuron.tempOutput;
                 predictionValueExpected[predictionIndex] = ((OutputNeuron) outputNeuron).target;
 
                 if (checkOutputAgainstTarget((OutputNeuron) outputNeuron)) {
-                    System.out.println(" -----------------------------------PASSED"); // TODO: LOGGER
+                    Logger.log(logPrepend + " -------------PASSED", 5);
                 } else {
                     failedNeuronsCount++;
-                    System.out.println(" -----------------------------------FAILED"); // TODO: LOGGER
+                    Logger.log(logPrepend + " -------------FAILED", 5);
                 }
             }
-            System.out.println();
+            Logger.log();
         }
 
         if (failedNeuronsCount > 0) {
             network.cycleFailCount++;
-            System.out.println("THIS TEST HAS FAILED ON " + failedNeuronsCount + "OUTPUT(S)");
+            Logger.log("THIS TEST HAS FAILED ON " + failedNeuronsCount + "OUTPUT(S)", 4);
         } else {
             network.cyclePassCount++;
-            System.out.println("!!!!!!!!!!!!!!!!!PASSED TEST!!!!!!!!!!!!!!!!!!!!!!!!");
+            Logger.log("!!!!!!!!!!!!!!!!!PASSED TEST!!!!!!!!!!!!!!!!!!!!!!!!", 4);
         }
-        System.out.println();
+        Logger.log();
     }
 
     // TODO: only used with testing, may need to see how training checks
@@ -68,7 +70,7 @@ public class NetworkTester {
         double outputTempVal = outputNeuron.tempOutput;
 
         if (outputTempVal < outputNeuron.target - network.desiredError || outputTempVal > outputNeuron.target + network.desiredError) {
-            System.out.println("TARGET IS NOT WITHIN PERMISSIBLE RANGES. TERMINATING RUN.");
+            Logger.log("TARGET IS NOT WITHIN PERMISSIBLE RANGES. TERMINATING RUN.", 5);
             return false;
         } else return outputTempVal >= outputNeuron.target - network.desiredError && outputTempVal <= outputNeuron.target + network.desiredError;
     }

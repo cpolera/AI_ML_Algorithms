@@ -80,12 +80,12 @@ public class Network {
             // Determine if training should continue
             if ( 1.0 * cyclePassCount / (cyclePassCount + cycleFailCount) > acceptablePassRate) {
                 endTrainingEarly = true;
-                System.out.println("Training ended early...");
+                Logger.log("Training ended early...", 1);
             }
         }
-        System.out.println("TrainingCount: " + trainCountTotal);
-        System.out.println("TestCount: " + (passCountTotal + failCountTotal));
-        System.out.println("TotalPass: " + passCountTotal + " | TotalFail: " + failCountTotal);
+        Logger.log("TrainingCount: " + trainCountTotal, 1);
+        Logger.log("TestCount: " + (passCountTotal + failCountTotal), 1);
+        Logger.log("TotalPass: " + passCountTotal + " | TotalFail: " + failCountTotal, 1);
     }
 
 
@@ -110,13 +110,12 @@ public class Network {
     }
 
     public void calculateNodeOutputs(Boolean save, Boolean test) {
-        System.out.println("Calculating node outputs...");
+        Logger.log("Calculating node outputs...", 1);
         for (int i = 0; i < nodes.length; i++) {
-//        for (int i = 0; i < hiddenNeuronLayersCount + 1; i++) { // hidden layer count plus output layer
             for (Node node : nodes[i]) {
                 double tempVal = node.calculateNodeOutput(save, test);
-                if (node instanceof OutputNeuron) {
-                    System.out.println("OUTPUT NODE: " + tempVal);
+                if (node instanceof OutputNeuron && !test) { // Test function has its own log for now
+                    Logger.log("OUTPUT NODE: " + tempVal, 3);
                 }
             }
         }
