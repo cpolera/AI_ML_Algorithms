@@ -85,8 +85,18 @@ public class Logger {
         System.out.println(gson.toJson(NETWORK.getNodes()));
     }
 
-    public void showNetowrkTrainingObjs(){
+    public void showNetworkTrainingObjs(){
         System.out.println(gson.toJson(NETWORK.getTrainingObjs()));
+    }
+
+    public void log(String logString, int debugLevel){
+        if(debugLevel <= Integer.parseInt(System.getProperty("FFN_DEBUG_LEVEL"))){
+            System.out.println(logString);
+        }
+    }
+
+    public void log(String logString){
+        log(logString, 5); // Default to most granular
     }
 
     public void closeWriter(){

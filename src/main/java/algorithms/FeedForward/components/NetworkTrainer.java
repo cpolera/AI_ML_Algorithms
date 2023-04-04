@@ -23,15 +23,14 @@ public class NetworkTrainer {
 
     public void trainNetwork(NNObj[] trainingObjs) {
         // TODO: Investigate why this broke things
-//        while(network.TSSE >= network.desiredError && network.trainCountTotal < trainingCount/minTrainingFactor){
+//        while(network.TSSE >= network.desiredError && network.trainCountTotal < trainingCount/minTrainingFactor){ // TODO: this truncates mid cycle. Should we ever do this?
             // Run the training sets x trainingCount
             for (int i = 0; i < trainingCount; i++) {
+                System.out.println("Training cycle: " + i); // TODO: LOGGER
                 // Run each training set
                 for (NNObj nnObj : trainingObjs) {
-
-                    System.out.println("Training set: " + i);// TODO: LOGGER
-                    System.out.println(Arrays.toString(nnObj.getInputVals()) +
-                            " ::: " + Arrays.toString(nnObj.getOutputVals())); // TODO: LOGGER
+                    System.out.println("Input: " + Arrays.toString(nnObj.getInputVals())); // TODO: LOGGER
+                    System.out.println("Expected Outputs: " + Arrays.toString(nnObj.getOutputVals())); // TODO: LOGGER
                     network.setValuesInNetwork(nnObj);
                     network.calculateNodeOutputs(true, false);
 

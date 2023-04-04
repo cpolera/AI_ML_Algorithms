@@ -3,36 +3,33 @@ package algorithms.FeedForward.components;
 import algorithms.FeedForward.*;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Random;
-
-import static algorithms.FeedForward.NNMath.calculateTSSE;
 
 public class Network {
     transient int trainingEpoch = 0; // TODO: logging value
 
-    public transient double desiredError = 0.01;        // TODO: network config
-    public transient double TSSE = 0.02;                // TODO: network config
-    public transient double RMSE = 0.1;                 // TODO: network config
-    public transient double acceptablePassRate = 0.95;  // TODO: network config
-    public transient double learningRate = 0.5;// n     // TODO: network config
-    transient public double biasVal = 1;                // TODO: network config
-    transient public int hiddenNeuronCount;             // TODO: network config
-    transient public int hiddenNeuronLayersCount;       // TODO: network config
+    public transient double desiredError = 0.01;        // network config
+    public transient double TSSE = 0.02;                // network config
+    public transient double RMSE = 0.1;                 // network config
+    public transient double acceptablePassRate = 0.95;  // network config
+    public transient double learningRate = 0.5;// n     // network config
+    transient public double biasVal = 1;                // network config
+    transient public int hiddenNeuronCount;             // network config
+    transient public int hiddenNeuronLayersCount;       // network config
     private transient NNObj[] _trainingObjs;
     private transient NNObj[] _testObjs;
-    private InputNode[] inputNodes;                 // TODO: network component
-    Node[][] nodes;                                 // TODO: network component
+    private InputNode[] inputNodes;                 // network component
+    Node[][] nodes;                                 // network component
 
-    public transient int trainingCount = 10000;        // TODO: training config
-    public transient int maxTrainingCycles = 5;        // TODO: training config
+    public transient int trainingCount = 10000;        // training config
+    public transient int maxTrainingCycles = 5;        // training config
 
     private int passCountTotal = 0;
     private int failCountTotal = 0;
-    transient public int cyclePassCount = 0;                       // TODO: validation config
-    transient public int cycleFailCount = 0;                       // TODO: validation config
+    transient public int cyclePassCount = 0;                       // validation config
+    transient public int cycleFailCount = 0;                       // validation config
 
-    int trainCountTotal = 0;                                // TODO: validation config
+    int trainCountTotal = 0;                                // validation config
 
 
     public Network() {
@@ -66,12 +63,12 @@ public class Network {
         }
     }
 
-    public void runNetworkTrainingAndTesting() throws IOException {
+    public void runNetworkTrainingAndTesting() {
         NetworkTrainer networkTrainer = new NetworkTrainer(this, trainingCount);
         NetworkTester networkTester = new NetworkTester(this);
-        boolean endTraining = false;
+        boolean endTrainingEarly = false;
         int trainingCycleCount = 0;
-        while (!endTraining) { // Train/test until meets threshold
+        while ( trainingCycleCount < maxTrainingCycles && !endTrainingEarly ) {
             cyclePassCount = 0;
             cycleFailCount = 0;
             networkTrainer.trainNetwork(_trainingObjs);
@@ -81,14 +78,14 @@ public class Network {
             trainingCycleCount++;
 
             // Determine if training should continue
-            if (trainingCycleCount >= maxTrainingCycles || 1.0 * cyclePassCount / (cyclePassCount + cycleFailCount) > acceptablePassRate) {
-                endTraining = true;
+            if ( 1.0 * cyclePassCount / (cyclePassCount + cycleFailCount) > acceptablePassRate) {
+                endTrainingEarly = true;
+                System.out.println("Training ended early...");
             }
         }
         System.out.println("TrainingCount: " + trainCountTotal);
         System.out.println("TestCount: " + (passCountTotal + failCountTotal));
         System.out.println("TotalPass: " + passCountTotal + " | TotalFail: " + failCountTotal);
-        System.out.println("//*****************END TESTING*******************//");
     }
 
 
@@ -113,12 +110,13 @@ public class Network {
     }
 
     public void calculateNodeOutputs(Boolean save, Boolean test) {
-        System.out.println("***NODE OUTPUT CALC***");
-        for (int i = 0; i < hiddenNeuronLayersCount + 1; i++) { // hidden layer count plus output layer
+        System.out.println("Calculating node outputs...");
+        for (int i = 0; i < nodes.length; i++) {
+//        for (int i = 0; i < hiddenNeuronLayersCount + 1; i++) { // hidden layer count plus output layer
             for (Node node : nodes[i]) {
                 double tempVal = node.calculateNodeOutput(save, test);
                 if (node instanceof OutputNeuron) {
-                    System.out.print("OUTPUT NODE: " + tempVal);
+                    System.out.println("OUTPUT NODE: " + tempVal);
                 }
             }
         }
@@ -158,7 +156,7 @@ public class Network {
         nodes[nodes.length - 1] = outputNeurons;
     }
 
-    //TODO: Only works for one hidden layer
+    // TODO: Only works for one hidden layer - need to confirm
     private void setupConnections() {
         int count = 0;
         for (InputNode inputNode : inputNodes) {
@@ -206,5 +204,9 @@ public class Network {
 
     public Node[] getHiddenLayerNodes(int i){
         return nodes[i];
+    }
+
+    public Node[] getOutputLayerNodes(){
+        return nodes[nodes.length - 1];
     }
 }

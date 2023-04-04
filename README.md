@@ -14,6 +14,8 @@ If adding a dependency while using IntelliJ, add dependency to pom file, right c
 ### Environment Variables
 Add a .env file to project root and set the following:
 ```
+# 1-5 with 5 being most granular
+FFN_DEBUG_LEVEL=1 
 ```
 
 Use `System.getProperty("{PROPERTY NAME}")` to get the value

@@ -20,7 +20,7 @@ public class NetworkTester {
         int predictionIndex = 0;
         predictionValueActual = new double[nnObjs.length];
         predictionValueExpected = new double[nnObjs.length];
-
+        System.out.println("Beginning test of the network...");
         // Run each test set once
         for (NNObj testObj : nnObjs) {
             network.setValuesInNetwork(testObj);
@@ -30,33 +30,34 @@ public class NetworkTester {
             System.out.println("Cycle Pass: " + network.cyclePassCount + " | Cycle Fail: " + network.cycleFailCount);
             predictionIndex++;
         }
+        System.out.println("//*****************END TESTING*******************//");
     }
 
     public void validateOutput(NNObj nnObj, int predictionIndex) {
-        Node[][] nodes = network.getNodes();
-        System.out.println(Arrays.toString(nnObj.getInputVals()));
-        boolean tester = true;
-        for (Node outputNeuron : nodes[nodes.length - 1]) {
+        System.out.println("Input values: " + Arrays.toString(nnObj.getInputVals()));
+        System.out.println("Validating output...");
+        int failedNeuronsCount = 0;
+        for (Node outputNeuron : network.getOutputLayerNodes()) {
             if (outputNeuron instanceof OutputNeuron) {
-                System.out.println("Output:" + outputNeuron.tempOutput);
+                System.out.print("Output: " + outputNeuron.tempOutput); // TODO: Logger
                 predictionValueActual[predictionIndex] = outputNeuron.tempOutput;
                 predictionValueExpected[predictionIndex] = ((OutputNeuron) outputNeuron).target;
 
                 if (checkOutputAgainstTarget((OutputNeuron) outputNeuron)) {
-                    System.out.print("-----------------------------------PASSED");//TODO LOGGER
-                    network.cyclePassCount++;
+                    System.out.println(" -----------------------------------PASSED"); // TODO: LOGGER
                 } else {
-                    tester = false;
-                    System.out.print("-----------------------------------FAILED");//TODO LOGGER
-                    network.cycleFailCount++;
+                    failedNeuronsCount++;
+                    System.out.println(" -----------------------------------FAILED"); // TODO: LOGGER
                 }
             }
             System.out.println();
         }
 
-        if (!tester) {
-            System.out.println("THIS TEST HAS FAILED ON ONE OR MORE OUTPUTS");
+        if (failedNeuronsCount > 0) {
+            network.cycleFailCount++;
+            System.out.println("THIS TEST HAS FAILED ON " + failedNeuronsCount + "OUTPUT(S)");
         } else {
+            network.cyclePassCount++;
             System.out.println("!!!!!!!!!!!!!!!!!PASSED TEST!!!!!!!!!!!!!!!!!!!!!!!!");
         }
         System.out.println();
