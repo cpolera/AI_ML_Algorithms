@@ -65,7 +65,14 @@ public class Network {
         _trainingObjs = trainingObjs;
         _testObjs = testingObjs;
 
-        setupNetworkBase(hiddenNeuronLayersCount, hiddenNeuronCount, biasVal);
+        nodes = new Node[hiddenNeuronLayersCount + 1][];
+
+        createInputLayer(_trainingObjs[0].getInputVals().length);
+        createHiddenNeurons(biasVal);
+        createOutputLayer(_trainingObjs[0].getOutputVals().length, biasVal);
+        setupConnections();
+
+        //setRMSE();
         Logger.logStaticVals();
         Logger.logInputs();
 
@@ -100,12 +107,8 @@ public class Network {
     }
 
     private void calculateNodeOutputs(Boolean save, Boolean test) {
-//        for (int i = 0; i < nodes.length; i++) {
-//            for (Node node : nodes[i]) {
-//                node.calculateNodeOutput(false, true);
-//            }
-//        }
-
+        System.out.println("***NODE OUTPUT CALC***");
+        // hidden layer count plus output layer
         for (int i = 0; i < hiddenNeuronLayersCount + 1; i++) {
             for (Node node : nodes[i]) {
                 double tempVal = node.calculateNodeOutput(save, test);
@@ -179,11 +182,12 @@ public class Network {
         predictionValueActual = new double[nnObjs.length];
         predictionValueExpected = new double[nnObjs.length];
 
-        // Test each test set
+        // Run each test set
         for (NNObj testObj : nnObjs) {
             testNetworkHelper(testObj);
             //TODO THIS SHOULD BE A SEPARATE THING
 //                Logger.log();
+            totalCount_RESETBEFOREPREDICITION++;
         }
 
         System.out.println("Pass: " + passCount + " | Fail: " + failCount); // TODO: these are per test cycle. shouldnt be here
@@ -191,6 +195,7 @@ public class Network {
         System.out.println("TestCount: " + testCountTotal);
         System.out.println("TrainingCount: " + trainCountTotal);
         System.out.println("TotalPass: " + passCountTotal + " | TotalFail: " + failCountTotal);
+        System.out.println("//*****************END TESTING*******************//");
     }
 
     private void setValuesInNetwork(NNObj nnObj) {
@@ -213,8 +218,6 @@ public class Network {
     public void testNetworkHelper(NNObj nnObj) {
         this.testCountTotal++;
         setValuesInNetwork(nnObj);
-        System.out.println("***NODE OUTPUT CALC***");
-
         calculateNodeOutputs(false, true);
 
         System.out.println(Arrays.toString(nnObj.getInputVals()));
@@ -225,7 +228,7 @@ public class Network {
                 predictionValueActual[totalCount_RESETBEFOREPREDICITION] = outputNeuron.tempOutput;
                 predictionValueExpected[totalCount_RESETBEFOREPREDICITION] = ((OutputNeuron) outputNeuron).target;
 
-                if (checkOutputAgainstTarget_TESTING((OutputNeuron) outputNeuron)) {
+                if (checkOutputAgainstTarget((OutputNeuron) outputNeuron)) {
                     System.out.print("-----------------------------------PASSED");//TODO LOGGER
                     passCount++;
                 } else {
@@ -236,7 +239,6 @@ public class Network {
             }
             System.out.println("");
         }
-        totalCount_RESETBEFOREPREDICITION++;
 
         if (!tester) {
             System.out.println("THIS TEST HAS FAILED ON ONE OR MORE OUTPUTS");
@@ -246,40 +248,14 @@ public class Network {
         System.out.println("");
     }
 
-    private boolean checkOutputAgainstTarget_TESTING(OutputNeuron outputNeuron) {
-
+    // TODO: only used with testing, may need to see how training checks
+    private boolean checkOutputAgainstTarget(OutputNeuron outputNeuron) {
         double outputTempVal = outputNeuron.tempOutput;
 
         if (outputTempVal < outputNeuron.target - desiredError || outputTempVal > outputNeuron.target + desiredError) {
             System.out.println("TARGET IS NOT WITHIN PERMISSIBLE RANGES. TERMINATING RUN.");
             return false;
-        } else if (outputTempVal >= outputNeuron.target - desiredError && outputTempVal <= outputNeuron.target + desiredError) {
-            return true;
-        } else {
-            return false;
-        }
-
-    }
-
-    /**
-     * Setup the network and nodes along with connections and base data
-     *
-     * @param hiddenNeuronLayers
-     * @param hiddenNeuronCount
-     * @param biasVal
-     */
-    private void setupNetworkBase(int hiddenNeuronLayers, int hiddenNeuronCount, double biasVal) {
-
-        this.hiddenNeuronLayersCount = hiddenNeuronLayers;
-        this.hiddenNeuronCount = hiddenNeuronCount;
-        nodes = new Node[hiddenNeuronLayers + 1][];
-
-        createInputLayer(_trainingObjs[0].getInputVals().length);
-        createHiddenNeurons(biasVal);
-        createOutputLayer(_trainingObjs[0].getOutputVals().length, biasVal);
-        setupConnections();
-
-        //setRMSE();
+        } else return outputTempVal >= outputNeuron.target - desiredError && outputTempVal <= outputNeuron.target + desiredError;
     }
 
     /**
