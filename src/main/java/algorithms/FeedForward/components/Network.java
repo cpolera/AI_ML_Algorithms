@@ -17,32 +17,28 @@ public class Network {
     public transient double RMSE = 0.1;                 // TODO: network config
     public transient double acceptablePassRate = 0.95;  // TODO: network config
     public transient double learningRate = 0.5;// n     // TODO: network config
-
-    public transient int trainingCount = 10000;         // TODO: training config
-    public transient int maxTestCyclesPerTraining = 5;  // TODO: training config
-
     transient public double biasVal = 1;                // TODO: network config
     transient public int hiddenNeuronCount;             // TODO: network config
     transient public int hiddenNeuronLayersCount;       // TODO: network config
-    transient private int totalCount_RESETBEFOREPREDICITION = 0;    // TODO: validation config
-    transient private int passCount = 0;                            // TODO: validation config
-    transient private int failCount = 0;                            // TODO: validation config
+    private transient NNObj[] _trainingObjs;
+    private transient NNObj[] _testObjs;
+    private InputNode[] inputNodes;                 // TODO: network component
+    Node[][] nodes;                                 // TODO: network component
+
+    public transient int trainingCount = 10000;        // TODO: training config
+    public transient int maxTrainingCycles = 5;        // TODO: training config
+    private transient int minTrainingFactor = 1;       // TODO: training config
+
+    transient private int cyclePassCount = 0;                       // TODO: validation config
+    transient private int cycleFailCount = 0;                       // TODO: validation config
     private int passCountTotal = 0;                                 // TODO: validation config
     private int failCountTotal = 0;                                 // TODO: validation config
     private int testCountTotal = 0;                                 // TODO: validation config
     private int trainCountTotal = 0;                                // TODO: validation config
-
-    private transient int minTrainingFactor = 1; // TODO: training config
-    private transient double[] predictionValueActual;   // TODO: validation component
-    private transient double[] predictionValueExpected; // TODO: validation component
-
-    private transient ArrayList<Double[]> trainingDesired = new ArrayList<>();
-    private transient ArrayList<Double[]> trainingActual = new ArrayList<>();
-    private transient NNObj[] _trainingObjs;
-    private transient NNObj[] _testObjs;
-
-    private InputNode[] inputNodes; // TODO: network component
-    Node[][] nodes;                 // TODO: network component
+    private transient double[] predictionValueActual;           // TODO: validation component
+    private transient double[] predictionValueExpected;         // TODO: validation component
+    private transient ArrayList<Double[]> trainingDesired = new ArrayList<>(); // TODO: similar to predictionValueExpected
+    private transient ArrayList<Double[]> trainingActual = new ArrayList<>();  // TODO: similar to predictionValueActual
 
     public Network() {
     }
@@ -57,7 +53,6 @@ public class Network {
     public void setupNetwork(int hiddenNeuronCount, int neuronLayers, NNObj[] trainingObjs, NNObj[] testingObjs, boolean run) throws IOException {
         this.hiddenNeuronCount = hiddenNeuronCount;
         this.hiddenNeuronLayersCount = neuronLayers;
-
         _trainingObjs = trainingObjs;
         _testObjs = testingObjs;
         nodes = new Node[hiddenNeuronLayersCount + 1][]; // makes hidden layers plus output layer
@@ -78,32 +73,19 @@ public class Network {
 
     public void runNetworkTrainingAndTesting() throws IOException {
         boolean endTraining = false;
-        int testingCount = 0;
+        int trainingCycleCount = 0;
         while (!endTraining) { // Train/test until meets threshold
-            passCount = 0;
-            failCount = 0;
+            cyclePassCount = 0;
+            cycleFailCount = 0;
             trainNetwork();
-
             testNetwork(_testObjs); // TODO: test only needs to run once since it will be the same for a given test set
-            testingCount++;
-            passCountTotal += passCount;
-            failCountTotal += failCount;
+            passCountTotal += cyclePassCount;
+            failCountTotal += cycleFailCount;
+            trainingCycleCount++;
 
             // Determine if training should continue
-            if (testingCount >= maxTestCyclesPerTraining || 1.0 * passCount / (passCount + failCount) > acceptablePassRate) {
+            if (trainingCycleCount >= maxTrainingCycles || 1.0 * cyclePassCount / (cyclePassCount + cycleFailCount) > acceptablePassRate) {
                 endTraining = true;
-            }
-        }
-    }
-
-    private void calculateNodeOutputs(Boolean save, Boolean test) {
-        System.out.println("***NODE OUTPUT CALC***");
-        for (int i = 0; i < hiddenNeuronLayersCount + 1; i++) { // hidden layer count plus output layer
-            for (Node node : nodes[i]) {
-                double tempVal = node.calculateNodeOutput(save, test);
-                if (node instanceof OutputNeuron) {
-                    System.out.print("OUTPUT NODE: " + tempVal);
-                }
             }
         }
     }
@@ -167,19 +149,19 @@ public class Network {
      * @param nnObjs
      */
     public void testNetwork(NNObj[] nnObjs) {
-        totalCount_RESETBEFOREPREDICITION = 0;
+        int predictionIndex = 0;
         predictionValueActual = new double[nnObjs.length];
         predictionValueExpected = new double[nnObjs.length];
 
         // Run each test set
         for (NNObj testObj : nnObjs) {
-            testNetworkHelper(testObj);
+            testNetworkHelper(testObj, predictionIndex);
             //TODO THIS SHOULD BE A SEPARATE THING
 //                Logger.log();
-            totalCount_RESETBEFOREPREDICITION++;
+            predictionIndex++;
         }
 
-        System.out.println("Pass: " + passCount + " | Fail: " + failCount); // TODO: these are per test cycle. shouldnt be here
+        System.out.println("Pass: " + cyclePassCount + " | Fail: " + cycleFailCount); // TODO: these are per test cycle. shouldnt be here
         // or maybe this is for post validation?
         System.out.println("TestCount: " + testCountTotal);
         System.out.println("TrainingCount: " + trainCountTotal);
@@ -195,7 +177,7 @@ public class Network {
             count++;
         }
 
-        //TODO not efficient but works
+        // TODO: not efficient but works
         for (int j = 0; j < nodes[nodes.length - 1].length; j++) {
             Node node = nodes[nodes.length - 1][j];
             if (node instanceof OutputNeuron) {
@@ -204,7 +186,7 @@ public class Network {
         }
     }
 
-    public void testNetworkHelper(NNObj nnObj) {
+    public void testNetworkHelper(NNObj nnObj, int predictionIndex) {
         this.testCountTotal++;
         setValuesInNetwork(nnObj);
         calculateNodeOutputs(false, true);
@@ -214,16 +196,16 @@ public class Network {
         for (Node outputNeuron : nodes[nodes.length - 1]) {
             if (outputNeuron instanceof OutputNeuron) {
                 System.out.println("Output:" + outputNeuron.tempOutput);
-                predictionValueActual[totalCount_RESETBEFOREPREDICITION] = outputNeuron.tempOutput;
-                predictionValueExpected[totalCount_RESETBEFOREPREDICITION] = ((OutputNeuron) outputNeuron).target;
+                predictionValueActual[predictionIndex] = outputNeuron.tempOutput;
+                predictionValueExpected[predictionIndex] = ((OutputNeuron) outputNeuron).target;
 
                 if (checkOutputAgainstTarget((OutputNeuron) outputNeuron)) {
                     System.out.print("-----------------------------------PASSED");//TODO LOGGER
-                    passCount++;
+                    cyclePassCount++;
                 } else {
                     tester = false;
                     System.out.print("-----------------------------------FAILED");//TODO LOGGER
-                    failCount++;
+                    cycleFailCount++;
                 }
             }
             System.out.println("");
@@ -245,6 +227,18 @@ public class Network {
             System.out.println("TARGET IS NOT WITHIN PERMISSIBLE RANGES. TERMINATING RUN.");
             return false;
         } else return outputTempVal >= outputNeuron.target - desiredError && outputTempVal <= outputNeuron.target + desiredError;
+    }
+
+    private void calculateNodeOutputs(Boolean save, Boolean test) {
+        System.out.println("***NODE OUTPUT CALC***");
+        for (int i = 0; i < hiddenNeuronLayersCount + 1; i++) { // hidden layer count plus output layer
+            for (Node node : nodes[i]) {
+                double tempVal = node.calculateNodeOutput(save, test);
+                if (node instanceof OutputNeuron) {
+                    System.out.print("OUTPUT NODE: " + tempVal);
+                }
+            }
+        }
     }
 
     /**

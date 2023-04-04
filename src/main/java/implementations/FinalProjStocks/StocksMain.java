@@ -59,7 +59,7 @@ public class StocksMain {
         network.learningRate = 0.25;
         network.acceptablePassRate = 0.6;
         network.biasVal = 1;
-        network.maxTestCyclesPerTraining = 1;
+        network.maxTrainingCycles = 1;
         stocksMain.periodSize_Input = 5;//TEST USING MOST RECENT INSTEAD OF FULL YEAR
 //        network.setupNetwork();//TODO REMOVED METHOD
 
