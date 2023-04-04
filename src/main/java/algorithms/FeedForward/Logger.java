@@ -61,7 +61,6 @@ public class Logger {
             writer.name("acceptablePassRate").value(NETWORK.acceptablePassRate);
             writer.name("learningRate").value(NETWORK.learningRate);
             writer.name("trainingCount").value(NETWORK.trainingCount);
-            writer.name("testCount").value(NETWORK.testCount);
             writer.endObject();
         } catch (IOException e) {
             e.printStackTrace();

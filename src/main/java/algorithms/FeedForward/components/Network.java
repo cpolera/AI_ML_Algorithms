@@ -20,7 +20,6 @@ public class Network {
 
     public transient int trainingCount = 10000;         // TODO: training config
     public transient int maxTestCyclesPerTraining = 5;  // TODO: training config
-    public transient int testCount = 20; // TODO: validation config
 
     transient public double biasVal = 1;                // TODO: network config
     transient public int hiddenNeuronCount = 3;         // TODO: network config
@@ -96,22 +95,22 @@ public class Network {
     }
 
     public void predictOutput(NNObj[] objs) {
-
         System.out.println("PREDICTING OUTCOME==========================================================");
-        int temp = this.testCount;
-        this.testCount = 1;
         testNetwork(objs);
-        this.testCount = temp;
     }
 
-    private void calculateNodeOutputs() {
+    private void calculateNodeOutputs(Boolean save, Boolean test) {
+//        for (int i = 0; i < nodes.length; i++) {
+//            for (Node node : nodes[i]) {
+//                node.calculateNodeOutput(false, true);
+//            }
+//        }
+
         for (int i = 0; i < hiddenNeuronLayersCount + 1; i++) {
             for (Node node : nodes[i]) {
+                double tempVal = node.calculateNodeOutput(save, test);
                 if (node instanceof OutputNeuron) {
-                    System.out.print("OUTPUT NODE: ");
-                    System.out.println(node.calculateNodeOutput(true, false));
-                } else {
-                    node.calculateNodeOutput(true, false);
+                    System.out.print("OUTPUT NODE: " + tempVal);
                 }
             }
         }
@@ -132,7 +131,7 @@ public class Network {
                 System.out.println(Arrays.toString(nnObj.getInputVals()) +
                         " ::: " + Arrays.toString(nnObj.getOutputVals())); // TODO: LOGGER
                 setValuesInNetwork(nnObj);
-                calculateNodeOutputs();
+                calculateNodeOutputs(true, false);
 
                 updateErrorSignals();
                 updateWeights();
@@ -214,13 +213,10 @@ public class Network {
     public void testNetworkHelper(NNObj nnObj) {
         this.testCountTotal++;
         setValuesInNetwork(nnObj);
-
         System.out.println("***NODE OUTPUT CALC***");
-        for (int i = 0; i < nodes.length; i++) {
-            for (Node node : nodes[i]) {
-                node.calculateNodeOutput(false, true);
-            }
-        }
+
+        calculateNodeOutputs(false, true);
+
         System.out.println(Arrays.toString(nnObj.getInputVals()));
         boolean tester = true;
         for (Node outputNeuron : nodes[nodes.length - 1]) {
