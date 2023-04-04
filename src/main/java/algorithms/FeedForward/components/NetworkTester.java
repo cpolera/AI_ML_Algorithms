@@ -52,7 +52,7 @@ public class NetworkTester {
                     Logger.log(logPrepend + " -------------FAILED", 5);
                 }
             }
-            Logger.log();
+            Logger.logNetworkState();
         }
 
         if (failedNeuronsCount > 0) {
@@ -62,7 +62,7 @@ public class NetworkTester {
             network.cyclePassCount++;
             Logger.log("!!!!!!!!!!!!!!!!!PASSED TEST!!!!!!!!!!!!!!!!!!!!!!!!", 4);
         }
-        Logger.log();
+        Logger.logNetworkState();
     }
 
     // TODO: only used with testing, may need to see how training checks

@@ -26,11 +26,11 @@ public class NetworkTrainer {
 //        while(network.TSSE >= network.desiredError && network.trainCountTotal < trainingCount/minTrainingFactor){ // TODO: this truncates mid cycle. Should we ever do this?
             // Run the training sets x trainingCount
             for (int i = 0; i < trainingCount; i++) {
-                Logger.log("Training cycle: " + i, 4); // TODO: LOGGER
+                Logger.log("Training cycle: " + i, 4);
                 // Run each training set
                 for (NNObj nnObj : trainingObjs) {
-                    Logger.log("Input: " + Arrays.toString(nnObj.getInputVals()), 5); // TODO: LOGGER
-                    Logger.log("Expected Outputs: " + Arrays.toString(nnObj.getOutputVals()), 5); // TODO: LOGGER
+                    Logger.log("Input: " + Arrays.toString(nnObj.getInputVals()), 5);
+                    Logger.log("Expected Outputs: " + Arrays.toString(nnObj.getOutputVals()), 5);
                     network.setValuesInNetwork(nnObj);
                     network.calculateNodeOutputs(true, false);
 
@@ -41,7 +41,7 @@ public class NetworkTrainer {
                     setRMSE(trainingObjs);
                     network.trainingEpoch++;
                     network.trainCountTotal++;//LOGGER ____ USE AS COUNTER FOR FILE WRITE
-                    Logger.log();
+                    Logger.logNetworkState();
                 }
             }
             // After running all training sets this time, show RMSE and TSSE

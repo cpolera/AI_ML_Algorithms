@@ -66,7 +66,7 @@ public class Logger {
         writer.endArray();
     }
 
-    public static void log(){
+    public static void logNetworkState(){
         try {
             writer.beginObject();
             String networkS = gson.toJson(NETWORK);
