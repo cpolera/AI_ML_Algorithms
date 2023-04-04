@@ -1,4 +1,4 @@
-package common.Logging;
+package Feedforward.LoggerTests;
 
 
 import algorithms.Feedfoward.*;

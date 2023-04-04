@@ -1,4 +1,4 @@
-package common.Logging;
+package Feedforward.LoggerTests;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

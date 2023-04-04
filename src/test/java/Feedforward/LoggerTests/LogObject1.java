@@ -1,4 +1,4 @@
-package common.Logging;
+package Feedforward.LoggerTests;
 
 import com.google.gson.annotations.Expose;
 

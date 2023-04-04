@@ -1,4 +1,4 @@
-package common.Logging;
+package Feedforward.LoggerTests;
 
 public class LogObject2 {
 
