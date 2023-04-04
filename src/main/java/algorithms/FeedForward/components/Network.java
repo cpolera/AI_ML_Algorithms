@@ -3,6 +3,7 @@ package algorithms.FeedForward.components;
 import algorithms.FeedForward.*;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.Random;
 
 public class Network {
@@ -21,16 +22,23 @@ public class Network {
     private InputNode[] inputNodes;                 // network component
     Node[][] nodes;                                 // network component
 
-    public transient int trainingCount = 10000;        // training config
-    public transient int maxTrainingCycles = 5;        // training config
+    /**
+     * Runs all test sets X times per cycle
+     * allows control number of trainings before running test cycle. Saves time by reducing test time.
+     * Also useful if the dataset is smaller and you dont expect usable values with a single cycle
+     */
+    public transient int trainingCountPerCycle = 1;        // training config
+
+    /**
+     * Runs the training cycle X times
+     * Every training cycle has a test phase which combined with trainingCountPerCycle allows control over
+     * the total trainings while only testing as desired
+     */
+    public transient int maxTrainingCycles = 1;        // training config //
 
     private int passCountTotal = 0;
     private int failCountTotal = 0;
-    transient public int cyclePassCount = 0;                       // validation config
-    transient public int cycleFailCount = 0;                       // validation config
-
     int trainCountTotal = 0;                                // validation config
-
 
     public Network() {
     }
@@ -67,22 +75,21 @@ public class Network {
 
     public void runNetworkTrainingAndTesting() {
         Logger.log("Running network training and testing...", 1);
-        NetworkTrainer networkTrainer = new NetworkTrainer(this, trainingCount);
+        NetworkTrainer networkTrainer = new NetworkTrainer(this);
         NetworkTester networkTester = new NetworkTester(this);
         boolean endTrainingEarly = false;
         int trainingCycleCount = 0;
         while ( trainingCycleCount < maxTrainingCycles && !endTrainingEarly ) {
-            cyclePassCount = 0;
-            cycleFailCount = 0;
-            networkTrainer.trainNetwork(_trainingObjs);
-            networkTester.testNetwork(_testObjs); // TODO: test only needs to run once since it will be the same for a given test set
-            passCountTotal += cyclePassCount;
-            failCountTotal += cycleFailCount;
+            Logger.log("Executing training cycle: " + trainingCycleCount, 2);
+            networkTrainer.trainNetwork(_trainingObjs, trainingCountPerCycle);
+            Map<String, Integer> results = networkTester.testNetwork(_testObjs); // TODO: test only needs to run once since it will be the same for a given test set
+            passCountTotal += results.get("passed");
+            failCountTotal += results.get("failed");
             trainingCycleCount++;
 
             // Determine if training should continue
             if ( Integer.parseInt(System.getProperty("FFN_DEBUG_LEVEL")) == 1
-                    && 1.0 * cyclePassCount / (cyclePassCount + cycleFailCount) > acceptablePassRate) {
+                    && 1.0 * results.get("passed") / (results.get("passed") + results.get("failed")) > acceptablePassRate) {
                 endTrainingEarly = true;
                 Logger.log("Training ended early...", 2);
             }

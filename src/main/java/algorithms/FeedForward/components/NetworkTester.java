@@ -3,6 +3,8 @@ package algorithms.FeedForward.components;
 import algorithms.FeedForward.Logger;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 public class NetworkTester {
     Network network;
@@ -16,11 +18,17 @@ public class NetworkTester {
 
     /**
      * Method takes NNObj[] argument. If null, then use _testObjs
+     *
      * @param nnObjs
+     * @return
      */
-    public void testNetwork(NNObj[] nnObjs) {
+    public Map<String, Integer> testNetwork(NNObj[] nnObjs) {
         Logger.log("Testing network...", 2);
-
+//        int[] results = new int[]{0,0};
+        Map<String, Integer> results  = new HashMap<String, Integer>() {{
+            put("passed", 0);
+            put("failed", 0);
+        }};
         int predictionIndex = 0;
         predictionValueActual = new double[nnObjs.length];
         predictionValueExpected = new double[nnObjs.length];
@@ -28,15 +36,23 @@ public class NetworkTester {
         for (NNObj testObj : nnObjs) {
             network.setValuesInNetwork(testObj);
             network.calculateNodeOutputs(false, true);
-            validateOutput(testObj, predictionIndex);
-//                Logger.logNetworkState();
-            Logger.log("Cycle Pass: " + network.cyclePassCount + " | Cycle Fail: " + network.cycleFailCount, 3);
+            boolean passed = validateOutput(testObj, predictionIndex);
+
+            if(passed) {
+                results.merge("passed", 1, Integer::sum);
+            }
+            else {
+                results.merge("failed", 1, Integer::sum);
+            }
+
             predictionIndex++;
         }
+        Logger.log("Cycle Pass: " + results.get("passed") + " | Cycle Fail: " + results.get("failed"), 3);
         Logger.log("Finished testing network.", 2);
+        return results;
     }
 
-    public void validateOutput(NNObj nnObj, int predictionIndex) {
+    public boolean validateOutput(NNObj nnObj, int predictionIndex) {
         Logger.log("Validating output...", 4);
         Logger.log("Input values: " + Arrays.toString(nnObj.getInputVals()), 5);
         int failedNeuronsCount = 0;
@@ -55,15 +71,13 @@ public class NetworkTester {
             }
             Logger.logNetworkState();
         }
-
         if (failedNeuronsCount > 0) {
-            network.cycleFailCount++;
-            Logger.log("THIS TEST HAS FAILED ON " + failedNeuronsCount + "OUTPUT(S)", 4);
+            Logger.log("THIS TEST HAS FAILED ON " + failedNeuronsCount + " OUTPUT(S)", 4);
+            return false;
         } else {
-            network.cyclePassCount++;
-            Logger.log("!!!!!!!!!!!!!!!!!PASSED TEST!!!!!!!!!!!!!!!!!!!!!!!!", 4);
+            Logger.log("PASSED TEST", 4);
+            return true;
         }
-        Logger.logNetworkState();
     }
 
     // TODO: only used with testing, may need to see how training checks

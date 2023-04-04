@@ -11,39 +11,38 @@ import static algorithms.FeedForward.NNMath.calculateTSSE;
 public class NetworkTrainer {
 
     Network network;
-    int trainingCount;
-    private transient int minTrainingFactor = 1;
     private transient ArrayList<Double[]> trainingDesired = new ArrayList<>();
     private transient ArrayList<Double[]> trainingActual = new ArrayList<>();
 
-    public NetworkTrainer(Network network, int trainingCount){
+    public NetworkTrainer(Network network){
         this.network = network;
-        this.trainingCount = trainingCount;
+    }
+    public void trainNetwork(NNObj[] trainingObjs, int trainingCountPerCycle){
+        Logger.log("Running training sets " + trainingCountPerCycle + " time(s).", 1);
+        for(int i=0; i < trainingCountPerCycle; i++){
+            trainNetwork(trainingObjs);
+        }
     }
 
     public void trainNetwork(NNObj[] trainingObjs) {
         Logger.log("Training network...", 2);
-        // Run the training sets x trainingCount
-        for (int i = 0; i < trainingCount; i++) {
-            Logger.log("Training cycle: " + i, 3);
-            // Run each training set
-            for (NNObj nnObj : trainingObjs) {
-                Logger.log("Input: " + Arrays.toString(nnObj.getInputVals()), 5);
-                Logger.log("Expected Outputs: " + Arrays.toString(nnObj.getOutputVals()), 5);
-                network.setValuesInNetwork(nnObj);
-                network.calculateNodeOutputs(true, false);
+        for (NNObj nnObj : trainingObjs) {
+            Logger.log("Input: " + Arrays.toString(nnObj.getInputVals()), 5);
+            Logger.log("Expected Outputs: " + Arrays.toString(nnObj.getOutputVals()), 5);
+            network.setValuesInNetwork(nnObj);
+            network.calculateNodeOutputs(true, false);
 
-                Logger.log("Updating error signals and weights...", 5);
-                updateErrorSignals();
-                updateWeights();
+            Logger.log("Updating error signals and weights...", 5);
+            updateErrorSignals();
+            updateWeights();
 
-                //updatePatternSum(); // TODO: Keep for now
-                setRMSE(trainingObjs);
-                network.trainingEpoch++;
-                network.trainCountTotal++;//LOGGER ____ USE AS COUNTER FOR FILE WRITE
-                Logger.logNetworkState();
-            }
+            //updatePatternSum(); // TODO: Keep for now
+            setRMSE(trainingObjs);
+            network.trainingEpoch++;
+            network.trainCountTotal++;//LOGGER ____ USE AS COUNTER FOR FILE WRITE
+            Logger.logNetworkState();
         }
+
         // After running all training sets this time, show RMSE and TSSE
         Logger.log("RMSE: " + network.RMSE + " | TSSE: " + network.TSSE, 3);
 

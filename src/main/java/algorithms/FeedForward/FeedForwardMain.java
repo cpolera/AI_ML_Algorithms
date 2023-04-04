@@ -14,11 +14,13 @@ public class FeedForwardMain {
 
     public static void main(String[] args) throws IOException {
         Dotenv.configure().systemProperties().load();
+
         Network network = new Network();
         Logger logger = new Logger(network);
         NNObj[] trainingSet = createSymbolList_EXAMPLE();
         NNObj[] testSymbols = createTestSymbols();
-        network.trainingCount = 100;
+        network.trainingCountPerCycle = 1;
+        network.maxTrainingCycles = 1;
         network.desiredError = 0.1;
         network.setupNetwork(25, 2, trainingSet, testSymbols, true);
 

@@ -52,7 +52,7 @@ public class StocksMain {
         Network network = new Network(stocksMain.trainingGroup, stocksMain.testingGroup);
 
         //Network network = new Network(stocksMain.trainingStockGroups, stocksMain.testingStockGroups);
-        network.trainingCount = 1000;
+//        network.trainingCountPerCycle = 1000;
         network.hiddenNeuronCount = 10;
         network.hiddenNeuronLayersCount = 1;
         network.desiredError = 0.05;

@@ -58,7 +58,7 @@ public class Logger {
             writer.name("RMSE").value(NETWORK.RMSE);
             writer.name("acceptablePassRate").value(NETWORK.acceptablePassRate);
             writer.name("learningRate").value(NETWORK.learningRate);
-            writer.name("trainingCount").value(NETWORK.trainingCount);
+            writer.name("trainingCountPerCycle").value(NETWORK.trainingCountPerCycle);
             writer.endObject();
         } catch (IOException e) {
             e.printStackTrace();
