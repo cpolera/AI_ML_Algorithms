@@ -83,7 +83,7 @@ public class Network {
             failCount = 0;
             trainNetwork();
 
-            testNetwork(null);
+            testNetwork(_testObjs); // TODO: test only needs to run once since it will be the same for a given test set
             testingCount++;
             passCountTotal += passCount;
             failCountTotal += failCount;
@@ -176,24 +176,23 @@ public class Network {
      * @param nnObjs
      */
     public void testNetwork(NNObj[] nnObjs) {
-        NNObj[] objsToUse = nnObjs == null ? _testObjs : nnObjs;
-        //STORE INPUT NODE VALS
+        //TODO: is there a reason to do store original input node vals?
         double[] initialVals = new double[inputNodes.length];
         for (int i = 0; i < initialVals.length; i++) {
             initialVals[i] = inputNodes[i].inputValue;
         }
 
-        for (int i = 0; i < testCount; i++) {
-            totalCount_RESETBEFOREPREDICITION = 0;
-            predictionValueActual = new double[objsToUse.length];
-            predictionValueExpected = new double[objsToUse.length];
+        totalCount_RESETBEFOREPREDICITION = 0;
+        predictionValueActual = new double[nnObjs.length];
+        predictionValueExpected = new double[nnObjs.length];
 
-            for (NNObj testObj : objsToUse) {
-                testNetworkHelper(testObj);
-                //TODO THIS SHOULD BE A SEPARATE THING
+        // Test each test set
+        for (NNObj testObj : nnObjs) {
+            testNetworkHelper(testObj);
+            //TODO THIS SHOULD BE A SEPARATE THING
 //                Logger.log();
-            }
         }
+
 
         //REVERT INPUT NODE VALUES
         for (int i = 0; i < initialVals.length; i++) {
