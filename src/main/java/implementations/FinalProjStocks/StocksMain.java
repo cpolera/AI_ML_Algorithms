@@ -1,7 +1,7 @@
 package implementations.FinalProjStocks;
 
-import algorithms.Feedfoward.NNMath;
-import algorithms.Feedfoward.Network.Network;
+import algorithms.FeedForward.NNMath;
+import algorithms.FeedForward.components.Network;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import implementations.FinalProjStocks.utils.TradesUtil;
@@ -59,7 +59,7 @@ public class StocksMain {
         network.learningRate = 0.25;
         network.acceptablePassRate = 0.6;
         network.biasVal = 1;
-        network.howManyToTest = 1;
+        network.maxTestCyclesPerTraining = 1;
         stocksMain.periodSize_Input = 5;//TEST USING MOST RECENT INSTEAD OF FULL YEAR
 //        network.setupNetwork();//TODO REMOVED METHOD
 

@@ -1,4 +1,4 @@
-package algorithms.Feedfoward;
+package algorithms.FeedForward.components;
 
 /**
  * NNObj is a generic neural network object that contains an array of input values, expected output values

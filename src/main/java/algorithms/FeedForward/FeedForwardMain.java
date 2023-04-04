@@ -1,10 +1,11 @@
-package algorithms.Feedfoward;
+package algorithms.FeedForward;
 
-import algorithms.Feedfoward.Network.Network;
+import algorithms.FeedForward.components.NNObj;
+import algorithms.FeedForward.components.Network;
 
 import java.io.IOException;
 
-public class Main {
+public class FeedForwardMain {
 
     public static void main(String args[]) throws IOException {
         Network network = new Network();

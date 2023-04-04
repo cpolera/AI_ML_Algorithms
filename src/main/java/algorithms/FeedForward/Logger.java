@@ -1,6 +1,6 @@
-package algorithms.Feedfoward;
+package algorithms.FeedForward;
 
-import algorithms.Feedfoward.Network.Network;
+import algorithms.FeedForward.components.Network;
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonWriter;
 
@@ -14,7 +14,7 @@ public class Logger {
 
     static {
         try {
-            writer = new JsonWriter( new FileWriter("src/main/logs/Log1.json"));
+            writer = new JsonWriter( new FileWriter("src/logs/Log1.json"));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -73,7 +73,7 @@ public class Logger {
         try {
             writer.beginObject();
             String networkS = gson.toJson(NETWORK);
-            writer.name(""+NETWORK.getEpoch()).value(networkS);
+            writer.name(""+NETWORK.getTrainingEpoch()).value(networkS);
             writer.endObject();
         } catch (IOException e) {
             e.printStackTrace();

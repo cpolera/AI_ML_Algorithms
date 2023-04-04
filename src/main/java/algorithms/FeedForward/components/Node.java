@@ -1,5 +1,6 @@
-package algorithms.Feedfoward;
+package algorithms.FeedForward.components;
 
+import algorithms.FeedForward.NNMath;
 import com.google.gson.annotations.Expose;
 
 import java.util.ArrayList;

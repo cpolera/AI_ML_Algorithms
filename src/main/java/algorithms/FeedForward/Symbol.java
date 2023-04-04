@@ -1,4 +1,6 @@
-package algorithms.Feedfoward;
+package algorithms.FeedForward;
+
+import algorithms.FeedForward.components.NNObj;
 
 public class Symbol extends NNObj {
 

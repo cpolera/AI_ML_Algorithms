@@ -1,4 +1,4 @@
-package algorithms.Feedfoward;
+package algorithms.FeedForward.components;
 
 public class Connection {
 
