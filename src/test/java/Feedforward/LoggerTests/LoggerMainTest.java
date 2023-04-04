@@ -10,6 +10,9 @@ import com.google.gson.Gson;
 
 import java.io.IOException;
 
+import static algorithms.FeedForward.FeedForwardHelper.createSymbolList_EXAMPLE;
+import static algorithms.FeedForward.FeedForwardHelper.createTestSymbols;
+
 public class LoggerMainTest {
 
 
@@ -21,8 +24,8 @@ public class LoggerMainTest {
 
         System.out.println(json);
 
-        NNObj[] trainingSet = FeedForwardMain.createSymbolList_EXAMPLE();
-        NNObj[] testSymbols = FeedForwardMain.createTestSymbols();
+        NNObj[] trainingSet = createSymbolList_EXAMPLE();
+        NNObj[] testSymbols = createTestSymbols();
         Network network = new Network();
         Logger logger = new Logger(network);
         network.setupNetwork(3, 1, trainingSet, testSymbols, false);

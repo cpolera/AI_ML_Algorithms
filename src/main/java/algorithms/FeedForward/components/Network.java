@@ -4,7 +4,6 @@ import algorithms.FeedForward.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Random;
 
 import static algorithms.FeedForward.NNMath.calculateTSSE;
@@ -27,18 +26,14 @@ public class Network {
 
     public transient int trainingCount = 10000;        // TODO: training config
     public transient int maxTrainingCycles = 5;        // TODO: training config
-    private transient int minTrainingFactor = 1;       // TODO: training config
 
-    transient private int cyclePassCount = 0;                       // TODO: validation config
-    transient private int cycleFailCount = 0;                       // TODO: validation config
-    private int passCountTotal = 0;                                 // TODO: validation config
-    private int failCountTotal = 0;                                 // TODO: validation config
-    private int testCountTotal = 0;                                 // TODO: validation config
-    private int trainCountTotal = 0;                                // TODO: validation config
-    private transient double[] predictionValueActual;           // TODO: validation component
-    private transient double[] predictionValueExpected;         // TODO: validation component
-    private transient ArrayList<Double[]> trainingDesired = new ArrayList<>(); // TODO: similar to predictionValueExpected
-    private transient ArrayList<Double[]> trainingActual = new ArrayList<>();  // TODO: similar to predictionValueActual
+    private int passCountTotal = 0;
+    private int failCountTotal = 0;
+    transient public int cyclePassCount = 0;                       // TODO: validation config
+    transient public int cycleFailCount = 0;                       // TODO: validation config
+
+    int trainCountTotal = 0;                                // TODO: validation config
+
 
     public Network() {
     }
@@ -72,13 +67,15 @@ public class Network {
     }
 
     public void runNetworkTrainingAndTesting() throws IOException {
+        NetworkTrainer networkTrainer = new NetworkTrainer(this, trainingCount);
+        NetworkTester networkTester = new NetworkTester(this);
         boolean endTraining = false;
         int trainingCycleCount = 0;
         while (!endTraining) { // Train/test until meets threshold
             cyclePassCount = 0;
             cycleFailCount = 0;
-            trainNetwork();
-            testNetwork(_testObjs); // TODO: test only needs to run once since it will be the same for a given test set
+            networkTrainer.trainNetwork(_trainingObjs);
+            networkTester.testNetwork(_testObjs); // TODO: test only needs to run once since it will be the same for a given test set
             passCountTotal += cyclePassCount;
             failCountTotal += cycleFailCount;
             trainingCycleCount++;
@@ -88,88 +85,17 @@ public class Network {
                 endTraining = true;
             }
         }
-    }
-
-    public void trainNetwork() throws IOException {
-        // TODO: Investigate why this broke things
-//        while(TSSE >= desiredError && totalCountTraining < trainingCount/minTrainingFactor){
-        // Run the training sets x trainingCount
-        for (int i = 0; i < trainingCount; i++) {
-            // Run each training set
-            for (NNObj nnObj : _trainingObjs) {
-                if (TSSE <= desiredError && i > trainingCount / minTrainingFactor) {
-                    //break; // TODO: clarify purpose
-                }
-
-                System.out.println("Training set: " + i);// TODO: LOGGER
-                System.out.println(Arrays.toString(nnObj.getInputVals()) +
-                        " ::: " + Arrays.toString(nnObj.getOutputVals())); // TODO: LOGGER
-                setValuesInNetwork(nnObj);
-                calculateNodeOutputs(true, false);
-
-                updateErrorSignals();
-                updateWeights();
-
-                //updatePatternSum(); // TODO: Keep for now
-                setRMSE();
-                trainingEpoch++;
-                trainCountTotal++;//LOGGER ____ USE AS COUNTER FOR FILE WRITE
-                Logger.log();
-            }
-//            }
-            // After running all training sets this time, show RMSE and TSSE
-            System.out.println("RMSE: " + RMSE + " | TSSE: " + TSSE);
-        }
-
-        System.out.println("//*****************END TRAINING*******************//");
-    }
-
-    // TODO: Not clear when to use this. Appears to be important to updating TSSE
-    // Called from trainNetwork, but commented out now
-    private void updatePatternSum() {
-        Double[] desired = new Double[nodes[nodes.length - 1].length];
-        Double[] actual = new Double[nodes[nodes.length - 1].length];
-        Node[] nodesOut = nodes[nodes.length - 1];
-
-        for (int i = 0; i < nodes[nodes.length - 1].length; i++) {
-            Node outputNode = nodesOut[i];
-            if (outputNode instanceof OutputNeuron) {
-                desired[i] = ((OutputNeuron) outputNode).target;
-                actual[i] = outputNode.outputVal;
-            }
-        }
-        trainingDesired.add(desired);
-        trainingActual.add(actual);
-
-        TSSE = calculateTSSE(trainingDesired, trainingActual);
-    }
-
-    /**
-     * Method takes NNObj[] argument. If null, then use _testObjs
-     * @param nnObjs
-     */
-    public void testNetwork(NNObj[] nnObjs) {
-        int predictionIndex = 0;
-        predictionValueActual = new double[nnObjs.length];
-        predictionValueExpected = new double[nnObjs.length];
-
-        // Run each test set
-        for (NNObj testObj : nnObjs) {
-            testNetworkHelper(testObj, predictionIndex);
-            //TODO THIS SHOULD BE A SEPARATE THING
-//                Logger.log();
-            predictionIndex++;
-        }
-
-        System.out.println("Pass: " + cyclePassCount + " | Fail: " + cycleFailCount); // TODO: these are per test cycle. shouldnt be here
-        // or maybe this is for post validation?
-        System.out.println("TestCount: " + testCountTotal);
         System.out.println("TrainingCount: " + trainCountTotal);
+        System.out.println("TestCount: " + (passCountTotal + failCountTotal));
         System.out.println("TotalPass: " + passCountTotal + " | TotalFail: " + failCountTotal);
         System.out.println("//*****************END TESTING*******************//");
     }
 
-    private void setValuesInNetwork(NNObj nnObj) {
+
+
+
+
+    void setValuesInNetwork(NNObj nnObj) {
         int count = 0;
         //for each input val: assign to input node - Same amount of nodes as input val
         for (double d : nnObj.getInputVals()) {
@@ -186,50 +112,7 @@ public class Network {
         }
     }
 
-    public void testNetworkHelper(NNObj nnObj, int predictionIndex) {
-        this.testCountTotal++;
-        setValuesInNetwork(nnObj);
-        calculateNodeOutputs(false, true);
-
-        System.out.println(Arrays.toString(nnObj.getInputVals()));
-        boolean tester = true;
-        for (Node outputNeuron : nodes[nodes.length - 1]) {
-            if (outputNeuron instanceof OutputNeuron) {
-                System.out.println("Output:" + outputNeuron.tempOutput);
-                predictionValueActual[predictionIndex] = outputNeuron.tempOutput;
-                predictionValueExpected[predictionIndex] = ((OutputNeuron) outputNeuron).target;
-
-                if (checkOutputAgainstTarget((OutputNeuron) outputNeuron)) {
-                    System.out.print("-----------------------------------PASSED");//TODO LOGGER
-                    cyclePassCount++;
-                } else {
-                    tester = false;
-                    System.out.print("-----------------------------------FAILED");//TODO LOGGER
-                    cycleFailCount++;
-                }
-            }
-            System.out.println("");
-        }
-
-        if (!tester) {
-            System.out.println("THIS TEST HAS FAILED ON ONE OR MORE OUTPUTS");
-        } else {
-            System.out.println("!!!!!!!!!!!!!!!!!PASSED TEST!!!!!!!!!!!!!!!!!!!!!!!!");
-        }
-        System.out.println("");
-    }
-
-    // TODO: only used with testing, may need to see how training checks
-    private boolean checkOutputAgainstTarget(OutputNeuron outputNeuron) {
-        double outputTempVal = outputNeuron.tempOutput;
-
-        if (outputTempVal < outputNeuron.target - desiredError || outputTempVal > outputNeuron.target + desiredError) {
-            System.out.println("TARGET IS NOT WITHIN PERMISSIBLE RANGES. TERMINATING RUN.");
-            return false;
-        } else return outputTempVal >= outputNeuron.target - desiredError && outputTempVal <= outputNeuron.target + desiredError;
-    }
-
-    private void calculateNodeOutputs(Boolean save, Boolean test) {
+    public void calculateNodeOutputs(Boolean save, Boolean test) {
         System.out.println("***NODE OUTPUT CALC***");
         for (int i = 0; i < hiddenNeuronLayersCount + 1; i++) { // hidden layer count plus output layer
             for (Node node : nodes[i]) {
@@ -289,34 +172,6 @@ public class Network {
 
             }
             count++;
-        }
-    }
-
-    private void setRMSE() {
-        if (TSSE != 1) {
-            RMSE = NNMath.calcRMSE(TSSE, _trainingObjs.length, _trainingObjs[0].getOutputVals().length);
-        }
-    }
-
-    private void updateErrorSignals() {
-        for (int nC = nodes.length - 1; nC >= 0; nC--) {
-            for (int i = nodes[nC].length - 1; i >= 0; i--) {
-                if (nodes[nC][i] instanceof OutputNeuron) {
-                    nodes[nC][i].calculateError();
-                } else {
-                    nodes[nC][i].calculateError();
-                }
-                //System.out.println(nodes[nC][i].sigma);
-            }
-        }
-
-    }
-
-    private void updateWeights() {
-        for (Node[] value : nodes) {
-            for (Node node : value) {
-                node.updateWeights(learningRate);
-            }
         }
     }
 

@@ -2,6 +2,7 @@ package implementations.FinalProjStocks;
 
 import algorithms.FeedForward.NNMath;
 import algorithms.FeedForward.components.Network;
+import algorithms.FeedForward.components.NetworkTester;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import implementations.FinalProjStocks.utils.TradesUtil;
@@ -75,7 +76,8 @@ public class StocksMain {
         //stocksMain.prepareFinalTestArrays();
         stocksMain.createStockTesting_TrainingLists();
         System.out.println("PREDICTING OUTCOME==========================================================");
-        network.testNetwork(stocksMain.testingGroup);
+        NetworkTester networkTester = new NetworkTester(network);
+        networkTester.testNetwork(stocksMain.testingGroup);
         System.currentTimeMillis();
 
         int count = 0;
