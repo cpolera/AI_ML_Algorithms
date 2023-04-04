@@ -22,14 +22,14 @@ public class NetworkTester {
         int predictionIndex = 0;
         predictionValueActual = new double[nnObjs.length];
         predictionValueExpected = new double[nnObjs.length];
-        System.out.println("Beginning test of the network...");
+        Logger.log("Beginning test of the network...", 1);
         // Run each test set once
         for (NNObj testObj : nnObjs) {
             network.setValuesInNetwork(testObj);
             network.calculateNodeOutputs(false, true);
             validateOutput(testObj, predictionIndex);
-//                Logger.log();
-            System.out.println("Cycle Pass: " + network.cyclePassCount + " | Cycle Fail: " + network.cycleFailCount);
+//                Logger.logNetworkState();
+            Logger.log("Cycle Pass: " + network.cyclePassCount + " | Cycle Fail: " + network.cycleFailCount, 3);
             predictionIndex++;
         }
         Logger.log("//*****************END TESTING*******************//", 1);
