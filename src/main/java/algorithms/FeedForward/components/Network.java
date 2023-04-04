@@ -35,6 +35,7 @@ public class Network {
     public Network() {
     }
 
+    // TODO: put together a builder to replace this
     public Network(NNObj[] trainingObjs, NNObj[] testObjs) throws IOException {
         this._trainingObjs = trainingObjs;
         this. _testObjs = testObjs;
@@ -42,6 +43,7 @@ public class Network {
         setupNetwork(10, 1, trainingObjs, testObjs, true);
     }
 
+    // TODO: put together a builder to partially replace this monstrosity
     public void setupNetwork(int hiddenNeuronCount, int neuronLayers, NNObj[] trainingObjs, NNObj[] testingObjs, boolean run) throws IOException {
         this.hiddenNeuronCount = hiddenNeuronCount;
         this.hiddenNeuronLayersCount = neuronLayers;
@@ -64,6 +66,7 @@ public class Network {
     }
 
     public void runNetworkTrainingAndTesting() {
+        Logger.log("Running network training and testing...", 1);
         NetworkTrainer networkTrainer = new NetworkTrainer(this, trainingCount);
         NetworkTester networkTester = new NetworkTester(this);
         boolean endTrainingEarly = false;
@@ -78,21 +81,19 @@ public class Network {
             trainingCycleCount++;
 
             // Determine if training should continue
-            if ( 1.0 * cyclePassCount / (cyclePassCount + cycleFailCount) > acceptablePassRate) {
+            if ( Integer.parseInt(System.getProperty("FFN_DEBUG_LEVEL")) == 1
+                    && 1.0 * cyclePassCount / (cyclePassCount + cycleFailCount) > acceptablePassRate) {
                 endTrainingEarly = true;
-                Logger.log("Training ended early...", 1);
+                Logger.log("Training ended early...", 2);
             }
         }
-        Logger.log("TrainingCount: " + trainCountTotal, 1);
-        Logger.log("TestCount: " + (passCountTotal + failCountTotal), 1);
-        Logger.log("TotalPass: " + passCountTotal + " | TotalFail: " + failCountTotal, 1);
+        Logger.log("Completed network training and testing.", 1);
+        Logger.log("Training Count: " + trainCountTotal, 2);
+        Logger.log("Test Count: " + (passCountTotal + failCountTotal) + " | Total Pass: " + passCountTotal + " | Total Fail: " + failCountTotal, 2);
     }
 
-
-
-
-
     void setValuesInNetwork(NNObj nnObj) {
+        Logger.log("Setting network values...", 3);
         int count = 0;
         //for each input val: assign to input node - Same amount of nodes as input val
         for (double d : nnObj.getInputVals()) {
@@ -107,18 +108,20 @@ public class Network {
                 ((OutputNeuron) node).target = nnObj.getOutputVals()[j];
             }
         }
+        Logger.log("Finished setting network values.", 3);
     }
 
     public void calculateNodeOutputs(Boolean save, Boolean test) {
-        Logger.log("Calculating node outputs...", 1);
+        Logger.log("Calculating node outputs...", 3);
         for (int i = 0; i < nodes.length; i++) {
             for (Node node : nodes[i]) {
                 double tempVal = node.calculateNodeOutput(save, test);
                 if (node instanceof OutputNeuron && !test) { // Test function has its own log for now
-                    Logger.log("OUTPUT NODE: " + tempVal, 3);
+                    Logger.log("OUTPUT NODE: " + tempVal, 4);
                 }
             }
         }
+        Logger.log("Finished calculating node outputs.", 3);
     }
 
     /**

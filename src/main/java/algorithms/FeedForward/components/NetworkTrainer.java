@@ -22,33 +22,32 @@ public class NetworkTrainer {
     }
 
     public void trainNetwork(NNObj[] trainingObjs) {
-        // TODO: Investigate why this broke things
-//        while(network.TSSE >= network.desiredError && network.trainCountTotal < trainingCount/minTrainingFactor){ // TODO: this truncates mid cycle. Should we ever do this?
-            // Run the training sets x trainingCount
-            for (int i = 0; i < trainingCount; i++) {
-                Logger.log("Training cycle: " + i, 4);
-                // Run each training set
-                for (NNObj nnObj : trainingObjs) {
-                    Logger.log("Input: " + Arrays.toString(nnObj.getInputVals()), 5);
-                    Logger.log("Expected Outputs: " + Arrays.toString(nnObj.getOutputVals()), 5);
-                    network.setValuesInNetwork(nnObj);
-                    network.calculateNodeOutputs(true, false);
+        Logger.log("Training network...", 2);
+        // Run the training sets x trainingCount
+        for (int i = 0; i < trainingCount; i++) {
+            Logger.log("Training cycle: " + i, 3);
+            // Run each training set
+            for (NNObj nnObj : trainingObjs) {
+                Logger.log("Input: " + Arrays.toString(nnObj.getInputVals()), 5);
+                Logger.log("Expected Outputs: " + Arrays.toString(nnObj.getOutputVals()), 5);
+                network.setValuesInNetwork(nnObj);
+                network.calculateNodeOutputs(true, false);
 
-                    updateErrorSignals();
-                    updateWeights();
+                Logger.log("Updating error signals and weights...", 5);
+                updateErrorSignals();
+                updateWeights();
 
-                    //updatePatternSum(); // TODO: Keep for now
-                    setRMSE(trainingObjs);
-                    network.trainingEpoch++;
-                    network.trainCountTotal++;//LOGGER ____ USE AS COUNTER FOR FILE WRITE
-                    Logger.logNetworkState();
-                }
+                //updatePatternSum(); // TODO: Keep for now
+                setRMSE(trainingObjs);
+                network.trainingEpoch++;
+                network.trainCountTotal++;//LOGGER ____ USE AS COUNTER FOR FILE WRITE
+                Logger.logNetworkState();
             }
-            // After running all training sets this time, show RMSE and TSSE
-            Logger.log("RMSE: " + network.RMSE + " | TSSE: " + network.TSSE, 4);
-//        }
+        }
+        // After running all training sets this time, show RMSE and TSSE
+        Logger.log("RMSE: " + network.RMSE + " | TSSE: " + network.TSSE, 3);
 
-        Logger.log("//*****************END TRAINING*******************//", 1);
+        Logger.log("Finished training network.", 2);
     }
 
     private void updateErrorSignals() {

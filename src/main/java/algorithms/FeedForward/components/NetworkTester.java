@@ -19,10 +19,11 @@ public class NetworkTester {
      * @param nnObjs
      */
     public void testNetwork(NNObj[] nnObjs) {
+        Logger.log("Testing network...", 2);
+
         int predictionIndex = 0;
         predictionValueActual = new double[nnObjs.length];
         predictionValueExpected = new double[nnObjs.length];
-        Logger.log("Beginning test of the network...", 1);
         // Run each test set once
         for (NNObj testObj : nnObjs) {
             network.setValuesInNetwork(testObj);
@@ -32,12 +33,12 @@ public class NetworkTester {
             Logger.log("Cycle Pass: " + network.cyclePassCount + " | Cycle Fail: " + network.cycleFailCount, 3);
             predictionIndex++;
         }
-        Logger.log("//*****************END TESTING*******************//", 1);
+        Logger.log("Finished testing network.", 2);
     }
 
     public void validateOutput(NNObj nnObj, int predictionIndex) {
-        Logger.log("Input values: " + Arrays.toString(nnObj.getInputVals()), 5);
         Logger.log("Validating output...", 4);
+        Logger.log("Input values: " + Arrays.toString(nnObj.getInputVals()), 5);
         int failedNeuronsCount = 0;
         for (Node outputNeuron : network.getOutputLayerNodes()) {
             if (outputNeuron instanceof OutputNeuron) {
