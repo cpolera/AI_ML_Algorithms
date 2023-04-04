@@ -176,12 +176,6 @@ public class Network {
      * @param nnObjs
      */
     public void testNetwork(NNObj[] nnObjs) {
-        //TODO: is there a reason to do store original input node vals?
-        double[] initialVals = new double[inputNodes.length];
-        for (int i = 0; i < initialVals.length; i++) {
-            initialVals[i] = inputNodes[i].inputValue;
-        }
-
         totalCount_RESETBEFOREPREDICITION = 0;
         predictionValueActual = new double[nnObjs.length];
         predictionValueExpected = new double[nnObjs.length];
@@ -191,12 +185,6 @@ public class Network {
             testNetworkHelper(testObj);
             //TODO THIS SHOULD BE A SEPARATE THING
 //                Logger.log();
-        }
-
-
-        //REVERT INPUT NODE VALUES
-        for (int i = 0; i < initialVals.length; i++) {
-            inputNodes[i].inputValue = initialVals[i];
         }
 
         System.out.println("Pass: " + passCount + " | Fail: " + failCount); // TODO: these are per test cycle. shouldnt be here
