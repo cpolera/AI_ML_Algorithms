@@ -8,9 +8,13 @@ import java.io.IOException;
 import static algorithms.FeedForward.FeedForwardHelper.createSymbolList_EXAMPLE;
 import static algorithms.FeedForward.FeedForwardHelper.createTestSymbols;
 
+import io.github.cdimascio.dotenv.Dotenv;
+
 public class FeedForwardMain {
 
     public static void main(String args[]) throws IOException {
+        Dotenv.configure().systemProperties().load();
+        String tester = System.getProperty("FFN_TEST");
         Network network = new Network();
         Logger logger = new Logger(network);
         NNObj[] trainingSet = createSymbolList_EXAMPLE();
@@ -24,11 +28,6 @@ public class FeedForwardMain {
 
     }
 
-//update to take any number of inputs
-    //update to have any number of output neurons
-    //update to handle multiple layers of hidden neurons
-    //update training method to handle any number of inputs/ same with testing
-
-
-
+    // update to handle multiple layers of hidden neurons - TODO: need to validate still
+    // update training method to handle any number of inputs/ same with testing
 }
