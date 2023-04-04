@@ -26,11 +26,9 @@ public class Logger {
     }
 
     public Logger(Network network) throws IOException {
-
-        this.NETWORK = network;
+        NETWORK = network;
         writer.beginArray();
         writer.beginArray();
-
     }
 
     public static void logInputs() throws IOException {
@@ -43,7 +41,7 @@ public class Logger {
 
             writer.beginObject();
             String testingObjsS = gson.toJson(NETWORK.getTestingObjs());
-            writer.name("trainingObjs").value(testingObjsS);
+            writer.name("testingObjs").value(testingObjsS);
             writer.endObject();
         } catch (IOException e) {
             e.printStackTrace();
