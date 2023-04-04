@@ -19,7 +19,7 @@ public class FeedForwardMain {
         Logger logger = new Logger(network);
         NNObj[] trainingSet = createSymbolList_EXAMPLE();
         NNObj[] testSymbols = createTestSymbols();
-        network.trainingCountPerCycle = 1;
+        network.trainingCountPerCycle = 1000;
         network.maxTrainingCycles = 1;
         network.desiredError = 0.1;
         network.setupNetwork(25, 2, trainingSet, testSymbols, true);
@@ -27,7 +27,4 @@ public class FeedForwardMain {
         logger.closeWriter();
         logger.showNetwork();
     }
-
-    // update to handle multiple layers of hidden neurons - TODO: need to validate still
-    // update training method to handle any number of inputs/ same with testing
 }

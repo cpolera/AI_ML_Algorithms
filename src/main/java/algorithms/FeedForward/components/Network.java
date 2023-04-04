@@ -52,6 +52,7 @@ public class Network {
     }
 
     // TODO: put together a builder to partially replace this monstrosity
+    // trainingObjs informs the input layer node count - not great to be implicit in this class
     public void setupNetwork(int hiddenNeuronCount, int neuronLayers, NNObj[] trainingObjs, NNObj[] testingObjs, boolean run) throws IOException {
         this.hiddenNeuronCount = hiddenNeuronCount;
         this.hiddenNeuronLayersCount = neuronLayers;
@@ -165,7 +166,6 @@ public class Network {
         nodes[nodes.length - 1] = outputNeurons;
     }
 
-    // TODO: Only works for one hidden layer - need to confirm
     private void setupConnections() {
         int count = 0;
         for (InputNode inputNode : inputNodes) {
