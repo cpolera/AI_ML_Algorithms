@@ -74,7 +74,8 @@ public class StocksMain {
         jsonToStockArray = stocksMain.reverseArray(jsonToStockArray);
         //stocksMain.prepareFinalTestArrays();
         stocksMain.createStockTesting_TrainingLists();
-        network.predictOutput(stocksMain.testingGroup);
+        System.out.println("PREDICTING OUTCOME==========================================================");
+        network.testNetwork(stocksMain.testingGroup);
         System.currentTimeMillis();
 
         int count = 0;

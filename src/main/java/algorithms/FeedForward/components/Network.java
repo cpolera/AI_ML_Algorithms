@@ -22,8 +22,8 @@ public class Network {
     public transient int maxTestCyclesPerTraining = 5;  // TODO: training config
 
     transient public double biasVal = 1;                // TODO: network config
-    transient public int hiddenNeuronCount = 3;         // TODO: network config
-    transient public int hiddenNeuronLayersCount = 1;   // TODO: network config
+    transient public int hiddenNeuronCount;             // TODO: network config
+    transient public int hiddenNeuronLayersCount;       // TODO: network config
     transient private int totalCount_RESETBEFOREPREDICITION = 0;    // TODO: validation config
     transient private int passCount = 0;                            // TODO: validation config
     transient private int failCount = 0;                            // TODO: validation config
@@ -58,14 +58,9 @@ public class Network {
         this.hiddenNeuronCount = hiddenNeuronCount;
         this.hiddenNeuronLayersCount = neuronLayers;
 
-        setupNetwork(trainingObjs, testingObjs, run);
-    }
-
-    public void setupNetwork(NNObj[] trainingObjs, NNObj[] testingObjs, boolean run) throws IOException {
         _trainingObjs = trainingObjs;
         _testObjs = testingObjs;
-
-        nodes = new Node[hiddenNeuronLayersCount + 1][];
+        nodes = new Node[hiddenNeuronLayersCount + 1][]; // makes hidden layers plus output layer
 
         createInputLayer(_trainingObjs[0].getInputVals().length);
         createHiddenNeurons(biasVal);
@@ -101,15 +96,9 @@ public class Network {
         }
     }
 
-    public void predictOutput(NNObj[] objs) {
-        System.out.println("PREDICTING OUTCOME==========================================================");
-        testNetwork(objs);
-    }
-
     private void calculateNodeOutputs(Boolean save, Boolean test) {
         System.out.println("***NODE OUTPUT CALC***");
-        // hidden layer count plus output layer
-        for (int i = 0; i < hiddenNeuronLayersCount + 1; i++) {
+        for (int i = 0; i < hiddenNeuronLayersCount + 1; i++) { // hidden layer count plus output layer
             for (Node node : nodes[i]) {
                 double tempVal = node.calculateNodeOutput(save, test);
                 if (node instanceof OutputNeuron) {

@@ -9,7 +9,6 @@ public class FeedForwardMain {
 
     public static void main(String args[]) throws IOException {
         Network network = new Network();
-//        network.setupNetworkAndRunExample();
         Logger logger = new Logger(network);
         NNObj[] trainingSet = createSymbolList_EXAMPLE();
         NNObj[] testSymbols = createTestSymbols();

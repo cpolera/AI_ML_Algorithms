@@ -25,7 +25,7 @@ public class LoggerMainTest {
         NNObj[] testSymbols = FeedForwardMain.createTestSymbols();
         Network network = new Network();
         Logger logger = new Logger(network);
-        network.setupNetwork(trainingSet, testSymbols, false);
+        network.setupNetwork(3, 1, trainingSet, testSymbols, false);
 
         Node[] nodes = network.getHiddenLayerNodes(0);
         OutputNeuron[] outputNeurons = (OutputNeuron[]) network.getHiddenLayerNodes(1);
