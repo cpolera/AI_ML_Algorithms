@@ -109,9 +109,9 @@ public class Network {
             for (Node node : nodes[i]) {
                 if (node instanceof OutputNeuron) {
                     System.out.print("OUTPUT NODE: ");
-                    System.out.println(node.calculateNodeOutput(true));
+                    System.out.println(node.calculateNodeOutput(true, false));
                 } else {
-                    node.calculateNodeOutput(true);
+                    node.calculateNodeOutput(true, false);
                 }
             }
         }
@@ -216,8 +216,8 @@ public class Network {
         setValuesInNetwork(nnObj);
 
         System.out.println("***NODE OUTPUT CALC***");
-        for (int count2 = 0; count2 < nodes.length; count2++) {
-            for (Node node : nodes[count2]) {
+        for (int i = 0; i < nodes.length; i++) {
+            for (Node node : nodes[i]) {
                 node.calculateNodeOutput(false, true);
             }
         }

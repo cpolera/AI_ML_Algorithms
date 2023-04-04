@@ -67,22 +67,15 @@ public class Node {
         return returnValue;
     }
 
+    // TODO:  called by testing phase (false, true) and reverse for training phase
     public double calculateNodeOutput(Boolean save, Boolean test) {
         double netVal = calculateNet(save);
         double tempVal = NNMath.sigmoidFunc(netVal);
         if (save)
             outputVal = tempVal;
         if (test) {
-            tempOutput = tempVal;
+            tempOutput = tempVal; // TODO: is there any reason to hold onto the outputVal?
         }
-        return tempVal;
-    }
-
-    public double calculateNodeOutput(Boolean save) {//CALLED BY TRAINING
-        double netVal = calculateNet(save);
-        double tempVal = NNMath.sigmoidFunc(netVal);
-        if (save)
-            outputVal = tempVal;
         return tempVal;
     }
 
