@@ -10,11 +10,17 @@ public class OutputNode extends Node {
         this.target = target;
     }
 
+    /**
+     * Calculates the error signal specifically for output node
+     * where layer k = m
+     * @return
+     */
     @Override
     public double calculateError() {
         double output = getOutputVal();
-        sigma = (target - output) * (output * (1 - output));
-        return sigma;
+        return (target - output) * output * (1 - output);
+        // One source indicates this should be:
+        // output * (1 - output) * (output - target) aka the negative of what I have now
     }
 
 }
