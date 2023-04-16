@@ -12,7 +12,8 @@ public class OutputNeuron extends Node {
 
     @Override
     public double calculateError() {
-        sigma = (target - outputVal) * (outputVal * (1 - outputVal));
+        double output = getOutputVal();
+        sigma = (target - output) * (output * (1 - output));
         return sigma;
     }
 

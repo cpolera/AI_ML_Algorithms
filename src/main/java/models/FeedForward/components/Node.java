@@ -11,7 +11,7 @@ public class Node {
     @Expose double biasWeight;
     double net = 0;
     @Expose
-    public double outputVal;
+    private double outputVal;
     ArrayList<Connection> inputConnections = new ArrayList<>();
     ArrayList<Connection> outputConnections = new ArrayList<>();
     @Expose double sigma;
@@ -102,4 +102,11 @@ public class Node {
 
     }
 
+    public double getOutputVal() {
+        return outputVal;
+    }
+
+    public void setOutputVal(double outputVal) {
+        this.outputVal = outputVal;
+    }
 }
