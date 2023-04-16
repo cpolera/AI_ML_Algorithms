@@ -1,7 +1,7 @@
 package implementations.FinalProjStocks;
 
-import algorithms.FeedForward.NNMath;
-import algorithms.FeedForward.components.NNObj;
+import models.FeedForward.NNMath;
+import models.FeedForward.components.NNObj;
 
 public class Stock extends NNObj {
     public static double highest = 0;

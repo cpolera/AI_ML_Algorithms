@@ -1,6 +1,6 @@
 package implementations.FinalProjStocks;
 
-import algorithms.FeedForward.components.NNObj;
+import models.FeedForward.components.NNObj;
 
 public class StockGroup extends NNObj {
 

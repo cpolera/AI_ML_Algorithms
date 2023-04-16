@@ -1,8 +1,8 @@
 package implementations.FinalProjStocks;
 
-import algorithms.FeedForward.NNMath;
-import algorithms.FeedForward.components.Network;
-import algorithms.FeedForward.components.NetworkTester;
+import models.FeedForward.NNMath;
+import models.FeedForward.components.Network;
+import models.FeedForward.components.NetworkTester;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import implementations.FinalProjStocks.utils.TradesUtil;

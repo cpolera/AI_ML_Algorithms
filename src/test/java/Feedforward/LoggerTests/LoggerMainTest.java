@@ -1,17 +1,17 @@
 package Feedforward.LoggerTests;
 
 
-import algorithms.FeedForward.*;
-import algorithms.FeedForward.components.NNObj;
-import algorithms.FeedForward.components.Network;
-import algorithms.FeedForward.components.Node;
-import algorithms.FeedForward.components.OutputNeuron;
+import models.FeedForward.*;
+import models.FeedForward.components.NNObj;
+import models.FeedForward.components.Network;
+import models.FeedForward.components.Node;
+import models.FeedForward.components.OutputNeuron;
 import com.google.gson.Gson;
 
 import java.io.IOException;
 
-import static algorithms.FeedForward.FeedForwardHelper.createSymbolList_EXAMPLE;
-import static algorithms.FeedForward.FeedForwardHelper.createTestSymbols;
+import static models.FeedForward.FeedForwardExampleGenerator.createTrainingSymbolList;
+import static models.FeedForward.FeedForwardExampleGenerator.createTestSymbolList;
 
 public class LoggerMainTest {
 
@@ -24,8 +24,8 @@ public class LoggerMainTest {
 
         System.out.println(json);
 
-        NNObj[] trainingSet = createSymbolList_EXAMPLE();
-        NNObj[] testSymbols = createTestSymbols();
+        NNObj[] trainingSet = createTrainingSymbolList();
+        NNObj[] testSymbols = createTestSymbolList();
         Network network = new Network();
         Logger logger = new Logger(network);
         network.setupNetwork(3, 1, trainingSet, testSymbols, false);

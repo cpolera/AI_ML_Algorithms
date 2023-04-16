@@ -1,11 +1,10 @@
 package implementations.FinalProjStocks;
 
-import algorithms.NearestNeighbor.ObjectNN;
+import models.NearestNeighbor.ObjectNN;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashSet;
 
 // TODO: this was old k-nearest neighbor implementation
