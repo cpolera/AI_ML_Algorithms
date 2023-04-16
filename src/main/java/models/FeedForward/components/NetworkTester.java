@@ -57,12 +57,12 @@ public class NetworkTester {
         Logger.log("Input values: " + Arrays.toString(nnObj.getInputVals()), 5);
         int failedNeuronsCount = 0;
         for (Node outputNeuron : network.getOutputLayerNodes()) {
-            if (outputNeuron instanceof OutputNeuron) {
+            if (outputNeuron instanceof OutputNode) {
                 String logPrepend = "Output: " + outputNeuron.tempOutput;
                 predictionValueActual[predictionIndex] = outputNeuron.tempOutput;
-                predictionValueExpected[predictionIndex] = ((OutputNeuron) outputNeuron).target;
+                predictionValueExpected[predictionIndex] = ((OutputNode) outputNeuron).target;
 
-                if (checkOutputAgainstTarget((OutputNeuron) outputNeuron)) {
+                if (checkOutputAgainstTarget((OutputNode) outputNeuron)) {
                     Logger.log(logPrepend + " -------------PASSED", 5);
                 } else {
                     failedNeuronsCount++;
@@ -81,12 +81,12 @@ public class NetworkTester {
     }
 
     // TODO: only used with testing, may need to see how training checks
-    private boolean checkOutputAgainstTarget(OutputNeuron outputNeuron) {
-        double outputTempVal = outputNeuron.tempOutput;
+    private boolean checkOutputAgainstTarget(OutputNode outputNode) {
+        double outputTempVal = outputNode.tempOutput;
 
-        if (outputTempVal < outputNeuron.target - network.desiredError || outputTempVal > outputNeuron.target + network.desiredError) {
+        if (outputTempVal < outputNode.target - network.desiredError || outputTempVal > outputNode.target + network.desiredError) {
             Logger.log("TARGET IS NOT WITHIN PERMISSIBLE RANGES. TERMINATING RUN.", 5);
             return false;
-        } else return outputTempVal >= outputNeuron.target - network.desiredError && outputTempVal <= outputNeuron.target + network.desiredError;
+        } else return outputTempVal >= outputNode.target - network.desiredError && outputTempVal <= outputNode.target + network.desiredError;
     }
 }

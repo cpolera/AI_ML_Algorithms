@@ -5,7 +5,7 @@ import models.FeedForward.*;
 import models.FeedForward.components.NNObj;
 import models.FeedForward.components.Network;
 import models.FeedForward.components.Node;
-import models.FeedForward.components.OutputNeuron;
+import models.FeedForward.components.OutputNode;
 import com.google.gson.Gson;
 
 import java.io.IOException;
@@ -31,10 +31,10 @@ public class LoggerMainTest {
         network.setupNetwork(3, 1, trainingSet, testSymbols, false);
 
         Node[] nodes = network.getHiddenLayerNodes(0);
-        OutputNeuron[] outputNeurons = (OutputNeuron[]) network.getHiddenLayerNodes(1);
+        OutputNode[] outputNodes = (OutputNode[]) network.getHiddenLayerNodes(1);
 
         String nodeList = gson.toJson(nodes);
-        String outputNodesList = gson.toJson(outputNeurons);
+        String outputNodesList = gson.toJson(outputNodes);
         System.out.println(nodeList);
         System.out.println(outputNodesList);
         String networkString = gson.toJson(network);

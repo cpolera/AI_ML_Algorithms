@@ -82,8 +82,8 @@ public class NetworkTrainer {
 
         for (int i = 0; i < nodes[nodes.length - 1].length; i++) {
             Node outputNode = nodesOut[i];
-            if (outputNode instanceof OutputNeuron) {
-                desired[i] = ((OutputNeuron) outputNode).target;
+            if (outputNode instanceof OutputNode) {
+                desired[i] = ((OutputNode) outputNode).target;
                 actual[i] = outputNode.getOutputVal();
             }
         }

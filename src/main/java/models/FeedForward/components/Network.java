@@ -112,8 +112,8 @@ public class Network {
         // TODO: not efficient but works
         for (int j = 0; j < nodes[nodes.length - 1].length; j++) {
             Node node = nodes[nodes.length - 1][j];
-            if (node instanceof OutputNeuron) {
-                ((OutputNeuron) node).target = nnObj.getOutputVals()[j];
+            if (node instanceof OutputNode) {
+                ((OutputNode) node).target = nnObj.getOutputVals()[j];
             }
         }
         Logger.log("Finished setting network values.", 3);
@@ -124,7 +124,7 @@ public class Network {
         for (int i = 0; i < nodes.length; i++) {
             for (Node node : nodes[i]) {
                 double tempVal = node.calculateNodeOutput(save, test);
-                if (node instanceof OutputNeuron && !test) { // Test function has its own log for now
+                if (node instanceof OutputNode && !test) { // Test function has its own log for now
                     Logger.log("OUTPUT NODE: " + tempVal, 4);
                 }
             }
@@ -157,13 +157,13 @@ public class Network {
 
     private void createOutputLayer(int size, double biasVal) {
         int count = 0;
-        OutputNeuron[] outputNeurons = new OutputNeuron[size];
+        OutputNode[] outputNodes = new OutputNode[size];
         while (count < size) {
-            outputNeurons[count] = new OutputNeuron(biasVal, randomDouble(), 0.9);// TODO: confirm static target here is ok
+            outputNodes[count] = new OutputNode(biasVal, randomDouble(), 0.9);// TODO: confirm static target here is ok
             count++;
         }
 
-        nodes[nodes.length - 1] = outputNeurons;
+        nodes[nodes.length - 1] = outputNodes;
     }
 
     private void setupConnections() {
