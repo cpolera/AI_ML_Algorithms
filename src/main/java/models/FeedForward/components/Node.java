@@ -14,7 +14,6 @@ public class Node {
     private double outputVal;
     ArrayList<Connection> inputConnections = new ArrayList<>();
     ArrayList<Connection> outputConnections = new ArrayList<>();
-    @Expose double sigma;
     public double tempOutput = -1;
     private transient static int idCounter = 0;
     @Expose private int id;
@@ -42,28 +41,27 @@ public class Node {
     private double calculateNet(boolean save) {
         //net = bias*Wbias + SUM incoming outputs*their weight
         double nodeBiasCalc = this.biasWeight * biasVal;
-
-        double returnValue;
         double sum = 0;
 
         //THIS IS SUM OF INCOMING INPUTS (PREVIOUS LAYER OUTPUTS)
-        for (Connection connection : inputConnections) {//Go through each incoming connection
-            double outputVal = connection.getInputNeuron().outputVal;//Get outputVal of the hidden neuron
+        for (Connection connection : inputConnections) {// Go through each incoming connection
+            double outputVal = connection.getInputNeuron().outputVal;// Get outputVal of the hidden neuron
             if (connection.getInputNeuron().tempOutput > -1) {
-                outputVal = connection.getInputNeuron().tempOutput;//IF TESTING, GET TEMP OUTPUT INSTEAD//TODO Probably log when skipped
+                outputVal = connection.getInputNeuron().tempOutput;//IF TESTING, GET TEMP OUTPUT INSTEAD // TODO Probably log when skipped
             }
-            sum += connection.getWeight() * outputVal; //Connection weight * output of the hidden neuron to next layer
+            sum += connection.getWeight() * outputVal; // Connection weight * output of the hidden neuron to next layer
         }
 
-        returnValue = nodeBiasCalc + sum;
+        double returnValue = nodeBiasCalc + sum;
         if (save) {
-            this.net = returnValue;//Update node net value. THIS IS NOT OUTPUT
+            this.net = returnValue;// Update node net value. THIS IS NOT OUTPUT
         }
 
         return returnValue;
     }
 
     // TODO:  called by testing phase (false, true) and reverse for training phase
+    // Used by Hidden and Output Nodes
     public double calculateNodeOutput(Boolean save, Boolean test) {
         double netVal = calculateNet(save);
         double tempVal = NNMath.sigmoidFunc(netVal);
@@ -75,31 +73,22 @@ public class Node {
         return tempVal;
     }
 
+    // Temp until I go back to make interface
+    // Output and Hidden nodes implement their own version of this
     public double calculateError() {
-        sigma = outputVal * (1 - outputVal);
-        double sumPostSynapticNeurons = calculatePostSynapticNeurons();
-        return sigma *= sumPostSynapticNeurons;
-    }
-
-    public double calculatePostSynapticNeurons() {
-        //iterate through connections
-        double subTotal = 0;
-        for (Connection connection : outputConnections) {
-            subTotal += connection.outputNeuron.sigma * connection.weight;
-        }
-        return subTotal;
+        return 0.0;
     }
 
     public void updateWeights(double learningRate) {
-        biasWeight += learningRate * sigma * biasVal;//UPDATE OWN BIAS WEIGHT. CAN UPDATE BIAS HERE IF ENABLED
-        //backpropogating the error from this node, to the bias ^^^
+        double error = calculateError();
+        biasWeight += learningRate * error * biasVal;//UPDATE OWN BIAS WEIGHT. CAN UPDATE BIAS HERE IF ENABLED
+        //backpropagation of the error from this node, to the bias ^^^
 
         for (Connection connection : inputConnections) {
            if (connection.inputNeuron != null) {
-                connection.weight += learningRate * sigma * connection.inputNeuron.outputVal;
+                connection.weight += learningRate * error * connection.inputNeuron.outputVal;
             }
         }
-
     }
 
     public double getOutputVal() {
