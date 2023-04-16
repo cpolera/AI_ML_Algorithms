@@ -2,15 +2,17 @@ package models.FeedForward.components;
 
 public class InputNode extends Connection {
 
-    public double inputValue;
+    private double inputValue;
 
     public InputNode() {
         super(null, null);
     }
 
-    public InputNode(double inputValue) {
-        super(null, null);
+    public void setInputValue(double inputValue) {
         this.inputValue = inputValue;
     }
 
+    public double getInputValue() {
+        return inputValue;
+    }
 }

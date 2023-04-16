@@ -105,7 +105,7 @@ public class Network {
         int count = 0;
         //for each input val: assign to input node - Same amount of nodes as input val
         for (double d : nnObj.getInputVals()) {
-            this.inputNodes[count].inputValue = d;
+            this.inputNodes[count].setInputValue(d);
             count++;
         }
 

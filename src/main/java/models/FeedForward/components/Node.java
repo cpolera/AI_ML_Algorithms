@@ -49,7 +49,7 @@ public class Node {
         //THIS IS SUM OF INCOMING INPUTS AKA PREVIOUS LAYER OUTPUTS
         for (Connection connection : inputConnections) {//Go through each incoming connection
             if (connection.inputNode != null) {//Logic for Input nodes specifically
-                sum += connection.getWeight() * connection.inputNode.inputValue;//Connection weight * input val if connection is to input
+                sum += connection.getWeight() * connection.inputNode.getInputValue();//Connection weight * input val if connection is to input
             } else {//Logic for hidden neuron inputs
                 double outputVal = connection.getInputNeuron().outputVal;//Get outputVal of the hidden neuron
                 if (connection.getInputNeuron().tempOutput > -1) {
@@ -100,11 +100,11 @@ public class Node {
 
         for (Connection connection : inputConnections) {
             if (connection instanceof InputNode) {
-                connection.weight += learningRate * sigma * ((InputNode) connection).inputValue;//see if this is ever used
+                connection.weight += learningRate * sigma * ((InputNode) connection).getInputValue();//see if this is ever used
             } else if (connection.inputNeuron != null) {
                 connection.weight += learningRate * sigma * connection.inputNeuron.outputVal;
             } else if (connection.inputNode != null) {
-                connection.weight += learningRate * sigma * connection.inputNode.inputValue;
+                connection.weight += learningRate * sigma * connection.inputNode.getInputValue();
             }
         }
 

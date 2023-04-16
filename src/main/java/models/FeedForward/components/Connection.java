@@ -6,14 +6,14 @@ public class Connection {
     transient Node inputNeuron;
     transient Node outputNeuron;
     transient InputNode inputNode;//NOT SAME AS A HIDDEN NODE
-    private static int idCounter = 0;
-    private int id;
+    private static int nextId = 1;
+    protected int id;
 
     public Connection(Node input, Node output) {
         this.inputNeuron = input;
         this.outputNeuron = output;
-        this.id=idCounter;
-        idCounter++;
+        this.id= nextId;
+        nextId++;
     }
 
     public Connection(Node input, Node output, double weight) {
@@ -22,8 +22,8 @@ public class Connection {
         this.outputNeuron = output;
         output.inputConnections.add(this);
         this.weight = weight;
-        this.id=idCounter;
-        idCounter++;
+        this.id= nextId;
+        nextId++;
     }
 
     public Connection(InputNode inputNode, Node output, double weight) {
@@ -31,8 +31,8 @@ public class Connection {
         this.outputNeuron = output;
         output.inputConnections.add(this);
         this.weight = weight;
-        this.id=idCounter;
-        idCounter++;
+        this.id= nextId;
+        nextId++;
     }
 
     public double getWeight() {
