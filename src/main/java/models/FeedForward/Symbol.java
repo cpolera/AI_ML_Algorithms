@@ -4,15 +4,18 @@ import models.FeedForward.components.NNObj;
 
 public class Symbol extends NNObj {
 
-    protected int[] vals;
-
     public Symbol(int[] newVals, int[] targetVals, String desc) {
-        vals = newVals;
         dVals_targets = convertValToDouble(targetVals);
-        dVals = convertValToDouble(vals);
+        dVals = convertValToDouble(newVals);
         this.desc = desc;
     }
 
+    /**
+     * Method to take an array of 1s and 0s and convert them to 0.9 and 0.1 respectively
+     *
+     * @param vals
+     * @return
+     */
     public double[] convertValToDouble(int[] vals) {
         double[] newVals = new double[vals.length];
 
