@@ -105,7 +105,7 @@ public class Network {
         int count = 0;
         //for each input val: assign to input node - Same amount of nodes as input val
         for (double d : nnObj.getInputVals()) {
-            this.inputNodes[count].setInputValue(d);
+            this.inputNodes[count].setOutputValue(d);
             count++;
         }
 
@@ -169,7 +169,7 @@ public class Network {
     private void setupConnections() {
         int count = 0;
         for (InputNode inputNode : inputNodes) {
-            for (Node node : nodes[0]) {
+            for (Node node : nodes[0]) { // This goes through each node in only the first layer
                 new Connection(inputNode, node, randomDouble() + 0.1);
                 if (count < 1) {
                     for (Node outputNeuron : nodes[nodes.length - 1]) {

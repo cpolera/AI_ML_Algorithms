@@ -1,18 +1,18 @@
 package models.FeedForward.components;
 
-public class InputNode extends Connection {
+public class InputNode {
 
-    private double inputValue;
+    private double outputValue;
+    private static int nextId = 1;
+    protected int id;
 
-    public InputNode() {
-        super(null, null);
+    public InputNode() {}
+
+    public void setOutputValue(double outputValue) {
+        this.outputValue = outputValue;
     }
 
-    public void setInputValue(double inputValue) {
-        this.inputValue = inputValue;
-    }
-
-    public double getInputValue() {
-        return inputValue;
+    public double getOutputValue() {
+        return outputValue;
     }
 }

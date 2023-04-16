@@ -46,17 +46,13 @@ public class Node {
         double returnValue;
         double sum = 0;
 
-        //THIS IS SUM OF INCOMING INPUTS AKA PREVIOUS LAYER OUTPUTS
+        //THIS IS SUM OF INCOMING INPUTS (PREVIOUS LAYER OUTPUTS)
         for (Connection connection : inputConnections) {//Go through each incoming connection
-            if (connection.inputNode != null) {//Logic for Input nodes specifically
-                sum += connection.getWeight() * connection.inputNode.getInputValue();//Connection weight * input val if connection is to input
-            } else {//Logic for hidden neuron inputs
-                double outputVal = connection.getInputNeuron().outputVal;//Get outputVal of the hidden neuron
-                if (connection.getInputNeuron().tempOutput > -1) {
-                    outputVal = connection.getInputNeuron().tempOutput;//IF TESTING, GET TEMP OUTPUT INSTEAD//TODO Probably log when skipped
-                }
-                sum += connection.getWeight() * outputVal; //Connection weight * output of the hidden neuron to next layer
+            double outputVal = connection.getInputNeuron().outputVal;//Get outputVal of the hidden neuron
+            if (connection.getInputNeuron().tempOutput > -1) {
+                outputVal = connection.getInputNeuron().tempOutput;//IF TESTING, GET TEMP OUTPUT INSTEAD//TODO Probably log when skipped
             }
+            sum += connection.getWeight() * outputVal; //Connection weight * output of the hidden neuron to next layer
         }
 
         returnValue = nodeBiasCalc + sum;
@@ -99,12 +95,8 @@ public class Node {
         //backpropogating the error from this node, to the bias ^^^
 
         for (Connection connection : inputConnections) {
-            if (connection instanceof InputNode) {
-                connection.weight += learningRate * sigma * ((InputNode) connection).getInputValue();//see if this is ever used
-            } else if (connection.inputNeuron != null) {
+           if (connection.inputNeuron != null) {
                 connection.weight += learningRate * sigma * connection.inputNeuron.outputVal;
-            } else if (connection.inputNode != null) {
-                connection.weight += learningRate * sigma * connection.inputNode.getInputValue();
             }
         }
 
