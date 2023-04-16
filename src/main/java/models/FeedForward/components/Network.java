@@ -119,13 +119,13 @@ public class Network {
         Logger.log("Finished setting network values.", 3);
     }
 
-    public void calculateNodeOutputs(Boolean save, Boolean test) {
+    public void calculateNodeOutputs() {
         Logger.log("Calculating node outputs...", 3);
         for (int i = 0; i < nodes.length; i++) {
             for (Node node : nodes[i]) {
-                double tempVal = node.calculateNodeOutput(save, test);
-                if (node instanceof OutputNode && !test) { // Test function has its own log for now
-                    Logger.log("OUTPUT NODE: " + tempVal, 4);
+                node.calculateNodeOutput();
+                if (node instanceof OutputNode) {
+                    Logger.log("OUTPUT NODE: " + node.getOutputVal(), 4);
                 }
             }
         }
@@ -166,6 +166,7 @@ public class Network {
         nodes[nodes.length - 1] = outputNodes;
     }
 
+    // TODO: this is not using the node connections
     private void setupConnections() {
         int count = 0;
         for (InputNode inputNode : inputNodes) {

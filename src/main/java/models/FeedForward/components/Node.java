@@ -9,7 +9,6 @@ public class Node {
 
     @Expose double biasVal;
     @Expose double biasWeight;
-    double net = 0;
     @Expose
     private double outputVal;
     ArrayList<Connection> inputConnections = new ArrayList<>();
@@ -38,7 +37,7 @@ public class Node {
         outputConnections.add(connection);
     }
 
-    private double calculateNet(boolean save) {
+    private double calculateNet() {
         //net = bias*Wbias + SUM incoming outputs*their weight
         double nodeBiasCalc = this.biasWeight * biasVal;
         double sum = 0;
@@ -46,31 +45,16 @@ public class Node {
         //THIS IS SUM OF INCOMING INPUTS (PREVIOUS LAYER OUTPUTS)
         for (Connection connection : inputConnections) {// Go through each incoming connection
             double outputVal = connection.getInputNeuron().outputVal;// Get outputVal of the hidden neuron
-            if (connection.getInputNeuron().tempOutput > -1) {
-                outputVal = connection.getInputNeuron().tempOutput;//IF TESTING, GET TEMP OUTPUT INSTEAD // TODO Probably log when skipped
-            }
             sum += connection.getWeight() * outputVal; // Connection weight * output of the hidden neuron to next layer
         }
 
-        double returnValue = nodeBiasCalc + sum;
-        if (save) {
-            this.net = returnValue;// Update node net value. THIS IS NOT OUTPUT
-        }
-
-        return returnValue;
+        return nodeBiasCalc + sum;
     }
 
-    // TODO:  called by testing phase (false, true) and reverse for training phase
     // Used by Hidden and Output Nodes
-    public double calculateNodeOutput(Boolean save, Boolean test) {
-        double netVal = calculateNet(save);
-        double tempVal = NNMath.sigmoidFunc(netVal);
-        if (save)
-            outputVal = tempVal;
-        if (test) {
-            tempOutput = tempVal; // TODO: is there any reason to hold onto the outputVal?
-        }
-        return tempVal;
+    public void calculateNodeOutput() {
+        double netVal = calculateNet();
+        setOutputVal(NNMath.sigmoidFunc(netVal));
     }
 
     // Temp until I go back to make interface
