@@ -16,13 +16,15 @@ public class FeedForwardMain {
         Dotenv.configure().systemProperties().load();
 
         Network network = new Network();
-        Logger logger = new Logger(network);
+        Logger logger = network.getLogger();
         NNObj[] trainingSet = createTrainingSymbolList();
         NNObj[] testSymbols = createTestSymbolList();
-        network.trainingCountPerCycle = 1000;
+        network.trainingCountPerCycle = 20000;
         network.maxTrainingCycles = 1;
         network.desiredError = 0.1;
-        network.setupNetwork(25, 2, trainingSet, testSymbols, true);
+        network.setupNetwork(2, 1, trainingSet, testSymbols);
+//        network.setupNetwork(25, 2, trainingSet, testSymbols);
+        network.runNetworkTrainingAndTesting();
 
         logger.closeWriter();
         logger.showNetwork();

@@ -7,7 +7,7 @@ public class HiddenNode extends Node{
     }
 
     public double calculateError() {
-        double sigma = getOutputVal() * (1 - getOutputVal());
+        double sigma = getOutputVal() * (1 - getOutputVal()); //0.2475
         double sumPostSynapticNeurons = calculatePostSynapticNeurons();
         return sigma * sumPostSynapticNeurons;
     }

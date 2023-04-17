@@ -3,12 +3,13 @@ package JsonTesting;
 import models.FeedForward.components.Network;
 import com.google.gson.Gson;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class Main {
 
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
 
         ObjA obj1 = new ObjA();
         ObjA obj2 = new ObjA();

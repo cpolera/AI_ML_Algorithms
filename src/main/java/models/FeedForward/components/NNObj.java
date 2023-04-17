@@ -19,6 +19,14 @@ public class NNObj {
         nextId++;
     }
 
+    public NNObj(double[] dVals, double[] dVals_targets, String description){
+        this.id = nextId;
+        nextId++;
+        this.dVals = dVals;
+        this.dVals_targets = dVals_targets;
+        this.description = description;
+    }
+
     public double[] getInputVals(){
         return dVals;
     }

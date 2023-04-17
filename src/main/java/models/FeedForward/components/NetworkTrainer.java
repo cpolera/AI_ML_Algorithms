@@ -40,7 +40,7 @@ public class NetworkTrainer {
             setRMSE(trainingObjs);
             network.trainingEpoch++;
             network.trainCountTotal++;//LOGGER ____ USE AS COUNTER FOR FILE WRITE
-            Logger.logNetworkState();
+            network.getLogger().logNetworkState();
         }
 
         // After running all training sets this time, show RMSE and TSSE

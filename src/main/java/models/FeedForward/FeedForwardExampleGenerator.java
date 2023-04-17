@@ -1,5 +1,7 @@
 package models.FeedForward;
 
+import models.FeedForward.components.NNObj;
+
 public class FeedForwardExampleGenerator {
     public static Symbol[] createTrainingSymbolList() {
 

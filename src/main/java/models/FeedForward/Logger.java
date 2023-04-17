@@ -15,29 +15,26 @@ import java.io.IOException;
  */
 public class Logger {
 
-    private static Network NETWORK;
-    private static JsonWriter writer;
+    private Network NETWORK;
+    private JsonWriter writer;
 
-    static {
-        try {
-            writer = new JsonWriter( new FileWriter("src/logs/Log1.json"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private static Gson gson = new Gson();
+    private Gson gson = new Gson();
 
     public Logger() throws IOException {
     }
 
     public Logger(Network network) throws IOException {
         NETWORK = network;
+        try {
+            writer = new JsonWriter( new FileWriter("src/logs/Log1.json"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         writer.beginArray();
         writer.beginArray();
     }
 
-    public static void logInputs() throws IOException {
+    public void logInputs() throws IOException {
         writer.beginArray();
         try{
             writer.beginObject();
@@ -55,7 +52,7 @@ public class Logger {
         writer.endArray();
     }
 
-    public static void logStaticVals() throws IOException {
+    public void logStaticVals() throws IOException {
         writer.beginArray();
         try{
             writer.beginObject();
@@ -72,7 +69,7 @@ public class Logger {
         writer.endArray();
     }
 
-    public static void logNetworkState(){
+    public void logNetworkState(){
         try {
             writer.beginObject();
             String networkS = gson.toJson(NETWORK);

@@ -1,5 +1,6 @@
 package models.FeedForward.components;
 
+import jdk.internal.util.xml.impl.Input;
 import models.FeedForward.*;
 
 import java.io.IOException;
@@ -24,6 +25,8 @@ public class Network {
     private HiddenNode[][] hiddenLayers;
     private OutputNode[] outputLayer;
 
+    private transient Logger logger;
+
     /**
      * Runs all test sets X times per cycle
      * allows control number of trainings before running test cycle. Saves time by reducing test time.
@@ -42,20 +45,21 @@ public class Network {
     private int failCountTotal = 0;
     int trainCountTotal = 0;                                // validation config
 
-    public Network() {
+    public Network() throws IOException {
+        this.logger = new Logger(this);
     }
 
     // TODO: put together a builder to replace this
     public Network(NNObj[] trainingObjs, NNObj[] testObjs) throws IOException {
         this._trainingObjs = trainingObjs;
         this. _testObjs = testObjs;
-        new Logger(this);
-        setupNetwork(10, 1, trainingObjs, testObjs, true);
+        this.logger = new Logger(this);
+        setupNetwork(2, 1, trainingObjs, testObjs);
     }
 
     // TODO: put together a builder to partially replace this monstrosity
     // trainingObjs informs the input layer node count - not great to be implicit in this class
-    public void setupNetwork(int hiddenNeuronCount, int neuronLayers, NNObj[] trainingObjs, NNObj[] testingObjs, boolean run) throws IOException {
+    public void setupNetwork(int hiddenNeuronCount, int neuronLayers, NNObj[] trainingObjs, NNObj[] testingObjs) throws IOException {
         this.hiddenNeuronCount = hiddenNeuronCount;
         this.hiddenNeuronLayersCount = neuronLayers;
         _trainingObjs = trainingObjs;
@@ -67,12 +71,8 @@ public class Network {
         setupConnections();
 
         //setRMSE();
-        Logger.logStaticVals();
-        Logger.logInputs();
-
-        if(run) {
-            runNetworkTrainingAndTesting();
-        }
+        logger.logStaticVals();
+        logger.logInputs();
     }
 
     public void runNetworkTrainingAndTesting() {
@@ -180,12 +180,6 @@ public class Network {
         }
     }
 
-    private void connectNodeToLayer(Node node, Node[] layer) {
-        for(Node nextNode: layer) {
-
-        }
-    }
-
     private double randomWeight() {
         Random random = new Random();
         double d = random.nextDouble();
@@ -221,11 +215,19 @@ public class Network {
         return nodes;
     }
 
-    public Node[] getHiddenLayerNodes(int i){
+    public InputNode[] getInputLayerNodes(){
+        return inputLayer;
+    }
+
+    public HiddenNode[] getHiddenLayerNodes(int i){
         return hiddenLayers[i];
     }
 
-    public Node[] getOutputLayerNodes(){
+    public OutputNode[] getOutputLayerNodes(){
         return outputLayer;
+    }
+
+    public Logger getLogger(){
+        return logger;
     }
 }

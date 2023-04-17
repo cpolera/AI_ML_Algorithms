@@ -69,7 +69,7 @@ public class NetworkTester {
                     Logger.log(logPrepend + " -------------FAILED", 5);
                 }
             }
-            Logger.logNetworkState();
+            network.getLogger().logNetworkState();
         }
         if (failedNeuronsCount > 0) {
             Logger.log("THIS TEST HAS FAILED ON " + failedNeuronsCount + " OUTPUT(S)", 4);

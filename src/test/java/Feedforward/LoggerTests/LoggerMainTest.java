@@ -28,10 +28,10 @@ public class LoggerMainTest {
         NNObj[] testSymbols = createTestSymbolList();
         Network network = new Network();
         Logger logger = new Logger(network);
-        network.setupNetwork(3, 1, trainingSet, testSymbols, false);
+        network.setupNetwork(3, 1, trainingSet, testSymbols);
 
         Node[] nodes = network.getHiddenLayerNodes(0);
-        OutputNode[] outputNodes = (OutputNode[]) network.getHiddenLayerNodes(1);
+        OutputNode[] outputNodes = network.getOutputLayerNodes();
 
         String nodeList = gson.toJson(nodes);
         String outputNodesList = gson.toJson(outputNodes);

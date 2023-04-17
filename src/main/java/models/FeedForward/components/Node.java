@@ -4,17 +4,19 @@ import models.FeedForward.NNMath;
 import com.google.gson.annotations.Expose;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Node {
 
     @Expose double biasVal;
     @Expose double biasWeight;
-    @Expose
-    private double outputVal;
+    @Expose private double outputVal;
     ArrayList<Connection> inputConnections = new ArrayList<>();
     ArrayList<Connection> outputConnections = new ArrayList<>();
+    public HashMap<Integer, Connection> inputConnectionsMap = new HashMap<>();
+    public HashMap<Integer, Connection> outputConnectionsMap = new HashMap<>();
     public double tempOutput = -1;
-    private transient static int idCounter = 0;
+    private static int idCounter = 0;
     @Expose private int id;
 
     public Node(double biasVal, double biasWeight) {
@@ -61,12 +63,16 @@ public class Node {
 
     public void updateWeights(double learningRate) {
         double error = calculateError();
-        biasWeight += learningRate * error * biasVal;//UPDATE OWN BIAS WEIGHT. CAN UPDATE BIAS HERE IF ENABLED
-        //backpropagation of the error from this node, to the bias ^^^
 
+        // Update node bias weight ex: delta W H2, Bias
+        double deltaBias = learningRate * error * biasVal;
+        biasWeight = biasWeight + deltaBias;
+
+        // Update incoming connection weights ex: delta W O3, H1 = 0.01685
         for (Connection connection : inputConnections) {
            if (connection.inputNeuron != null) {
-                connection.weight += learningRate * error * connection.inputNeuron.outputVal;
+               double deltaConnection = learningRate * error * connection.inputNeuron.getOutputVal();
+               connection.weight += deltaConnection;
             }
         }
     }
@@ -78,4 +84,10 @@ public class Node {
     public void setOutputVal(double outputVal) {
         this.outputVal = outputVal;
     }
+
+    public double getBiasWeight() { return this.biasWeight; }
+
+    public void setBiasWeight(double biasWeight) { this.biasWeight = biasWeight; }
+
+    public int getId() { return this.id; }
 }
