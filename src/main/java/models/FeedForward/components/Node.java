@@ -43,8 +43,8 @@ public class Node {
         double sum = 0;
 
         //THIS IS SUM OF INCOMING INPUTS (PREVIOUS LAYER OUTPUTS)
-        for (Connection connection : inputConnections) {// Go through each incoming connection
-            double outputVal = connection.getInputNeuron().outputVal;// Get outputVal of the hidden neuron
+        for (Connection connection : inputConnections) { // Go through each incoming connection
+            double outputVal = connection.getInputNeuron().outputVal; // Get outputVal of the hidden neuron
             sum += connection.getWeight() * outputVal; // Connection weight * output of the hidden neuron to next layer
         }
 

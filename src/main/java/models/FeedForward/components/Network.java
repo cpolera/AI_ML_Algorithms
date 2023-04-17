@@ -212,6 +212,10 @@ public class Network {
         return trainingEpoch;
     }
 
+    /**
+     * @deprecated Get layers as needed using other methods
+     * @return
+     */
     public Node[][] getNodes(){
         Node[][] nodes = new Node[2+hiddenLayers.length][];
         nodes[0] = inputLayer;

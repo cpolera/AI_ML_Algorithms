@@ -35,7 +35,7 @@ public class NetworkTester {
         // Run each test set once
         for (NNObj testObj : nnObjs) {
             network.setValuesInNetwork(testObj);
-            network.calculateNodeOutputs(false, true);
+            network.calculateNodeOutputs();
             boolean passed = validateOutput(testObj, predictionIndex);
 
             if(passed) {
