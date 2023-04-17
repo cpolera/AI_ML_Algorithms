@@ -120,16 +120,16 @@ public class Network {
     public void calculateNodeOutputs() {
         Logger.log("Calculating node outputs...", 3);
 
-        for (int i = 0; i < hiddenLayers.length; i++) {
-            for (HiddenNode node : hiddenLayers[i]) {
-                node.calculateNodeOutput();
+        for (HiddenNode[] hiddenLayer : hiddenLayers) {
+            for (HiddenNode hiddenNode : hiddenLayer) {
+                hiddenNode.calculateNodeOutput();
             }
         }
 
-        for (OutputNode node: outputLayer) {
-            node.calculateNodeOutput();
-            Logger.log("OUTPUT NODE: " + node.getOutputVal(), 4);
+        for (OutputNode outputNode: outputLayer) {
+            outputNode.calculateNodeOutput();
         }
+
         Logger.log("Finished calculating node outputs.", 3);
     }
 
@@ -148,24 +148,22 @@ public class Network {
         }
     }
 
-    private void createInputLayer(int count) {
-        inputLayer = new InputNode[count];
-        int c = 0;
-        while (c < count) {
-            inputLayer[c] = new InputNode();
-            c++;
+    private void createInputLayer(int size) {
+        inputLayer = new InputNode[size];
+        int count = 0;
+        while (count < size) {
+            inputLayer[count] = new InputNode();
+            count++;
         }
     }
 
     private void createOutputLayer(int size) {
+        outputLayer = new OutputNode[size];
         int count = 0;
-        OutputNode[] outputNodes = new OutputNode[size];
         while (count < size) {
-            outputNodes[count] = new OutputNode(biasVal, randomWeight(), 0.9);// TODO: confirm static target here is ok
+            outputLayer[count] = new OutputNode(biasVal, randomWeight(), 0.9); // TODO: move default to OutputNode class and refactor a bit
             count++;
         }
-
-        outputLayer = outputNodes;
     }
 
     // TODO: this is not using the node connections

@@ -1,5 +1,7 @@
 package models.FeedForward.components;
 
+import models.FeedForward.Logger;
+
 public class OutputNode extends Node {
 
     public double target;
@@ -21,6 +23,12 @@ public class OutputNode extends Node {
         return (target - output) * output * (1 - output);
         // One source indicates this should be:
         // output * (1 - output) * (output - target) aka the negative of what I have now
+    }
+
+    @Override
+    public void calculateNodeOutput() {
+        super.calculateNodeOutput();
+        Logger.log("OUTPUT NODE: " + getOutputVal(), 4);
     }
 
 }
