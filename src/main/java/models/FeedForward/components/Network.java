@@ -173,20 +173,9 @@ public class Network {
         Node[][] layers = getNodes();
         for (int layerIndex = 0; layerIndex < layers.length - 1; layerIndex++) {
             for (Node node: layers[layerIndex]) {
-                new Connection(inputNode, node, randomWeight() + 0.1);
-            }
-        }
-
-        // Connect input nodes to first hidden layer
-        for (InputNode inputNode : inputLayer) {
-            for (Node node : hiddenLayers[0]) {
-                new Connection(inputNode, node, randomWeight() + 0.1);
-                if (count < 1) {
-                    for (Node outputNeuron : outputLayer) {
-                        new Connection(node, outputNeuron, randomWeight() + 0.1);
-                    }
+                for (Node upstreamNode: layers[layerIndex+1]){
+                    new Connection(node, upstreamNode, randomWeight() + 0.1);
                 }
-
             }
         }
     }
