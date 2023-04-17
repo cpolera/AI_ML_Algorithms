@@ -17,10 +17,13 @@ public class Network {
     transient public double biasVal = 1;                // network config
     transient public int hiddenNeuronCount;             // network config
     transient public int hiddenNeuronLayersCount;       // network config
+
     private transient NNObj[] _trainingObjs;
     private transient NNObj[] _testObjs;
-    private InputNode[] inputNodes;                 // network component
-    Node[][] nodes;                                 // network component
+
+    private InputNode[] inputLayer;                 // network component
+    private HiddenNode[][] hiddenLayers;
+    private OutputNode[] outputLayer;
 
     /**
      * Runs all test sets X times per cycle
@@ -58,11 +61,10 @@ public class Network {
         this.hiddenNeuronLayersCount = neuronLayers;
         _trainingObjs = trainingObjs;
         _testObjs = testingObjs;
-        nodes = new Node[hiddenNeuronLayersCount + 1][]; // makes hidden layers plus output layer
 
         createInputLayer(_trainingObjs[0].getInputVals().length);
-        createHiddenNeurons(biasVal);
-        createOutputLayer(_trainingObjs[0].getOutputVals().length, biasVal);
+        createHiddenLayers(neuronLayers, hiddenNeuronCount);
+        createOutputLayer(_trainingObjs[0].getOutputVals().length);
         setupConnections();
 
         //setRMSE();
@@ -102,79 +104,82 @@ public class Network {
 
     void setValuesInNetwork(NNObj nnObj) {
         Logger.log("Setting network values...", 3);
-        int count = 0;
-        //for each input val: assign to input node - Same amount of nodes as input val
-        for (double d : nnObj.getInputVals()) {
-            this.inputNodes[count].setOutputVal(d);
-            count++;
+        // Set input values
+        double[] inputValues = nnObj.getInputVals();
+        for (int i = 0; i < inputLayer.length; i++) {
+            inputLayer[i].setOutputVal(inputValues[i]);
         }
 
-        // TODO: not efficient but works
-        for (int j = 0; j < nodes[nodes.length - 1].length; j++) {
-            Node node = nodes[nodes.length - 1][j];
-            if (node instanceof OutputNode) {
-                ((OutputNode) node).target = nnObj.getOutputVals()[j];
-            }
+        // Set outputNode targets
+        for (int j = 0; j < outputLayer.length; j++) {
+            outputLayer[j].target = nnObj.getOutputVals()[j];
         }
+
         Logger.log("Finished setting network values.", 3);
     }
 
     public void calculateNodeOutputs() {
         Logger.log("Calculating node outputs...", 3);
-        for (int i = 0; i < nodes.length; i++) {
-            for (Node node : nodes[i]) {
+
+        for (int i = 0; i < hiddenLayers.length; i++) {
+            for (HiddenNode node : hiddenLayers[i]) {
                 node.calculateNodeOutput();
-                if (node instanceof OutputNode) {
-                    Logger.log("OUTPUT NODE: " + node.getOutputVal(), 4);
-                }
             }
+        }
+
+        for (OutputNode node: outputLayer) {
+            node.calculateNodeOutput();
+            Logger.log("OUTPUT NODE: " + node.getOutputVal(), 4);
         }
         Logger.log("Finished calculating node outputs.", 3);
     }
 
     /**
      * Assumes that biasVal is a static value for all nodes initially
-     * @param biasVal
      */
-    private void createHiddenNeurons(double biasVal) {
-        for (int nC = 0; nC < hiddenNeuronLayersCount; nC++) {
-            Node[] tempNodes = new Node[hiddenNeuronCount];
-            for (int i = 0; i < hiddenNeuronCount; i++) {
-                tempNodes[i] = new Node(biasVal, randomDouble());
+    private void createHiddenLayers(int layerCount, int neuronCountPerLayer) {
+        hiddenLayers = new HiddenNode[layerCount][];
+
+        for (int layer = 0; layer < hiddenLayers.length; layer++) {
+            HiddenNode[] _nodes = new HiddenNode[neuronCountPerLayer];
+            for (int i = 0; i < neuronCountPerLayer; i++) {
+                _nodes[i] = new HiddenNode(biasVal, randomWeight()); // Set a random weight to start
             }
-            nodes[nC] = tempNodes;
+            hiddenLayers[layer] = _nodes;
         }
     }
 
     private void createInputLayer(int count) {
-        inputNodes = new InputNode[count];
+        inputLayer = new InputNode[count];
         int c = 0;
         while (c < count) {
-            inputNodes[c] = new InputNode();
+            inputLayer[c] = new InputNode();
             c++;
         }
     }
 
-    private void createOutputLayer(int size, double biasVal) {
+    private void createOutputLayer(int size) {
         int count = 0;
         OutputNode[] outputNodes = new OutputNode[size];
         while (count < size) {
-            outputNodes[count] = new OutputNode(biasVal, randomDouble(), 0.9);// TODO: confirm static target here is ok
+            outputNodes[count] = new OutputNode(biasVal, randomWeight(), 0.9);// TODO: confirm static target here is ok
             count++;
         }
 
-        nodes[nodes.length - 1] = outputNodes;
+        outputLayer = outputNodes; // TODO: remove above and use this instead
     }
 
     // TODO: this is not using the node connections
+    // Might be better to just replace this and the node connections objects with a single map. This is excessive
+    // A node can know all its connections and a connection can know its nodes. This is problematic
     private void setupConnections() {
         int count = 0;
-        for (InputNode inputNode : inputNodes) {
-            for (Node node : nodes[0]) { // This goes through each node in only the first layer
-                new Connection(inputNode, node, randomDouble() + 0.1);
+        for (InputNode inputNode : inputLayer) {
+            for (Node node : hiddenLayers[0]) { // This goes through each node in only the first layer
+                new Connection(inputNode, node, randomWeight() + 0.1);
                 if (count < 1) {
-                    for (Node outputNeuron : nodes[nodes.length - 1]) {
-                        new Connection(node, outputNeuron, randomDouble() + 0.1);
+                    for (Node outputNeuron : outputLayer) {
+                        new Connection(node, outputNeuron, randomWeight() + 0.1);
                     }
                 }
 
@@ -183,7 +188,7 @@ public class Network {
         }
     }
 
-    private double randomDouble() {
+    private double randomWeight() {
         Random random = new Random();
         double d = random.nextDouble();
 //        d = d * 0.99 *100;
@@ -209,14 +214,20 @@ public class Network {
     }
 
     public Node[][] getNodes(){
+        Node[][] nodes = new Node[2+hiddenLayers.length][];
+        nodes[0] = inputLayer;
+        nodes[nodes.length-1] = outputLayer;
+        for(int i = 0; i < hiddenLayers.length; i++){
+            nodes[i+1] = hiddenLayers[i];
+        }
         return nodes;
     }
 
     public Node[] getHiddenLayerNodes(int i){
-        return nodes[i];
+        return hiddenLayers[i];
     }
 
     public Node[] getOutputLayerNodes(){
-        return nodes[nodes.length - 1];
+        return outputLayer;
     }
 }

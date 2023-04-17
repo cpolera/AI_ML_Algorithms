@@ -30,7 +30,7 @@ public class NetworkTrainer {
             Logger.log("Input: " + Arrays.toString(nnObj.getInputVals()), 5);
             Logger.log("Expected Outputs: " + Arrays.toString(nnObj.getOutputVals()), 5);
             network.setValuesInNetwork(nnObj);
-            network.calculateNodeOutputs(true, false);
+            network.calculateNodeOutputs();
 
             Logger.log("Updating error signals and weights...", 5);
             updateErrorSignals();
@@ -50,16 +50,16 @@ public class NetworkTrainer {
     }
 
     private void updateErrorSignals() {
-        for (int nC = network.nodes.length - 1; nC >= 0; nC--) {
-            for (int i = network.nodes[nC].length - 1; i >= 0; i--) {
-                network.nodes[nC][i].calculateError();
+        for (int nC = network.getNodes().length - 1; nC >= 0; nC--) {
+            for (int i = network.getNodes()[nC].length - 1; i >= 0; i--) {
+                network.getNodes()[nC][i].calculateError();
                 //Logger.log(nodes[nC][i].sigma, 5);
             }
         }
     }
 
     private void updateWeights() {
-        for (Node[] value : network.nodes) {
+        for (Node[] value : network.getNodes()) {
             for (Node node : value) {
                 node.updateWeights(network.learningRate);
             }
@@ -75,7 +75,7 @@ public class NetworkTrainer {
     // TODO: Not clear when to use this. Appears to be important to updating TSSE
     // Called from trainNetwork, but commented out now
     private void updatePatternSum() {
-        Node[][] nodes = network.nodes;
+        Node[][] nodes = network.getNodes();
         Double[] desired = new Double[nodes[nodes.length - 1].length];
         Double[] actual = new Double[nodes[nodes.length - 1].length];
         Node[] nodesOut = nodes[nodes.length - 1];
