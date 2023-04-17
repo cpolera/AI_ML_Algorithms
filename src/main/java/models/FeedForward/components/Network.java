@@ -17,7 +17,6 @@ public class Network {
     transient public double biasVal = 1;                // network config
     transient public int hiddenNeuronCount;             // network config
     transient public int hiddenNeuronLayersCount;       // network config
-
     private transient NNObj[] _trainingObjs;
     private transient NNObj[] _testObjs;
 
@@ -166,7 +165,7 @@ public class Network {
             count++;
         }
 
-        outputLayer = outputNodes; // TODO: remove above and use this instead
+        outputLayer = outputNodes;
     }
 
     // TODO: this is not using the node connections
