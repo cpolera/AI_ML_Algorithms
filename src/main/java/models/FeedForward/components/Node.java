@@ -29,26 +29,22 @@ public class Node {
         idCounter++;
     }
 
-    public void addInputConnection(Connection connection) {
-        inputConnections.add(connection);
-    }
-
-    public void addOutputConnection(Connection connection) {
-        outputConnections.add(connection);
-    }
-
     private double calculateNet() {
         //net = bias*Wbias + SUM incoming outputs*their weight
         double nodeBiasCalc = this.biasWeight * biasVal;
+
+        return nodeBiasCalc + sumIncomingInputs(inputConnections);
+    }
+
+    private double sumIncomingInputs(ArrayList<Connection> connections){
         double sum = 0;
 
         //THIS IS SUM OF INCOMING INPUTS (PREVIOUS LAYER OUTPUTS)
-        for (Connection connection : inputConnections) { // Go through each incoming connection
+        for (Connection connection : connections) { // Go through each incoming connection
             double outputVal = connection.getInputNeuron().outputVal; // Get outputVal of the hidden neuron
             sum += connection.getWeight() * outputVal; // Connection weight * output of the hidden neuron to next layer
         }
-
-        return nodeBiasCalc + sum;
+        return sum;
     }
 
     // Used by Hidden and Output Nodes

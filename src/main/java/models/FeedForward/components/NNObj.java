@@ -7,7 +7,7 @@ package models.FeedForward.components;
  */
 public class NNObj {
 
-    public String desc;
+    protected String description;
     protected double[] dVals;//input values for a single set
     protected double[] dVals_targets;//expected output values for a single set
     //EXAMPLE: dVals = [0,1], targets = [1]. EXAMPLE: [0,1,1,1,1,0] targets[0,1,0]

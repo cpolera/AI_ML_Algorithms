@@ -26,8 +26,8 @@ public class Connection {
         nextId++;
     }
 
-    public Connection(InputNode inputNode, Node output, double weight) {
-        this.inputNode = inputNode;
+    public Connection(InputNode input, Node output, double weight) {
+        this.inputNode = input;
         this.outputNeuron = output;
         output.inputConnections.add(this);
         this.weight = weight;

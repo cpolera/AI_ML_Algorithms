@@ -113,11 +113,11 @@ public class Stock extends NNObj {
     public void setDate(String date) {
         this.date = date;
         this.id++;
-        desc = id + ": date";
+        description = id + ": date";
     }
 
     public void updateDesc() {
-        desc = id + ": date";
+        description = id + ": date";
     }
 
     public double getClose() {

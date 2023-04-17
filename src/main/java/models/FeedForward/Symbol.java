@@ -7,7 +7,7 @@ public class Symbol extends NNObj {
     public Symbol(int[] newVals, int[] targetVals, String desc) {
         dVals_targets = convertValToDouble(targetVals);
         dVals = convertValToDouble(newVals);
-        this.desc = desc;
+        description = desc;
     }
 
     /**

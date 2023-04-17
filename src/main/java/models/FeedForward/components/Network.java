@@ -170,9 +170,16 @@ public class Network {
     // Might be better to just replace this and the node connections objects with a single map. This is excessive
     // A node can know all its connections and a connection can know its nodes. This is problematic
     private void setupConnections() {
-        int count = 0;
+        Node[][] layers = getNodes();
+        for (int layerIndex = 0; layerIndex < layers.length - 1; layerIndex++) {
+            for (Node node: layers[layerIndex]) {
+                new Connection(inputNode, node, randomWeight() + 0.1);
+            }
+        }
+
+        // Connect input nodes to first hidden layer
         for (InputNode inputNode : inputLayer) {
-            for (Node node : hiddenLayers[0]) { // This goes through each node in only the first layer
+            for (Node node : hiddenLayers[0]) {
                 new Connection(inputNode, node, randomWeight() + 0.1);
                 if (count < 1) {
                     for (Node outputNeuron : outputLayer) {
@@ -181,7 +188,12 @@ public class Network {
                 }
 
             }
-            count++;
+        }
+    }
+
+    private void connectNodeToLayer(Node node, Node[] layer) {
+        for(Node nextNode: layer) {
+
         }
     }
 
@@ -210,10 +222,6 @@ public class Network {
         return trainingEpoch;
     }
 
-    /**
-     * @deprecated Get layers as needed using other methods
-     * @return
-     */
     public Node[][] getNodes(){
         Node[][] nodes = new Node[2+hiddenLayers.length][];
         nodes[0] = inputLayer;
