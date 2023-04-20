@@ -1,7 +1,6 @@
 package models.GeneticAlgorithm.company;
 
 import java.io.*;
-import java.net.URL;
 import java.util.*;
 
 /**
@@ -12,14 +11,14 @@ public class MainQAPSolution {
     static HashMap<Integer, Integer> results = new HashMap<>();
     int[] val;
     int now = -1;
-    int V = 4;
+    int locationCount = 4;
     long count = 0;
     int extraCount = 0;
     int countEqualOrImprove = 0;
     int[][] flowMatrix;
     int[][] distanceMatrix;
-    String file = "had20.txt";
-    int min = 0;
+    String file = "had20.txt"; // Put at root of project for now //had20.txt is all facilities go to all other facilities
+    static int min = 0;
     int[] bestPermutation;
     int[] worstPermutation;
     ArrayList<int[]> bestPermutations = new ArrayList<>();
@@ -30,88 +29,36 @@ public class MainQAPSolution {
     float standardDeviation;
     long startTime;
     long estimatedTime;
-    Boolean randomized = true; //If true, use a number of random permutations instead of running through
+    Boolean randomized = true; // If true, use a number of random permutations instead of running through
     int randomCount = 500;
-    int improvementAttempts = 50000;
-    Boolean runHelperAlgorirthm = true;
+    Boolean runHelperAlgorithm = true;
     HashMap<String, int[]> randomResults = new HashMap<>();
-    HashMap<String, int[]> improvingResults = new HashMap<>();
 
     public void main() throws IOException {
-
         startTime = System.nanoTime();
-        readInData();
+        log("Starting evaluation...", 1);
 
+        readInData(this.file);
         createAndProcessPermutations();
 
-        if (runHelperAlgorirthm) {
-            myAlgorithm();
-        }
-
         estimatedTime = System.nanoTime() - startTime;
+        log("Completed evaluation.", 1);
 
         consoleReport();
         processHashMapData();
     }
 
+    private void createAndProcessPermutations() {
+        val = new int[locationCount + 1];
 
-    public void myAlgorithm() {
-        //take best from 1 million
-        ArrayList<int[]> cloneBestPermutation = (ArrayList<int[]>) bestPermutations.clone();
-        for (int[] potentialSolution : cloneBestPermutation) {
-            myAlgorithmHelper(potentialSolution, improvementAttempts);
-        }
-    }
-
-    private int myAlgorithmHelper(int[] potentialSolution, int improvementAttempts) {
-        int newCost = min;
-        int limit = 2;
-        for (int i = 0; i < improvementAttempts; i++) {
-            if (limit >= 10) {
-                limit = 5;
-            }
-            boolean check = true;
-            int[] potenialPermutation = null;
-            while (check) {
-                potenialPermutation = shuffleArray(potentialSolution, limit);
-                check = checkArrayAgainstKnown(potenialPermutation);
-            }
-            if (!checkArrayAgainstKnown(potenialPermutation)) {
-                newCost = calculateCost(potenialPermutation);
-                extraCount++;
-                System.out.println("#" + extraCount);
-                standardDeviation = (long) Math.sqrt((totalSquaredCostAllPermutations -
-                        (totalCostAllPermutations * totalCostAllPermutations / count)) / count);
-                if (newCost <= min || newCost - (standardDeviation / 10) < min) {
-                    countEqualOrImprove++;
-                    if (newCost <= min) {
-                        improvingResults.put(getArrayString(potenialPermutation), potenialPermutation);
-                    }
-                    if (!randomResults.containsKey(getArrayString(potenialPermutation))) {
-                        handleCost(potenialPermutation, newCost);
-                    }
-                    newCost = myAlgorithmHelper(potenialPermutation, improvementAttempts);
-
-                    if (limit > 1) {
-                        limit--;
-                    }
-                } else {
-                    limit++;
-                }
-            }
-        }
-        return newCost;
-    }
-
-
-    public void createAndProcessPermutations() {
         int multiplier = 0;
         if (randomized) {
             multiplier = 1;
         }
-        val = new int[V + 1];
-        for (int i = 0; i <= V; i++)
+
+        for (int i = 0; i <= locationCount; i++){
             val[i] = i * multiplier;
+        }
         if (randomized) {
             randomPermutationRunner();
         } else {
@@ -119,12 +66,45 @@ public class MainQAPSolution {
         }
     }
 
+    // TODO: move to class to build these permutations
+    public void procedurallyGenPermutations(int k) {
+        now++;
+        val[k] = now;
+        if (now == locationCount) handlePermutation();
+        for (int i = 1; i <= locationCount; i++)
+            if (val[i] == 0) procedurallyGenPermutations(i);
+        now--;
+        val[k] = 0;
+    }
+
+    // TODO: move to class to build these permutations
     public void randomPermutationRunner() {
         while (randomCount > 0) {
             generateValidRandomPermutation();
             handlePermutation();
             randomCount--;
         }
+    }
+
+    /**
+     * Calculate's the cost of each permutation
+     */
+    public void handlePermutation() {
+        count++;
+        int[] permutation = new int[locationCount];
+
+        String logString = (count + " ** ");
+        for (int i = 1; i <= locationCount; i++) {
+            permutation[i - 1] = val[i];
+            //calc cost and store
+            logString += val[i] + " ";
+        }
+
+        int permutationCost = calculateCost(permutation);
+        handleCost(permutation, permutationCost);
+
+        log(logString + " " + permutationCost + "**", 2);
+        processMetrics(permutationCost);
     }
 
     public void generateValidRandomPermutation() {
@@ -149,11 +129,13 @@ public class MainQAPSolution {
         return returnString;
     }
 
-    public int[] shuffleArray(int[] array) {
+    // TODO: Move to utilities class
+    public static int[] shuffleArray(int[] array) {
         return shuffleArray(array, array.length);
     }
 
-    public int[] shuffleArray(int[] array, int limit) {
+    // TODO: Move to utilities class
+    public static int[] shuffleArray(int[] array, int limit) {
         Random random = new Random();
         random.nextInt();
         for (int i = 1; i < limit; i++) {
@@ -173,60 +155,23 @@ public class MainQAPSolution {
         return array;
     }
 
-    private boolean checkArrayAgainstKnown(int[] array) {
-        if (randomResults.containsKey(getArrayString(array)) || improvingResults.containsKey(getArrayString(array))) {
-            return true;
-        }
-        return false;
-    }
-
     public void consoleReport() {
         if (count == 0) {
             count++;
         }
         double seconds = (double) estimatedTime / 1000000000.0;
-        System.out.println("Time to calculate in seconds: " + seconds);
+        log("Time to calculate in seconds: " + seconds, 1);
         averageCost = totalCostAllPermutations / count;
         standardDeviation = (long) Math.sqrt((totalSquaredCostAllPermutations -
                 (totalCostAllPermutations * totalCostAllPermutations / count)) / count);
-        System.out.println("Min cost : " + min + " ::::: Permutation is " + getPermutation(bestPermutation));
-        System.out.println("Max cost : " + max + " ::::: Permutation is " + getPermutation(worstPermutation));
-        System.out.println("Total cost is :" + totalCostAllPermutations);
-        System.out.println("Sum of the squared costs is :" + totalSquaredCostAllPermutations);
-        System.out.println("Average cost is: " + averageCost);
-        System.out.println("The standard deviation is: " + standardDeviation);
-        System.out.println("Total permutations ran: " + count);
-        System.out.println("" + getBestPermutationsList());
-    }
-
-    public void procedurallyGenPermutations(int k) {
-        now++;
-        val[k] = now;
-        if (now == V) handlePermutation();
-        for (int i = 1; i <= V; i++)
-            if (val[i] == 0) procedurallyGenPermutations(i);
-        now--;
-        val[k] = 0;
-    }
-
-
-    public void handlePermutation() {
-        count++;
-        int[] permutation = new int[V];
-
-        System.out.print(count + " ** ");
-        for (int i = 1; i <= V; i++) {
-            permutation[i - 1] = val[i];
-            //calc cost and store
-            System.out.print(val[i] + " ");
-        }
-
-        int permutationCost = calculateCost(permutation);
-        handleCost(permutation, permutationCost);
-
-        System.out.print(" " + permutationCost);
-        System.out.println("**");
-        processMetrics(permutationCost);
+        log("Min cost : " + min + " ::::: Permutation is " + getPermutation(bestPermutation), 1);
+        log("Max cost : " + max + " ::::: Permutation is " + getPermutation(worstPermutation), 1);
+        log("Total cost is :" + totalCostAllPermutations, 1);
+        log("Sum of the squared costs is :" + totalSquaredCostAllPermutations, 1);
+        log("Average cost is: " + averageCost, 1);
+        log("The standard deviation is: " + standardDeviation, 1);
+        log("Total permutations ran: " + count, 1);
+        log("" + getBestPermutationsListPretty(), 1);
     }
 
     public void handleCost(int[] permutation, int permutationCost) {
@@ -252,7 +197,7 @@ public class MainQAPSolution {
 
     public void processMetrics(int cost) {
         totalCostAllPermutations = totalCostAllPermutations + cost;
-        totalSquaredCostAllPermutations = totalSquaredCostAllPermutations + (cost * cost);
+        totalSquaredCostAllPermutations = totalSquaredCostAllPermutations + ((long) cost * cost);
     }
 
     public String getPermutation(int[] permutation) {
@@ -293,13 +238,27 @@ public class MainQAPSolution {
         return matrix;
     }
 
-    public void readInData() throws FileNotFoundException {
-        Scanner sc = new Scanner(new File(this.file)); // get from project root for now
+    /**
+     * Setup the flow and distance matrices
+     * File should be txt with data as so:
+     * --
+     * 2
+     *
+     * 0 1
+     * 1 0
+     *
+     * 3 5
+     * 3 9
+     * --
+     * @throws FileNotFoundException
+     */
+    public void readInData(String filename) throws FileNotFoundException {
+        Scanner sc = new Scanner(new File(filename));
         int size = sc.nextInt();
-        V = size;
-        int[][] inputs = new int[2][V * V];
+        locationCount = size;
+        int[][] inputs = new int[2][locationCount * locationCount];
         for (int i = 0; i < 2; i++) {
-            for (int j = 0; j < V * V; j++) {
+            for (int j = 0; j < locationCount * locationCount; j++) {
                 inputs[i][j] = sc.nextInt();
             }
         }
@@ -335,11 +294,11 @@ public class MainQAPSolution {
         bufferedWriter.newLine();
         bufferedWriter.write("Total permutations ran: " + count);
         bufferedWriter.newLine();
-        bufferedWriter.write(getBestPermutationsList());
+        bufferedWriter.write(getBestPermutationsListPretty());
         for (Map.Entry<Integer, Integer> entry : results.entrySet()) {
             Integer key = entry.getKey();
             Integer value = entry.getValue();
-            System.out.println("Result Value: " + key + " ... Count: " + value);
+            log("Result Value: " + key + " ... Count: " + value, 3);
             String outputString = "" + key + ", " + value;
             bufferedWriter.newLine();
             bufferedWriter.write(outputString);
@@ -351,7 +310,7 @@ public class MainQAPSolution {
         bufferedWriter.close();
     }
 
-    public String getBestPermutationsList() {
+    public String getBestPermutationsListPretty() {
         String bestPermutationsString = "Best Permutations are: ";
         for (int i = 0; i < bestPermutations.size(); i++) {
             String perm = "\n ";
@@ -364,6 +323,11 @@ public class MainQAPSolution {
         return bestPermutationsString;
     }
 
+    public static void log(String logString, int debugLevel){
+        if(debugLevel <= Integer.parseInt(System.getProperty("QAP_DEBUG_LEVEL"))){
+            System.out.println(logString);
+        }
+    }
 }
 //
 
