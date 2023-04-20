@@ -13,8 +13,7 @@ public class Runner {
         Dotenv.configure().systemProperties().load();
 
         MainQAPSolution mainQAPSolution1 = new MainQAPSolution();
-        mainQAPSolution1.randomized = true;
-        mainQAPSolution1.runHelperAlgorithm = true;
+        mainQAPSolution1.file = "had122.txt";
         mainQAPSolution1.main();
     }
 }

@@ -3,21 +3,23 @@ package models.GeneticAlgorithm.company;
 import java.io.*;
 import java.util.*;
 
+import static models.GeneticAlgorithm.company.QAPUtility.shuffleArray;
+
 /**
  * Apr 20, 2023: This code is over 5 years old and needs to be heavily refactored. Lots of novice mistakes and issues
  */
 public class MainQAPSolution {
+
+    int[][] flowMatrix;
+    int[][] distanceMatrix;
 
     static HashMap<Integer, Integer> results = new HashMap<>();
     int[] val;
     int now = -1;
     int locationCount = 4;
     long count = 0;
-    int extraCount = 0;
-    int countEqualOrImprove = 0;
-    int[][] flowMatrix;
-    int[][] distanceMatrix;
-    String file = "had20.txt"; // Put at root of project for now //had20.txt is all facilities go to all other facilities
+
+    String file; // Put at root of project for now //had20.txt is all facilities go to all other facilities
     static int min = 0;
     int[] bestPermutation;
     int[] worstPermutation;
@@ -29,10 +31,6 @@ public class MainQAPSolution {
     float standardDeviation;
     long startTime;
     long estimatedTime;
-    Boolean randomized = true; // If true, use a number of random permutations instead of running through
-    int randomCount = 500;
-    Boolean runHelperAlgorithm = true;
-    HashMap<String, int[]> randomResults = new HashMap<>();
 
     public void main() throws IOException {
         startTime = System.nanoTime();
@@ -51,19 +49,11 @@ public class MainQAPSolution {
     private void createAndProcessPermutations() {
         val = new int[locationCount + 1];
 
-        int multiplier = 0;
-        if (randomized) {
-            multiplier = 1;
+        for (int i = 0; i <= locationCount; i++){
+            val[i] = i * 0;
         }
 
-        for (int i = 0; i <= locationCount; i++){
-            val[i] = i * multiplier;
-        }
-        if (randomized) {
-            randomPermutationRunner();
-        } else {
-            procedurallyGenPermutations(0);
-        }
+        procedurallyGenPermutations(0);
     }
 
     // TODO: move to class to build these permutations
@@ -75,15 +65,6 @@ public class MainQAPSolution {
             if (val[i] == 0) procedurallyGenPermutations(i);
         now--;
         val[k] = 0;
-    }
-
-    // TODO: move to class to build these permutations
-    public void randomPermutationRunner() {
-        while (randomCount > 0) {
-            generateValidRandomPermutation();
-            handlePermutation();
-            randomCount--;
-        }
     }
 
     /**
@@ -107,52 +88,15 @@ public class MainQAPSolution {
         processMetrics(permutationCost);
     }
 
-    public void generateValidRandomPermutation() {
-        String permutationKey = "";
-        Boolean continueWorking = false;
-        while (!continueWorking) {
-            val = shuffleArray(val);
-            permutationKey = getArrayString(val);
-            continueWorking = !randomResults.containsKey(val);
-        }
-        randomResults.put(permutationKey, val);
-    }
-
-    private String getArrayString(int[] array) {
+    public String getPermutationString(int[] permutation) {
         String returnString = "";
-        for (int i = 0; i < array.length; i++) {
-            returnString = returnString + array[i];
-            if (i != array.length - 1) {
-                returnString = returnString + ".";
-            }
+        if (permutation == null) {
+            permutation = new int[1];
+        }
+        for (int aPermutation : permutation) {
+            returnString = returnString + " " + aPermutation;
         }
         return returnString;
-    }
-
-    // TODO: Move to utilities class
-    public static int[] shuffleArray(int[] array) {
-        return shuffleArray(array, array.length);
-    }
-
-    // TODO: Move to utilities class
-    public static int[] shuffleArray(int[] array, int limit) {
-        Random random = new Random();
-        random.nextInt();
-        for (int i = 1; i < limit; i++) {
-            int index = i;
-
-            if (limit != array.length) {
-                index = 1 + random.nextInt(array.length - 2);
-            }
-            int swapInt = index;
-            while (swapInt == index) {
-                swapInt = 1 + random.nextInt(array.length - 2);//index
-            }
-            int tempInt = array[index];//value to be replaced
-            array[index] = array[swapInt];
-            array[swapInt] = tempInt;
-        }
-        return array;
     }
 
     public void consoleReport() {
@@ -164,23 +108,20 @@ public class MainQAPSolution {
         averageCost = totalCostAllPermutations / count;
         standardDeviation = (long) Math.sqrt((totalSquaredCostAllPermutations -
                 (totalCostAllPermutations * totalCostAllPermutations / count)) / count);
-        log("Min cost : " + min + " ::::: Permutation is " + getPermutation(bestPermutation), 1);
-        log("Max cost : " + max + " ::::: Permutation is " + getPermutation(worstPermutation), 1);
+        log("Min cost : " + min + " ::::: Permutation is " + getPermutationString(bestPermutation), 1);
+        log("Max cost : " + max + " ::::: Permutation is " + getPermutationString(worstPermutation), 1);
         log("Total cost is :" + totalCostAllPermutations, 1);
         log("Sum of the squared costs is :" + totalSquaredCostAllPermutations, 1);
         log("Average cost is: " + averageCost, 1);
         log("The standard deviation is: " + standardDeviation, 1);
         log("Total permutations ran: " + count, 1);
-        log("" + getBestPermutationsListPretty(), 1);
     }
 
     public void handleCost(int[] permutation, int permutationCost) {
-        if (min == 0 || min > permutationCost) {
+        if (min == 0 || min >= permutationCost) { //
             min = permutationCost;
             bestPermutation = permutation;
             bestPermutations = new ArrayList<>();
-            bestPermutations.add(permutation);
-        } else if (permutationCost == min) {
             bestPermutations.add(permutation);
         } else if (max < permutationCost) {
             max = permutationCost;
@@ -200,16 +141,6 @@ public class MainQAPSolution {
         totalSquaredCostAllPermutations = totalSquaredCostAllPermutations + ((long) cost * cost);
     }
 
-    public String getPermutation(int[] permutation) {
-        String returnString = "";
-        if (permutation == null) {
-            permutation = new int[1];
-        }
-        for (int aPermutation : permutation) {
-            returnString = returnString + " " + aPermutation;
-        }
-        return returnString;
-    }
 
 
     public int calculateCost(int[] permutation) {
@@ -280,9 +211,9 @@ public class MainQAPSolution {
         averageCost = totalCostAllPermutations / count;
         standardDeviation = (long) Math.sqrt((totalSquaredCostAllPermutations -
                 (totalCostAllPermutations * totalCostAllPermutations / count)) / count);
-        bufferedWriter.write("Min cost : " + min + " ::::: Permutation is " + getPermutation(bestPermutation));
+        bufferedWriter.write("Min cost : " + min + " ::::: Permutation is " + getPermutationString(bestPermutation));
         bufferedWriter.newLine();
-        bufferedWriter.write("Max cost : " + max + " ::::: Permutation is " + getPermutation(worstPermutation));
+        bufferedWriter.write("Max cost : " + max + " ::::: Permutation is " + getPermutationString(worstPermutation));
         bufferedWriter.newLine();
         bufferedWriter.write("Total cost is :" + totalCostAllPermutations);
         bufferedWriter.newLine();
@@ -294,7 +225,6 @@ public class MainQAPSolution {
         bufferedWriter.newLine();
         bufferedWriter.write("Total permutations ran: " + count);
         bufferedWriter.newLine();
-        bufferedWriter.write(getBestPermutationsListPretty());
         for (Map.Entry<Integer, Integer> entry : results.entrySet()) {
             Integer key = entry.getKey();
             Integer value = entry.getValue();
@@ -304,23 +234,8 @@ public class MainQAPSolution {
             bufferedWriter.write(outputString);
         }
         bufferedWriter.newLine();
-        bufferedWriter.write("Number of improvements: " + countEqualOrImprove);
         bufferedWriter.newLine();
-        bufferedWriter.write("Number of additional permutations attempted: " + extraCount);
         bufferedWriter.close();
-    }
-
-    public String getBestPermutationsListPretty() {
-        String bestPermutationsString = "Best Permutations are: ";
-        for (int i = 0; i < bestPermutations.size(); i++) {
-            String perm = "\n ";
-            for (int j = 0; j < bestPermutations.get(i).length; j++) {
-                perm = perm + "." + bestPermutations.get(i)[j];
-            }
-            bestPermutationsString = bestPermutationsString + perm;
-        }
-
-        return bestPermutationsString;
     }
 
     public static void log(String logString, int debugLevel){
