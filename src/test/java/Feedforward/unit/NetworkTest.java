@@ -81,8 +81,17 @@ public class NetworkTest {
         Assert.assertEquals(round(H1_IN_A.getWeight(), 4), 0.7002);
     }
 
-//            Assert.assertEquals(round(H2.getBiasWeight(), 4), -0.0024);
-
+    // Takes about 7500 cycles to learn well
+    public void testLearning() throws IOException {
+        NNObj[][] data = new NNObj[][]{xorListFull(), xorListFull()};
+        Network network = setupExampleNetwork(data);
+        NetworkTrainer networkTrainer = new NetworkTrainer(network);
+        networkTrainer.trainNetwork(data[0], 7500);
+        for(NNObj iteration: data[1]){
+            double[] result = network.processInput(iteration);
+            Assert.assertEquals(round(result[0], 2), iteration.getOutputVals()[0]);
+        }
+    }
 
     NNObj[] xorTrainingList() {
         return new NNObj[]{
@@ -93,6 +102,15 @@ public class NetworkTest {
     NNObj[] xorTestingList() {
         return new NNObj[]{
                 new NNObj(new double[]{0.9, 0.9}, new double[]{0.1}, "1_t")
+        };
+    }
+
+    NNObj[] xorListFull() {
+        return new NNObj[]{
+                new NNObj(new double[]{0.1, 0.9}, new double[]{0.9}, "1_9"),
+                new NNObj(new double[]{0.1, 0.1}, new double[]{0.1}, "1_1"),
+                new NNObj(new double[]{0.9, 0.9}, new double[]{0.1}, "9_9"),
+                new NNObj(new double[]{0.9, 0.1}, new double[]{0.9}, "9_1")
         };
     }
 

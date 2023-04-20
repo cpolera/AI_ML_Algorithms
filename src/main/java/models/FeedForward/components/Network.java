@@ -1,6 +1,5 @@
 package models.FeedForward.components;
 
-import jdk.internal.util.xml.impl.Input;
 import models.FeedForward.*;
 
 import java.io.IOException;
@@ -73,6 +72,27 @@ public class Network {
         //setRMSE();
         logger.logStaticVals();
         logger.logInputs();
+    }
+
+    /**
+     * Method to use the trained network on a given object.
+     * Returns an array of outputs based on how the network was trained
+     *
+     * @param nnObj
+     * @return
+     */
+    public double[] processInput(NNObj nnObj) {
+        setValuesInNetwork(nnObj);
+        calculateNodeOutputs();
+        return getNetworkOutputs();
+    }
+
+    public double[] getNetworkOutputs(){
+        double[] outputs = new double[outputLayer.length];
+        for(int i=0; i<outputLayer.length; i++){
+            outputs[i] = outputLayer[i].getOutputVal();
+        }
+        return outputs;
     }
 
     public void runNetworkTrainingAndTesting() {
