@@ -294,20 +294,7 @@ public class MainQAPSolution {
     }
 
     public void readInData() throws FileNotFoundException {
-
-        class GetFile {
-            public GetFile() {
-            }
-
-            public URL getFileURL() {
-                return this.getClass().getResource(file);
-            }
-        }
-
-        GetFile getFile = new GetFile();
-        URL file = getFile.getFileURL();
-
-        Scanner sc = new Scanner(new File(file.getFile()));
+        Scanner sc = new Scanner(new File(this.file)); // get from project root for now
         int size = sc.nextInt();
         V = size;
         int[][] inputs = new int[2][V * V];
