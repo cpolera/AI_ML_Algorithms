@@ -2,6 +2,9 @@ package models.GeneticAlgorithm.company;
 
 import java.io.IOException;
 
+/**
+ * Apr 20, 2023: This code is over 5 years old and needs to be heavily refactored. Lots of novice mistakes and issues
+ */
 public class Runner {
 
     public static void main(String args[]) throws IOException {
