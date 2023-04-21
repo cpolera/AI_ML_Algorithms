@@ -1,4 +1,4 @@
-package models.GeneticAlgorithm.company;
+package models.QuadraticAssignment;
 
 import java.util.Random;
 

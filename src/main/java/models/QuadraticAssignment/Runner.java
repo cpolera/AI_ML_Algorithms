@@ -1,4 +1,4 @@
-package models.GeneticAlgorithm.company;
+package models.QuadraticAssignment;
 
 import io.github.cdimascio.dotenv.Dotenv;
 
@@ -12,10 +12,8 @@ public class Runner {
     public static void main(String args[]) throws IOException {
         Dotenv.configure().systemProperties().load();
 
-        MainQAPSolution mainQAPSolution1 = new MainQAPSolution();
-//        mainQAPSolution1.file = "had122.txt";
-        mainQAPSolution1.file = "hadNeos.txt";
-        mainQAPSolution1.main();
-        mainQAPSolution1.calculateCost(new int[]{2,1,4,3}); // test for hadNeos.txt should be 419
+        QAP QAP1 = new QAP();
+        QAP1.file = "had122.txt";
+        QAP1.main();
     }
 }

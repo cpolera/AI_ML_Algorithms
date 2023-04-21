@@ -1,4 +1,4 @@
-package models.GeneticAlgorithm.company;
+package models.QuadraticAssignment;
 
 import java.io.*;
 import java.util.*;
@@ -13,7 +13,7 @@ import java.util.*;
  * requires generating permutation and checking cost before moving on to generating the next one.
  *
  */
-public class MainQAPSolution {
+public class QAP {
 
     int[][] flowMatrix; // required flow between facilities
     int[][] distanceMatrix; // distance between locations
@@ -21,7 +21,7 @@ public class MainQAPSolution {
 
     HashMap<Integer, ArrayList<int[]>> results = new HashMap<Integer, ArrayList<int[]>>();
     int[] currentFacilityPermutation; // Location values start at 1; 0 is used for special case
-    int now = -1;
+    int nextFacilityId = -2; // Needs to start at -2
 
     int min = 0;
     int max = 0;
@@ -37,6 +37,7 @@ public class MainQAPSolution {
 
         readInData(this.file);
         currentFacilityPermutation = new int[getLocationCount()];
+        Arrays.fill(currentFacilityPermutation, -1);
         generateAndProcessPermutations(0);
 
         estimatedTime = System.nanoTime() - startTime;
@@ -50,30 +51,40 @@ public class MainQAPSolution {
     /**
      * This was not documented before so the following is my best understanding after staring at the code
      *
+     *  This updates the currentFacilityPermutation
+     *  K index indicates the value to be set to nextFacilityId
+     *  At the end sets k index back to 0 and decrements nextFacilityId
      *
-     *
-     * @param k
+     * @param k index to place nextFacilityId
      */
     public void generateAndProcessPermutations(int k) {
-        now++;
-        currentFacilityPermutation[k] = now;
-        if (now == getLocationCount()){
-            processPermutation();
+        log("Starting nextFacilityId: " + nextFacilityId + "\t\t", 4);
+        nextFacilityId++;
+        log("Pre-interim permutation:\t " + getPermutationString(currentFacilityPermutation) + "\tk: " + k + "\tnextFacilityId: " + nextFacilityId, 4);
+        currentFacilityPermutation[k] = nextFacilityId;
+        log("interim permutation:\t\t " + getPermutationString(currentFacilityPermutation), 4);
+
+        if (nextFacilityId == getLocationCount()-1){
+            int[] permutation = currentFacilityPermutation.clone();
+            System.out.print ("nextFacilityId: " + nextFacilityId);
+            log("  k: " + k + "  permutation: " + getPermutationString(permutation), 4);
+            processPermutation(permutation);
         }
-        for (int i = 0; i < getLocationCount(); i++)
-            if (currentFacilityPermutation[i] == 0) {
+
+        for (int i = 0; i < getLocationCount(); i++){
+            if (currentFacilityPermutation[i] == -1) {
                 generateAndProcessPermutations(i);
             }
-        now--;
-        currentFacilityPermutation[k] = 0;
+        }
+
+        nextFacilityId--;
+        currentFacilityPermutation[k] = -1;
     }
 
     /**
      * Calculates the cost of each permutation
      */
-    public void processPermutation() {
-        int[] permutation = currentFacilityPermutation.clone();
-
+    public void processPermutation(int[] permutation) {
         int permutationCost = calculateCost(permutation);
 
         int permutationCount = countResults(getResults());
@@ -103,28 +114,35 @@ public class MainQAPSolution {
     /**
      * Calculates the cost of a given facility permutation and updates relevant metrics
      *
-     * @param permutation
+     * @param permutation array of Facility IDs
      * @return
      */
     public int calculateCost(int[] permutation) {
         int cost = 0;
-        // Locations start at 1, so we subtract 1 to get the corresponding facility index
-        for (int i = 0; i < permutation.length; i++) { // Get each assigned location
-            int facilityIndex = permutation[i] - 1;
-            for (int j = 0; j < permutation.length; j++) { // TODO: something isnt calculating correctly here
-                int receivingFacilityIndex = permutation[j] - 1;
-                int distance = distanceMatrix[i][j]; // d(location i, location j)
-                int flow = flowMatrix[facilityIndex][receivingFacilityIndex]; // f(facility i, facility j)
-                if(flow > 0 && distance > 0){ // only include actual flows and separate locations
-                    int subCost = (distance * flow);
-                    log(
-                            "Distance between " + permutation[i] + " & " + permutation[j]
-                                    + ": " + distance + "\n" + "Flow: " + flowMatrix[facilityIndex][receivingFacilityIndex]
-                                    + "\n" + "Cost: " + subCost,
-                            3
-                    );
-                    cost += subCost;
+        Map<Integer, HashSet<Integer>> allLocationsVisited = new HashMap<>();
+        for (int locationI = 0; locationI < permutation.length; locationI++) {
+            HashSet<Integer> thisLocationVisited = new HashSet<>();
+            thisLocationVisited.add(locationI);
+            allLocationsVisited.put(locationI, thisLocationVisited);
+            for (int locationJ = 0; locationJ < permutation.length; locationJ++) { // TODO: something isnt calculating correctly here
+                if(!allLocationsVisited.containsKey(locationJ) || !allLocationsVisited.get(locationJ).contains(locationI)){ // Only for separate locations
+                    int facilityIndex = permutation[locationI]; // Facility I at location I
+                    int receivingFacilityIndex = permutation[locationJ]; // Facility J at location J
+
+                    int distance = distanceMatrix[locationI][locationJ]; // d(location i, location j)
+                    int flow = flowMatrix[facilityIndex][receivingFacilityIndex]; // f(facility i, facility j)
+                    if(flow > 0 && distance > 0){ // only include actual flows and known distances
+                        int subCost = (distance * flow);
+                        log(
+                                "Distance between " + permutation[locationI] + " & " + permutation[locationJ]
+                                        + ": " + distance + "\n" + "Flow: " + flowMatrix[facilityIndex][receivingFacilityIndex]
+                                        + "\n" + "subCost: " + subCost,
+                                3
+                        );
+                        cost += subCost;
+                    }
                 }
+                thisLocationVisited.add(locationJ);
             }
         }
         handleCost(permutation, cost);
