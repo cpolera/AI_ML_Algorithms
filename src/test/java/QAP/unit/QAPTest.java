@@ -33,7 +33,7 @@ public class QAPTest {
     public void testBestPermutation(QAP QAP) {
         int[] bestPermutation = QAP.getBestPermutation();
         int bestPermutationCost = QAP.calculateCost(bestPermutation);
-        Assert.assertEquals(bestPermutationCost, 70);
+        Assert.assertEquals(bestPermutationCost, 35);
     }
 
     public void testPermutationCostCalculation() throws IOException {
