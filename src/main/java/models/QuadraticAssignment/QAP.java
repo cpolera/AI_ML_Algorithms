@@ -15,7 +15,7 @@ public class QAP {
 
     int[][] flowMatrix; // required flow between facilities
     int[][] distanceMatrix; // distance between locations
-    String file; // Put at root of project for now //had20.txt is all facilities go to all other facilities
+    String file; // Put at root of project for now //qap20.txt is all facilities go to all other facilities
 
     HashMap<Integer, ArrayList<int[]>> results = new HashMap<Integer, ArrayList<int[]>>();
     int[] currentFacilityPermutation; // Location values start at 1; 0 is used for special case
@@ -39,7 +39,7 @@ public class QAP {
         log("Completed evaluation.", 1);
 
         consoleReport();
-        String filename = "results_" + this.file +".txt";
+        String filename = "results_" + this.file;
         logToOutputFile(filename);
     }
 

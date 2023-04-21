@@ -14,7 +14,7 @@ public class QAPTest {
     @DataProvider
     public Object[] data() throws IOException {
         QAP QAP1 = new QAP();
-        QAP1.setFile("had122.txt");
+        QAP1.setFile("qap4.txt");
         QAP1.runSolution();
         return new QAP[]{QAP1};
     }
@@ -38,7 +38,7 @@ public class QAPTest {
 
     public void testPermutationCostCalculation() throws IOException {
         QAP QAP = new QAP();
-        QAP.readInData("hadNeos.txt");
+        QAP.readInData("qap4_Realistic.txt");
         int[] testPermutation = new int[]{1,0,3,2};
         int cost = QAP.calculateCost(testPermutation);
         Assert.assertEquals(cost, 419);

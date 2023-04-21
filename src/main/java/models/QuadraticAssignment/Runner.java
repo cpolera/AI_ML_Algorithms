@@ -10,7 +10,7 @@ public class Runner {
         Dotenv.configure().systemProperties().load();
 
         QAP QAP1 = new QAP();
-        QAP1.file = "had122.txt";
+        QAP1.file = "qap4.txt";
         QAP1.runSolution();
     }
 }

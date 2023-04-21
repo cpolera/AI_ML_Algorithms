@@ -10,7 +10,7 @@
     </properties>
 
     <groupId>groupId</groupId>
-    <artifactId>BackPropogationProject</artifactId>
+    <artifactId>MachineLearningAlgorithms</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <dependencies>

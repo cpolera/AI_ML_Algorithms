@@ -4,4 +4,4 @@ target
 /src/logs/
 /.env
 /BackPropogationProject.iml
-results.txt
+/results.txt
