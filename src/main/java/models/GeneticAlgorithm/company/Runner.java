@@ -13,7 +13,9 @@ public class Runner {
         Dotenv.configure().systemProperties().load();
 
         MainQAPSolution mainQAPSolution1 = new MainQAPSolution();
-        mainQAPSolution1.file = "had122.txt";
+//        mainQAPSolution1.file = "had122.txt";
+        mainQAPSolution1.file = "hadNeos.txt";
         mainQAPSolution1.main();
+        mainQAPSolution1.calculateCost(new int[]{2,1,4,3}); // test for hadNeos.txt should be 419
     }
 }

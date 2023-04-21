@@ -20,7 +20,7 @@ public class MainQAPSolution {
     String file; // Put at root of project for now //had20.txt is all facilities go to all other facilities
 
     HashMap<Integer, ArrayList<int[]>> results = new HashMap<Integer, ArrayList<int[]>>();
-    int[] currentFacilityPermutation; // Facility values start at 1; 0 is used for special case
+    int[] currentFacilityPermutation; // Location values start at 1; 0 is used for special case
     int now = -1;
 
     int min = 0;
@@ -80,29 +80,51 @@ public class MainQAPSolution {
         log(permutationCount + " ** " + getPermutationString(permutation) + " : " + permutationCost + "**", 2);
     }
 
-    public void handleCost(int[] permutation, int permutationCost) {
+    /**
+     * Updates related variables as needed based on the latest permutation cost
+     *
+     * @param permutation
+     * @param permutationCost
+     */
+    private void handleCost(int[] permutation, int permutationCost) {
         if (min == 0 || min >= permutationCost) {
             min = permutationCost;
-            bestPermutation = permutation;
+            bestPermutation = permutation; // TODO does not handle multiple optimal solutions
         }
         if (max < permutationCost) {
             max = permutationCost;
             worstPermutation = permutation;
         }
 
-        results.computeIfAbsent(permutationCost, k -> new ArrayList<int[]>());
+        results.computeIfAbsent(permutationCost, k -> new ArrayList<>());
         results.get(permutationCost).add(permutation);
     }
 
+    /**
+     * Calculates the cost of a given facility permutation and updates relevant metrics
+     *
+     * @param permutation
+     * @return
+     */
     public int calculateCost(int[] permutation) {
         int cost = 0;
-        // Facilities start at 1, so we subtract 1 to get the actual facility index
-        for (int i = 0; i < permutation.length; i++) {
-            int facility = permutation[i] - 1;
-            for (int j = 0; j < permutation.length; j++) {
-                int receivingFacility = permutation[j] - 1;
-                int distance = distanceMatrix[i][j];
-                cost += (distance * flowMatrix[facility][receivingFacility]);
+        // Locations start at 1, so we subtract 1 to get the corresponding facility index
+        for (int i = 0; i < permutation.length; i++) { // Get each assigned location
+            int facilityIndex = permutation[i] - 1;
+            for (int j = 0; j < permutation.length; j++) { // TODO: something isnt calculating correctly here
+                int receivingFacilityIndex = permutation[j] - 1;
+                int distance = distanceMatrix[i][j]; // d(location i, location j)
+                int flow = flowMatrix[facilityIndex][receivingFacilityIndex]; // f(facility i, facility j)
+                if(flow > 0 && distance > 0){ // only include actual flows and separate locations
+                    int subCost = (distance * flow);
+                    log(
+                            "Distance between " + permutation[i] + " & " + permutation[j]
+                                    + ": " + distance + "\n" + "Flow: " + flowMatrix[facilityIndex][receivingFacilityIndex]
+                                    + "\n" + "Cost: " + subCost,
+                            3
+                    );
+                    cost += subCost;
+                }
             }
         }
         handleCost(permutation, cost);
