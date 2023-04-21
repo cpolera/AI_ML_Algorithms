@@ -15,7 +15,7 @@ public class QAPTest {
     public Object[] data() throws IOException {
         QAP QAP1 = new QAP();
         QAP1.setFile("had122.txt");
-        QAP1.main();
+        QAP1.runSolution();
         return new QAP[]{QAP1};
     }
 

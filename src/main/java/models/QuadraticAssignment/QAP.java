@@ -4,8 +4,6 @@ import java.io.*;
 import java.util.*;
 
 /**
- * Apr 20, 2023: This code is over 5 years old and needs to be heavily refactored. Lots of novice mistakes and issues
- *
  * Permutations are isolated which means this would benefit from multithreading or something similar
  *
  * Improvements:
@@ -25,14 +23,11 @@ public class QAP {
 
     int min = 0;
     int max = 0;
-    int[] bestPermutation;
-    int[] worstPermutation;
 
-    long startTime;
     long estimatedTime;
 
-    public void main() throws IOException {
-        startTime = System.nanoTime();
+    public void runSolution() throws IOException {
+        long startTime = System.nanoTime();
         log("Starting evaluation...", 1);
 
         readInData(this.file);
@@ -54,6 +49,8 @@ public class QAP {
      *  This updates the currentFacilityPermutation
      *  K index indicates the value to be set to nextFacilityId
      *  At the end sets k index back to 0 and decrements nextFacilityId
+     *
+     *  A value of -1 at any index indicates it needs the nextFacilityId
      *
      * @param k index to place nextFacilityId
      */
@@ -100,11 +97,9 @@ public class QAP {
     private void handleCost(int[] permutation, int permutationCost) {
         if (min == 0 || min >= permutationCost) {
             min = permutationCost;
-            bestPermutation = permutation; // TODO does not handle multiple optimal solutions
         }
         if (max < permutationCost) {
             max = permutationCost;
-            worstPermutation = permutation;
         }
 
         results.computeIfAbsent(permutationCost, k -> new ArrayList<>());
@@ -160,8 +155,8 @@ public class QAP {
     public void consoleReport() {
         double seconds = (double) estimatedTime / 1000000000.0;
         log("Time to calculate in seconds: " + seconds, 1);
-        log("Min cost : " + min + " ::::: Permutation is " + getPermutationString(bestPermutation), 1);
-        log("Max cost : " + max + " ::::: Permutation is " + getPermutationString(worstPermutation), 1);
+        log("Min cost : " + min + " ::::: Permutation is " + getPermutationString(getBestPermutation()), 1);
+        log("Max cost : " + max + " ::::: Permutation is " + getPermutationString(getWorstPermutation()), 1);
         log("Total permutations ran: " + countResults(getResults()), 1);
     }
 
@@ -215,9 +210,9 @@ public class QAP {
         double seconds = (double) estimatedTime / 1000000000.0;
         bufferedWriter.write("Time to calculate in seconds: " + seconds);
         bufferedWriter.newLine();
-        bufferedWriter.write("Min cost : " + min + " ::::: Permutation is " + getPermutationString(bestPermutation));
+        bufferedWriter.write("Min cost : " + min + " ::::: Permutation is " + getPermutationString(getBestPermutation()));
         bufferedWriter.newLine();
-        bufferedWriter.write("Max cost : " + max + " ::::: Permutation is " + getPermutationString(worstPermutation));
+        bufferedWriter.write("Max cost : " + max + " ::::: Permutation is " + getPermutationString(getWorstPermutation()));
         bufferedWriter.newLine();
         bufferedWriter.write("Total permutations ran: " + countResults(getResults()));
         bufferedWriter.newLine();
@@ -250,7 +245,19 @@ public class QAP {
     }
 
     public int[] getBestPermutation() {
-        return this.bestPermutation;
+        return getBestPermutations().get(0);
+    }
+
+    public ArrayList<int[]> getBestPermutations() {
+        return results.get(min);
+    }
+
+    public int[] getWorstPermutation() {
+        return getWorstPermutations().get(0);
+    }
+
+    public ArrayList<int[]> getWorstPermutations() {
+        return results.get(max);
     }
 
     public int getLocationCount() {
