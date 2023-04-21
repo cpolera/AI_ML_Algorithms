@@ -3,8 +3,6 @@ package models.GeneticAlgorithm.company;
 import java.io.*;
 import java.util.*;
 
-import static models.GeneticAlgorithm.company.QAPUtility.shuffleArray;
-
 /**
  * Apr 20, 2023: This code is over 5 years old and needs to be heavily refactored. Lots of novice mistakes and issues
  *
@@ -19,22 +17,20 @@ public class MainQAPSolution {
 
     int[][] flowMatrix; // required flow between facilities
     int[][] distanceMatrix; // distance between locations
+    String file; // Put at root of project for now //had20.txt is all facilities go to all other facilities
 
     HashMap<Integer, ArrayList<int[]>> results = new HashMap<Integer, ArrayList<int[]>>();
-    int[] val;
+    int[] currentFacilityPermutation; // Facility values start at 1; 0 is used for special case // TODO: make -1 special case and start at 0
     int now = -1;
-    int locationCount;
-    long count = 0;
 
-    String file; // Put at root of project for now //had20.txt is all facilities go to all other facilities
     int min = 0;
+    int max = 0;
     int[] bestPermutation;
     int[] worstPermutation;
+
     long totalCostAllPermutations;
     long totalSquaredCostAllPermutations;
-    float averageCost;
-    int max = 0;
-    float standardDeviation;
+
     long startTime;
     long estimatedTime;
 
@@ -43,84 +39,49 @@ public class MainQAPSolution {
         log("Starting evaluation...", 1);
 
         readInData(this.file);
-        createAndProcessPermutations();
+        currentFacilityPermutation = new int[getLocationCount()];
+        generateAndProcessPermutations(0);
 
         estimatedTime = System.nanoTime() - startTime;
         log("Completed evaluation.", 1);
 
         consoleReport();
-        processHashMapData();
+        String filename = "results_" + this.file +".txt";
+        writeHashMapDataToFile(filename);
     }
 
-    private void createAndProcessPermutations() {
-        val = new int[locationCount + 1];
-
-        for (int i = 0; i <= locationCount; i++){
-            val[i] = i * 0;
-        }
-
-        procedurallyGenPermutations(0);
-    }
-
-    // TODO: move to class to build these permutations
-    public void procedurallyGenPermutations(int k) {
+    /**
+     * This was not documented before so the following is my best understanding after staring at the code
+     *
+     *
+     *
+     * @param k
+     */
+    public void generateAndProcessPermutations(int k) {
         now++;
-        val[k] = now;
-        if (now == locationCount) handlePermutation();
-        for (int i = 1; i <= locationCount; i++)
-            if (val[i] == 0) procedurallyGenPermutations(i);
+        currentFacilityPermutation[k] = now;
+        if (now == getLocationCount()){
+            processPermutation();
+        }
+        for (int i = 0; i < getLocationCount(); i++)
+            if (currentFacilityPermutation[i] == 0) {
+                generateAndProcessPermutations(i);
+            }
         now--;
-        val[k] = 0;
+        currentFacilityPermutation[k] = 0;
     }
 
     /**
      * Calculates the cost of each permutation
      */
-    public void handlePermutation() {
-        count++;
-        int[] permutation = new int[locationCount];
-
-        String logString = (count + " ** ");
-        for (int i = 1; i <= locationCount; i++) {
-            permutation[i - 1] = val[i];
-            //calc cost and store
-            logString += val[i] + " ";
-        }
+    public void processPermutation() {
+        int[] permutation = currentFacilityPermutation.clone();
 
         int permutationCost = calculateCost(permutation);
         handleCost(permutation, permutationCost);
 
-        log(logString + " " + permutationCost + "**", 2);
-        processMetrics(permutationCost);
-    }
-
-    public String getPermutationString(int[] permutation) {
-        String returnString = "";
-        if (permutation == null) {
-            permutation = new int[1];
-        }
-        for (int aPermutation : permutation) {
-            returnString = returnString + " " + aPermutation;
-        }
-        return returnString;
-    }
-
-    public void consoleReport() {
-        if (count == 0) {
-            count++;
-        }
-        double seconds = (double) estimatedTime / 1000000000.0;
-        log("Time to calculate in seconds: " + seconds, 1);
-        averageCost = totalCostAllPermutations / count;
-        standardDeviation = (long) Math.sqrt((totalSquaredCostAllPermutations -
-                (totalCostAllPermutations * totalCostAllPermutations / count)) / count);
-        log("Min cost : " + min + " ::::: Permutation is " + getPermutationString(bestPermutation), 1);
-        log("Max cost : " + max + " ::::: Permutation is " + getPermutationString(worstPermutation), 1);
-        log("Total cost is :" + totalCostAllPermutations, 1);
-        log("Sum of the squared costs is :" + totalSquaredCostAllPermutations, 1);
-        log("Average cost is: " + averageCost, 1);
-        log("The standard deviation is: " + standardDeviation, 1);
-        log("Total permutations ran: " + count, 1);
+        int permutationCount = countResults(getResults());
+        log(permutationCount + " ** " + getPermutationString(permutation) + " : " + permutationCost + "**", 2);
     }
 
     public void handleCost(int[] permutation, int permutationCost) {
@@ -136,11 +97,6 @@ public class MainQAPSolution {
         results.get(permutationCost).add(permutation);
     }
 
-    public void processMetrics(int cost) {
-        totalCostAllPermutations = totalCostAllPermutations + cost;
-        totalSquaredCostAllPermutations = totalSquaredCostAllPermutations + ((long) cost * cost);
-    }
-
     public int calculateCost(int[] permutation) {
         int cost = 0;
         for (int i = 0; i < permutation.length; i++) {
@@ -154,17 +110,25 @@ public class MainQAPSolution {
         return cost;
     }
 
-    public int[][] getMatrix(int[] list) {
-        int numOfObjects = (int) Math.sqrt(list.length);
-        int[][] matrix = new int[numOfObjects][numOfObjects];
-        int counter = 0;
-        for (int i = 0; i < numOfObjects; i++) {
-            for (int j = 0; j < numOfObjects; j++) {
-                matrix[i][j] = list[counter];
-                counter++;
-            }
+    public String getPermutationString(int[] permutation) {
+        String returnString = "";
+        if (permutation == null) {
+            permutation = new int[1];
         }
-        return matrix;
+        for (int aPermutation : permutation) {
+            returnString = returnString + " " + aPermutation;
+        }
+        return returnString;
+    }
+
+    public void consoleReport() {
+        double seconds = (double) estimatedTime / 1000000000.0;
+        log("Time to calculate in seconds: " + seconds, 1);
+        log("Min cost : " + min + " ::::: Permutation is " + getPermutationString(bestPermutation), 1);
+        log("Max cost : " + max + " ::::: Permutation is " + getPermutationString(worstPermutation), 1);
+        log("Total cost is :" + totalCostAllPermutations, 1);
+        log("Sum of the squared costs is :" + totalSquaredCostAllPermutations, 1);
+        log("Total permutations ran: " + countResults(getResults()), 1);
     }
 
     /**
@@ -184,10 +148,9 @@ public class MainQAPSolution {
     public void readInData(String filename) throws FileNotFoundException {
         Scanner sc = new Scanner(new File(filename));
         int size = sc.nextInt();
-        locationCount = size;
-        int[][] inputs = new int[2][locationCount * locationCount];
+        int[][] inputs = new int[2][size * size];
         for (int i = 0; i < 2; i++) {
-            for (int j = 0; j < locationCount * locationCount; j++) {
+            for (int j = 0; j < size * size; j++) {
                 inputs[i][j] = sc.nextInt();
             }
         }
@@ -198,17 +161,27 @@ public class MainQAPSolution {
         sc.close();
     }
 
-    public void processHashMapData() throws IOException {
+    public int[][] getMatrix(int[] list) {
+        int numOfObjects = (int) Math.sqrt(list.length);
+        int[][] matrix = new int[numOfObjects][numOfObjects];
+        int counter = 0;
+        for (int i = 0; i < numOfObjects; i++) {
+            for (int j = 0; j < numOfObjects; j++) {
+                matrix[i][j] = list[counter];
+                counter++;
+            }
+        }
+        return matrix;
+    }
 
-        String FILENAME = "results.txt";
-        FileWriter fileWriter = new FileWriter(FILENAME);
+    private void writeHashMapDataToFile(String filename) throws IOException {
+
+        FileWriter fileWriter = new FileWriter(filename);
         BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
         double seconds = (double) estimatedTime / 1000000000.0;
         bufferedWriter.write("Time to calculate in seconds: " + seconds);
         bufferedWriter.newLine();
-        averageCost = totalCostAllPermutations / count;
-        standardDeviation = (long) Math.sqrt((totalSquaredCostAllPermutations -
-                (totalCostAllPermutations * totalCostAllPermutations / count)) / count);
+
         bufferedWriter.write("Min cost : " + min + " ::::: Permutation is " + getPermutationString(bestPermutation));
         bufferedWriter.newLine();
         bufferedWriter.write("Max cost : " + max + " ::::: Permutation is " + getPermutationString(worstPermutation));
@@ -217,11 +190,7 @@ public class MainQAPSolution {
         bufferedWriter.newLine();
         bufferedWriter.write("Sum of the squared costs is :" + totalSquaredCostAllPermutations);
         bufferedWriter.newLine();
-        bufferedWriter.write("Average cost is: " + averageCost);
-        bufferedWriter.newLine();
-        bufferedWriter.write("The standard deviation is: " + standardDeviation);
-        bufferedWriter.newLine();
-        bufferedWriter.write("Total permutations ran: " + count);
+        bufferedWriter.write("Total permutations ran: " + countResults(getResults()));
         bufferedWriter.newLine();
         for (Map.Entry<Integer, ArrayList<int[]>> entry : results.entrySet()) {
             Integer key = entry.getKey();
@@ -252,6 +221,18 @@ public class MainQAPSolution {
 
     public int[] getBestPermutation() {
         return this.bestPermutation;
+    }
+
+    public int getLocationCount() {
+        return distanceMatrix.length;
+    }
+
+    private int countResults(HashMap<Integer, ArrayList<int[]>> results) {
+        int count = 0;
+        for (Map.Entry<Integer, ArrayList<int[]>> entry : results.entrySet()) {
+            count += entry.getValue().size();
+        }
+        return count;
     }
 }
 //
