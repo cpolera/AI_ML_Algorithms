@@ -7,13 +7,16 @@ import static models.GeneticAlgorithm.company.QAPUtility.shuffleArray;
 
 /**
  * Apr 20, 2023: This code is over 5 years old and needs to be heavily refactored. Lots of novice mistakes and issues
+ *
+ * Permutations are isolated which means this would benefit from multithreading or something similar
+ *
  */
 public class MainQAPSolution {
 
     int[][] flowMatrix;
     int[][] distanceMatrix;
 
-    static HashMap<Integer, Integer> results = new HashMap<>();
+    HashMap<Integer, ArrayList<int[]>> results = new HashMap<Integer, ArrayList<int[]>>();
     int[] val;
     int now = -1;
     int locationCount = 4;
@@ -68,7 +71,7 @@ public class MainQAPSolution {
     }
 
     /**
-     * Calculate's the cost of each permutation
+     * Calculates the cost of each permutation
      */
     public void handlePermutation() {
         count++;
@@ -128,12 +131,8 @@ public class MainQAPSolution {
             worstPermutation = permutation;
         }
 
-        if (results.get(permutationCost) != null) {
-            int priorVal = results.get(permutationCost);
-            results.replace(permutationCost, priorVal + 1);
-        } else {
-            results.put(permutationCost, 1);
-        }
+        results.computeIfAbsent(permutationCost, k -> new ArrayList<int[]>());
+        results.get(permutationCost).add(permutation);
     }
 
     public void processMetrics(int cost) {
@@ -225,9 +224,9 @@ public class MainQAPSolution {
         bufferedWriter.newLine();
         bufferedWriter.write("Total permutations ran: " + count);
         bufferedWriter.newLine();
-        for (Map.Entry<Integer, Integer> entry : results.entrySet()) {
+        for (Map.Entry<Integer, ArrayList<int[]>> entry : results.entrySet()) {
             Integer key = entry.getKey();
-            Integer value = entry.getValue();
+            int value = entry.getValue().size();
             log("Result Value: " + key + " ... Count: " + value, 3);
             String outputString = "" + key + ", " + value;
             bufferedWriter.newLine();
@@ -242,6 +241,14 @@ public class MainQAPSolution {
         if(debugLevel <= Integer.parseInt(System.getProperty("QAP_DEBUG_LEVEL"))){
             System.out.println(logString);
         }
+    }
+
+    public void setFile(String filePath) {
+        this.file = filePath;
+    }
+
+    public HashMap<Integer, ArrayList<int[]>> getResults() {
+        return this.results;
     }
 }
 //
