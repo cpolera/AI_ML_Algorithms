@@ -1,4 +1,4 @@
-Time to calculate in seconds: 0.0147585
+Time to calculate in seconds: 0.0124301
 Min cost : 70 ::::: Permutation is  4 1 3 2
 Max cost : 74 ::::: Permutation is  1 4 2 3
 Total cost is :1728

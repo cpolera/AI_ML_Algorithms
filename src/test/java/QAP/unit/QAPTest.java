@@ -23,13 +23,20 @@ public class QAPTest {
     }
 
     @BeforeClass
-    public void beforeClass() throws IOException {
+    public void beforeClass() {
         Dotenv.configure().systemProperties().load();
     }
 
     @Test(dataProvider = "data")
     public void testPermutationCount(MainQAPSolution mainQAPSolution) {
         Assert.assertEquals(countResults(mainQAPSolution.getResults()), 24);
+    }
+
+    @Test(dataProvider = "data")
+    public void testBestPermutation(MainQAPSolution mainQAPSolution) {
+        int[] bestPermutation = mainQAPSolution.getBestPermutation();
+        int bestPermutationCost = mainQAPSolution.calculateCost(bestPermutation);
+        Assert.assertEquals(bestPermutationCost, 70);
     }
 
     private int countResults(HashMap<Integer, ArrayList<int[]>> results) {

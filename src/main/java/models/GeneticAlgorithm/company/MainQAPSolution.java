@@ -10,23 +10,26 @@ import static models.GeneticAlgorithm.company.QAPUtility.shuffleArray;
  *
  * Permutations are isolated which means this would benefit from multithreading or something similar
  *
+ * Improvements:
+ * If a certain subset cost is worse than the best permutation overall cost thus far, skip all other iterations with that pattern
+ * requires generating permutation and checking cost before moving on to generating the next one.
+ *
  */
 public class MainQAPSolution {
 
-    int[][] flowMatrix;
-    int[][] distanceMatrix;
+    int[][] flowMatrix; // required flow between facilities
+    int[][] distanceMatrix; // distance between locations
 
     HashMap<Integer, ArrayList<int[]>> results = new HashMap<Integer, ArrayList<int[]>>();
     int[] val;
     int now = -1;
-    int locationCount = 4;
+    int locationCount;
     long count = 0;
 
     String file; // Put at root of project for now //had20.txt is all facilities go to all other facilities
-    static int min = 0;
+    int min = 0;
     int[] bestPermutation;
     int[] worstPermutation;
-    ArrayList<int[]> bestPermutations = new ArrayList<>();
     long totalCostAllPermutations;
     long totalSquaredCostAllPermutations;
     float averageCost;
@@ -121,11 +124,9 @@ public class MainQAPSolution {
     }
 
     public void handleCost(int[] permutation, int permutationCost) {
-        if (min == 0 || min >= permutationCost) { //
+        if (min == 0 || min >= permutationCost) {
             min = permutationCost;
             bestPermutation = permutation;
-            bestPermutations = new ArrayList<>();
-            bestPermutations.add(permutation);
         } else if (max < permutationCost) {
             max = permutationCost;
             worstPermutation = permutation;
@@ -139,8 +140,6 @@ public class MainQAPSolution {
         totalCostAllPermutations = totalCostAllPermutations + cost;
         totalSquaredCostAllPermutations = totalSquaredCostAllPermutations + ((long) cost * cost);
     }
-
-
 
     public int calculateCost(int[] permutation) {
         int cost = 0;
@@ -249,6 +248,10 @@ public class MainQAPSolution {
 
     public HashMap<Integer, ArrayList<int[]>> getResults() {
         return this.results;
+    }
+
+    public int[] getBestPermutation() {
+        return this.bestPermutation;
     }
 }
 //
