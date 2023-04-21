@@ -1,5 +1,6 @@
 package implementations.FinalProjStocks;
 
+import io.github.cdimascio.dotenv.Dotenv;
 import models.FeedForward.NNMath;
 import models.FeedForward.components.Network;
 import models.FeedForward.components.NetworkTester;
@@ -32,6 +33,8 @@ public class StocksMain {
 
     ////WHAT A FREAKING MESS
     public static void main(String[] args) throws IOException {
+        Dotenv.configure().systemProperties().load();
+
         StocksMain stocksMain = new StocksMain();
         stocksMain.parseJSON();
 
