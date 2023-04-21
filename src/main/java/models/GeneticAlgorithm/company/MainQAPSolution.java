@@ -20,16 +20,13 @@ public class MainQAPSolution {
     String file; // Put at root of project for now //had20.txt is all facilities go to all other facilities
 
     HashMap<Integer, ArrayList<int[]>> results = new HashMap<Integer, ArrayList<int[]>>();
-    int[] currentFacilityPermutation; // Facility values start at 1; 0 is used for special case // TODO: make -1 special case and start at 0
+    int[] currentFacilityPermutation; // Facility values start at 1; 0 is used for special case
     int now = -1;
 
     int min = 0;
     int max = 0;
     int[] bestPermutation;
     int[] worstPermutation;
-
-    long totalCostAllPermutations;
-    long totalSquaredCostAllPermutations;
 
     long startTime;
     long estimatedTime;
@@ -47,7 +44,7 @@ public class MainQAPSolution {
 
         consoleReport();
         String filename = "results_" + this.file +".txt";
-        writeHashMapDataToFile(filename);
+        logToOutputFile(filename);
     }
 
     /**
@@ -78,7 +75,6 @@ public class MainQAPSolution {
         int[] permutation = currentFacilityPermutation.clone();
 
         int permutationCost = calculateCost(permutation);
-        handleCost(permutation, permutationCost);
 
         int permutationCount = countResults(getResults());
         log(permutationCount + " ** " + getPermutationString(permutation) + " : " + permutationCost + "**", 2);
@@ -88,7 +84,8 @@ public class MainQAPSolution {
         if (min == 0 || min >= permutationCost) {
             min = permutationCost;
             bestPermutation = permutation;
-        } else if (max < permutationCost) {
+        }
+        if (max < permutationCost) {
             max = permutationCost;
             worstPermutation = permutation;
         }
@@ -99,22 +96,21 @@ public class MainQAPSolution {
 
     public int calculateCost(int[] permutation) {
         int cost = 0;
+        // Facilities start at 1, so we subtract 1 to get the actual facility index
         for (int i = 0; i < permutation.length; i++) {
             int facility = permutation[i] - 1;
             for (int j = 0; j < permutation.length; j++) {
                 int receivingFacility = permutation[j] - 1;
                 int distance = distanceMatrix[i][j];
-                cost = cost + (distance * flowMatrix[facility][receivingFacility]);
+                cost += (distance * flowMatrix[facility][receivingFacility]);
             }
         }
+        handleCost(permutation, cost);
         return cost;
     }
 
     public String getPermutationString(int[] permutation) {
         String returnString = "";
-        if (permutation == null) {
-            permutation = new int[1];
-        }
         for (int aPermutation : permutation) {
             returnString = returnString + " " + aPermutation;
         }
@@ -126,8 +122,6 @@ public class MainQAPSolution {
         log("Time to calculate in seconds: " + seconds, 1);
         log("Min cost : " + min + " ::::: Permutation is " + getPermutationString(bestPermutation), 1);
         log("Max cost : " + max + " ::::: Permutation is " + getPermutationString(worstPermutation), 1);
-        log("Total cost is :" + totalCostAllPermutations, 1);
-        log("Sum of the squared costs is :" + totalSquaredCostAllPermutations, 1);
         log("Total permutations ran: " + countResults(getResults()), 1);
     }
 
@@ -155,13 +149,13 @@ public class MainQAPSolution {
             }
         }
 
-        flowMatrix = getMatrix(inputs[1]);
-        distanceMatrix = getMatrix(inputs[0]);
+        flowMatrix = generateMatrix(inputs[1]);
+        distanceMatrix = generateMatrix(inputs[0]);
 
         sc.close();
     }
 
-    public int[][] getMatrix(int[] list) {
+    public int[][] generateMatrix(int[] list) {
         int numOfObjects = (int) Math.sqrt(list.length);
         int[][] matrix = new int[numOfObjects][numOfObjects];
         int counter = 0;
@@ -174,21 +168,16 @@ public class MainQAPSolution {
         return matrix;
     }
 
-    private void writeHashMapDataToFile(String filename) throws IOException {
-
+    private void logToOutputFile(String filename) throws IOException {
         FileWriter fileWriter = new FileWriter(filename);
         BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
+
         double seconds = (double) estimatedTime / 1000000000.0;
         bufferedWriter.write("Time to calculate in seconds: " + seconds);
         bufferedWriter.newLine();
-
         bufferedWriter.write("Min cost : " + min + " ::::: Permutation is " + getPermutationString(bestPermutation));
         bufferedWriter.newLine();
         bufferedWriter.write("Max cost : " + max + " ::::: Permutation is " + getPermutationString(worstPermutation));
-        bufferedWriter.newLine();
-        bufferedWriter.write("Total cost is :" + totalCostAllPermutations);
-        bufferedWriter.newLine();
-        bufferedWriter.write("Sum of the squared costs is :" + totalSquaredCostAllPermutations);
         bufferedWriter.newLine();
         bufferedWriter.write("Total permutations ran: " + countResults(getResults()));
         bufferedWriter.newLine();
@@ -202,6 +191,7 @@ public class MainQAPSolution {
         }
         bufferedWriter.newLine();
         bufferedWriter.newLine();
+
         bufferedWriter.close();
     }
 
@@ -227,7 +217,11 @@ public class MainQAPSolution {
         return distanceMatrix.length;
     }
 
-    private int countResults(HashMap<Integer, ArrayList<int[]>> results) {
+    public int countResults() {
+        return countResults(getResults());
+    }
+
+    public int countResults(HashMap<Integer, ArrayList<int[]>> results) {
         int count = 0;
         for (Map.Entry<Integer, ArrayList<int[]>> entry : results.entrySet()) {
             count += entry.getValue().size();

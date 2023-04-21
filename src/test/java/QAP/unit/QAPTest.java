@@ -29,7 +29,7 @@ public class QAPTest {
 
     @Test(dataProvider = "data")
     public void testPermutationCount(MainQAPSolution mainQAPSolution) {
-        Assert.assertEquals(countResults(mainQAPSolution.getResults()), 24);
+        Assert.assertEquals(mainQAPSolution.countResults(), 24);
     }
 
     @Test(dataProvider = "data")
@@ -37,13 +37,5 @@ public class QAPTest {
         int[] bestPermutation = mainQAPSolution.getBestPermutation();
         int bestPermutationCost = mainQAPSolution.calculateCost(bestPermutation);
         Assert.assertEquals(bestPermutationCost, 70);
-    }
-
-    private int countResults(HashMap<Integer, ArrayList<int[]>> results) {
-        int count = 0;
-        for (Map.Entry<Integer, ArrayList<int[]>> entry : results.entrySet()) {
-            count += entry.getValue().size();
-        }
-        return count;
     }
 }
