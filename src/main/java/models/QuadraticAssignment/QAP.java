@@ -119,7 +119,7 @@ public class QAP {
             HashSet<Integer> thisLocationVisited = new HashSet<>();
             thisLocationVisited.add(locationI);
             allLocationsVisited.put(locationI, thisLocationVisited);
-            for (int locationJ = 0; locationJ < permutation.length; locationJ++) { // TODO: something isnt calculating correctly here
+            for (int locationJ = 0; locationJ < permutation.length; locationJ++) {
                 if(!allLocationsVisited.containsKey(locationJ) || !allLocationsVisited.get(locationJ).contains(locationI)){ // Only for separate locations
                     int facilityIndex = permutation[locationI]; // Facility I at location I
                     int receivingFacilityIndex = permutation[locationJ]; // Facility J at location J
