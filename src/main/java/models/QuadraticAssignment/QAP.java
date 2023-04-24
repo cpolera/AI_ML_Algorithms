@@ -25,6 +25,10 @@ import static models.QuadraticAssignment.QAPUtility.generateMatrix;
  */
 public class QAP {
 
+    // HashMap looks to have a max key count of 2.14 bil. Worst case matrix of 13x13 results in 6.2 bil
+    // So current limit should be 12x12. This is naive limit and assumes every facility has a flow to another
+    private static int FACILITY_LIMIT = 12;
+
     private int[][] flowMatrix; // required flow between facilities
     private int[][] distanceMatrix; // distance between locations
     private String file; // Put at root of project for now //qap20.txt is all facilities go to all other facilities
@@ -42,11 +46,14 @@ public class QAP {
         this.file = filename;
     }
 
-    public void runSolution() throws IOException {
+    public void runSolution() throws Exception {
         long startTime = System.nanoTime();
         log("Starting evaluation...", 1);
 
         readInData(this.file);
+        if(getLocationCount() > FACILITY_LIMIT) {
+            throw new Exception("File facility count limit exceeded");
+        }
         currentFacilityPermutation = new int[getLocationCount()];
         Arrays.fill(currentFacilityPermutation, -1);
         generateAndProcessPermutations(0);

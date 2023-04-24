@@ -12,7 +12,7 @@ import java.io.IOException;
 @Test()
 public class QAPTest {
     @DataProvider
-    public Object[] data() throws IOException {
+    public Object[] data() throws Exception {
         QAP QAP1 = new QAP("qap4.txt");
         QAP1.runSolution();
         return new QAP[]{QAP1};

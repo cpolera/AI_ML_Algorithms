@@ -6,7 +6,7 @@ import java.io.IOException;
 
 public class Runner {
 
-    public static void main(String args[]) throws IOException {
+    public static void main(String args[]) throws Exception {
         Dotenv.configure().systemProperties().load();
 
         QAP QAP1 = new QAP("qap4.txt"); // 4! = 24
