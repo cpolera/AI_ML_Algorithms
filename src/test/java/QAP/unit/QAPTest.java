@@ -7,11 +7,13 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
+import java.io.FileNotFoundException;
+
 @Test()
 public class QAPTest {
     @DataProvider
     public Object[] data() throws Exception {
-        QAP QAP1 = new QAP("qap4.txt");
+        QAP QAP1 = new QAP("src/test/java/QAP/resources/qap4.txt");
         QAP1.runSolution();
         return new QAP[]{QAP1};
     }
@@ -33,10 +35,11 @@ public class QAPTest {
         Assert.assertEquals(bestPermutationCost, 35);
     }
 
-    public void testPermutationCostCalculation() {
-        QAP QAP = new QAP("qap4_Realistic.txt");
+    public void testPermutationCostCalculation() throws FileNotFoundException {
+        QAP qap = new QAP("src/test/java/QAP/resources/qap4_Realistic.txt");
+        qap.readInData();
         int[] testPermutation = new int[]{1,0,3,2};
-        int cost = QAP.calculateCost(testPermutation);
+        int cost = qap.calculateCost(testPermutation);
         Assert.assertEquals(cost, 419);
     }
 }

@@ -53,7 +53,7 @@ public class QAP {
         long startTime = System.nanoTime();
         log("Starting evaluation...", 1);
 
-        readInData(this.file);
+        readInData();
         if(getLocationCount() > FACILITY_LIMIT) {
             throw new Exception("File facility count limit exceeded");
         }
@@ -65,7 +65,7 @@ public class QAP {
         log("Completed evaluation.", 1);
 
         consoleReport();
-        String filename = "results_" + this.file;
+        String filename = "results.txt";
         logToOutputFile(filename);
     }
 
@@ -188,8 +188,8 @@ public class QAP {
      * --
      * @throws FileNotFoundException
      */
-    public void readInData(String filename) throws FileNotFoundException {
-        Scanner sc = new Scanner(new File(filename));
+    public void readInData() throws FileNotFoundException {
+        Scanner sc = new Scanner(new File(this.file));
         int size = sc.nextInt();
         int[][] inputs = new int[2][size * size];
         for (int i = 0; i < 2; i++) {
