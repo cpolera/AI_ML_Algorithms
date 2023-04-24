@@ -7,8 +7,6 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-import java.io.IOException;
-
 @Test()
 public class QAPTest {
     @DataProvider
@@ -35,7 +33,7 @@ public class QAPTest {
         Assert.assertEquals(bestPermutationCost, 35);
     }
 
-    public void testPermutationCostCalculation() throws IOException {
+    public void testPermutationCostCalculation() {
         QAP QAP = new QAP("qap4_Realistic.txt");
         int[] testPermutation = new int[]{1,0,3,2};
         int cost = QAP.calculateCost(testPermutation);

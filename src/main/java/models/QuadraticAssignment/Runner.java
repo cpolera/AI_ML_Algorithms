@@ -2,8 +2,6 @@ package models.QuadraticAssignment;
 
 import io.github.cdimascio.dotenv.Dotenv;
 
-import java.io.IOException;
-
 public class Runner {
 
     public static void main(String args[]) throws Exception {
