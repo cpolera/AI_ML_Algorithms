@@ -1,6 +1,7 @@
-package models.Bayesian;
+package Bayesian;
 
 import common.Vector;
+import models.Bayesian.BayesianClassifier;
 
 public class BayesianMain {
 

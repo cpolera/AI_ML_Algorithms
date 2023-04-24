@@ -111,7 +111,7 @@ public class StocksMain {
         objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
 
         Stock[] stocks = objectMapper.readValue(
-                new File("src/main/java/implementations/FinalProjStocks/data/" + filename),
+                new File("src/test/java/implementations/FinalProjStocks/data/" + filename),
                 Stock[].class
         );
 

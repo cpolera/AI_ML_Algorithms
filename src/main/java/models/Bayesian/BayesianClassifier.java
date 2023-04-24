@@ -7,7 +7,7 @@ public class BayesianClassifier {
     Vector[] coords;
     Vector calculatedMean;
     Matrix covarianceMatrix = new Matrix(2, 2);
-    Matrix inverseCovariance;
+    public Matrix inverseCovariance;
 
     public BayesianClassifier() {}
 

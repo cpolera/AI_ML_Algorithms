@@ -1,6 +1,7 @@
-package models.NearestNeighbor;
+package NearestNeighbor;
 
 import common.Vector;
+import models.NearestNeighbor.ObjectNN;
 
 import java.io.IOException;
 import java.util.ArrayList;

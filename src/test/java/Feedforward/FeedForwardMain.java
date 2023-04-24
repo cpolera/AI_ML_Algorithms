@@ -1,5 +1,6 @@
-package models.FeedForward;
+package Feedforward;
 
+import models.FeedForward.Logger;
 import models.FeedForward.components.NNObj;
 import models.FeedForward.components.Network;
 
