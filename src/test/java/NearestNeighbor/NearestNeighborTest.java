@@ -16,7 +16,7 @@ import static common.implementations.models.NearestNeighbor.NearestNeighborClass
 public class NearestNeighborTest {
     @DataProvider
     public Object[][] data() {
-        return (Object[][]) new Object[]{initDataSpecific()};
+        return new Object[][]{new ArrayList[]{initDataSpecific()}};
     }
 
     @BeforeClass
