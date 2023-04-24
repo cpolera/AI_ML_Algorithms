@@ -5,9 +5,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-public class NearestNeighborRunner {
+public class NearestNeighborClassifier {
 
-    public static void classifyData(ArrayList<ObjectNN> neighbors, int k){
+    public static void classifyNeighbors(ArrayList<ObjectNN> neighbors, int k){
         // Go through each node
         for (ObjectNN vertex : neighbors) { // O(n)
             ObjectNN.focusedNode = vertex;

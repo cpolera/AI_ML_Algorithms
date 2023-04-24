@@ -16,6 +16,9 @@ import java.util.Scanner;
 import static models.QuadraticAssignment.QAPUtility.generateMatrix;
 
 /**
+ * Quadratic Assignment Problem Solver
+ * Limited to a max of 12 facilities/locations due to space complexity
+ *
  * Permutations are isolated which means this would benefit from multithreading or something similar
  *
  * Improvements:
@@ -31,16 +34,16 @@ public class QAP {
 
     private int[][] flowMatrix; // required flow between facilities
     private int[][] distanceMatrix; // distance between locations
-    private String file; // Put at root of project for now //qap20.txt is all facilities go to all other facilities
+    private String file; // Put at root of project for now
 
-    private final HashMap<Integer, ArrayList<int[]>> results = new HashMap<Integer, ArrayList<int[]>>();
+    private final HashMap<Integer, ArrayList<int[]>> results = new HashMap<>();
     private int[] currentFacilityPermutation;
     private int nextFacilityId = -2; // Needs to start at -2
 
     private int min = 0;
     private int max = 0;
 
-    private long estimatedTime;
+    private long runSolutionDuration;
 
     public QAP(String filename){
         this.file = filename;
@@ -58,7 +61,7 @@ public class QAP {
         Arrays.fill(currentFacilityPermutation, -1);
         generateAndProcessPermutations(0);
 
-        estimatedTime = System.nanoTime() - startTime;
+        runSolutionDuration = System.nanoTime() - startTime;
         log("Completed evaluation.", 1);
 
         consoleReport();
@@ -164,7 +167,7 @@ public class QAP {
     }
 
     public void consoleReport() {
-        double seconds = (double) estimatedTime / 1000000000.0;
+        double seconds = (double) runSolutionDuration / 1000000000.0;
         log("Time to calculate in seconds: " + seconds, 1);
         log("Min cost : " + min + " ::::: Permutation is " + getPermutationString(getBestPermutation()), 1);
         log("Max cost : " + max + " ::::: Permutation is " + getPermutationString(getWorstPermutation()), 1);
@@ -245,7 +248,7 @@ public class QAP {
         FileWriter fileWriter = new FileWriter(filename);
         BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
 
-        double seconds = (double) estimatedTime / 1000000000.0;
+        double seconds = (double) runSolutionDuration / 1000000000.0;
         bufferedWriter.write("Time to calculate in seconds: " + seconds);
         bufferedWriter.newLine();
         bufferedWriter.write("Min cost : " + min + " ::::: Permutation is " + getPermutationString(getBestPermutation()));

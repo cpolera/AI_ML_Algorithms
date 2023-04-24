@@ -9,7 +9,7 @@ import common.Vector;
  */
 public class ObjectNN implements Comparable {
 
-    public static int idIncr = 0;
+    private static int idIncr = 0;
     public static ObjectNN focusedNode;
 
     public Vector vector;
