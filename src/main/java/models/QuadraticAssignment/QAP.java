@@ -1,7 +1,17 @@
 package models.QuadraticAssignment;
 
-import java.io.*;
-import java.util.*;
+
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Scanner;
 
 /**
  * Permutations are isolated which means this would benefit from multithreading or something similar

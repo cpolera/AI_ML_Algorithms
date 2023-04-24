@@ -1,8 +1,11 @@
 package models.NearestNeighbor;
+
 import common.Vector;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 
 import static models.NearestNeighbor.NearestNeighborRunner.classifyData;
 
