@@ -13,6 +13,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Scanner;
 
+import static models.QuadraticAssignment.QAPUtility.generateMatrix;
+
 /**
  * Permutations are isolated which means this would benefit from multithreading or something similar
  *
@@ -200,52 +202,6 @@ public class QAP {
         sc.close();
     }
 
-    public int[][] generateMatrix(int[] list) {
-        int numOfObjects = (int) Math.sqrt(list.length);
-        int[][] matrix = new int[numOfObjects][numOfObjects];
-        int counter = 0;
-        for (int i = 0; i < numOfObjects; i++) {
-            for (int j = 0; j < numOfObjects; j++) {
-                matrix[i][j] = list[counter];
-                counter++;
-            }
-        }
-        return matrix;
-    }
-
-    private void logToOutputFile(String filename) throws IOException {
-        FileWriter fileWriter = new FileWriter(filename);
-        BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
-
-        double seconds = (double) estimatedTime / 1000000000.0;
-        bufferedWriter.write("Time to calculate in seconds: " + seconds);
-        bufferedWriter.newLine();
-        bufferedWriter.write("Min cost : " + min + " ::::: Permutation is " + getPermutationString(getBestPermutation()));
-        bufferedWriter.newLine();
-        bufferedWriter.write("Max cost : " + max + " ::::: Permutation is " + getPermutationString(getWorstPermutation()));
-        bufferedWriter.newLine();
-        bufferedWriter.write("Total permutations ran: " + countResults(getResults()));
-        bufferedWriter.newLine();
-        for (Map.Entry<Integer, ArrayList<int[]>> entry : results.entrySet()) {
-            Integer key = entry.getKey();
-            int value = entry.getValue().size();
-            log("Result Value: " + key + " ... Count: " + value, 3);
-            String outputString = "" + key + ", " + value;
-            bufferedWriter.newLine();
-            bufferedWriter.write(outputString);
-        }
-        bufferedWriter.newLine();
-        bufferedWriter.newLine();
-
-        bufferedWriter.close();
-    }
-
-    public static void log(String logString, int debugLevel){
-        if(debugLevel <= Integer.parseInt(System.getProperty("QAP_DEBUG_LEVEL"))){
-            System.out.println(logString);
-        }
-    }
-
     public void setFile(String filePath) {
         this.file = filePath;
     }
@@ -284,6 +240,39 @@ public class QAP {
             count += entry.getValue().size();
         }
         return count;
+    }
+
+    private void logToOutputFile(String filename) throws IOException {
+        FileWriter fileWriter = new FileWriter(filename);
+        BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
+
+        double seconds = (double) estimatedTime / 1000000000.0;
+        bufferedWriter.write("Time to calculate in seconds: " + seconds);
+        bufferedWriter.newLine();
+        bufferedWriter.write("Min cost : " + min + " ::::: Permutation is " + getPermutationString(getBestPermutation()));
+        bufferedWriter.newLine();
+        bufferedWriter.write("Max cost : " + max + " ::::: Permutation is " + getPermutationString(getWorstPermutation()));
+        bufferedWriter.newLine();
+        bufferedWriter.write("Total permutations ran: " + countResults(getResults()));
+        bufferedWriter.newLine();
+        for (Map.Entry<Integer, ArrayList<int[]>> entry : results.entrySet()) {
+            Integer key = entry.getKey();
+            int value = entry.getValue().size();
+            log("Result Value: " + key + " ... Count: " + value, 3);
+            String outputString = "" + key + ", " + value;
+            bufferedWriter.newLine();
+            bufferedWriter.write(outputString);
+        }
+        bufferedWriter.newLine();
+        bufferedWriter.newLine();
+
+        bufferedWriter.close();
+    }
+
+    public static void log(String logString, int debugLevel){
+        if(debugLevel <= Integer.parseInt(System.getProperty("QAP_DEBUG_LEVEL"))){
+            System.out.println(logString);
+        }
     }
 }
 //

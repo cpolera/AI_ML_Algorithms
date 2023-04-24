@@ -27,4 +27,17 @@ public class QAPUtility {
         }
         return array;
     }
+
+    public static int[][] generateMatrix(int[] list) {
+        int numOfObjects = (int) Math.sqrt(list.length);
+        int[][] matrix = new int[numOfObjects][numOfObjects];
+        int counter = 0;
+        for (int i = 0; i < numOfObjects; i++) {
+            for (int j = 0; j < numOfObjects; j++) {
+                matrix[i][j] = list[counter];
+                counter++;
+            }
+        }
+        return matrix;
+    }
 }
