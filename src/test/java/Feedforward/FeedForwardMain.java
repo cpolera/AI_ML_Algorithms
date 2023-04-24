@@ -20,7 +20,7 @@ public class FeedForwardMain {
         Logger logger = network.getLogger();
         NNObj[] trainingSet = createTrainingSymbolList();
         NNObj[] testSymbols = createTestSymbolList();
-        network.trainingCountPerCycle = 20000;
+        network.trainingCountPerCycle = 1000;
         network.maxTrainingCycles = 1;
         network.desiredError = 0.1;
         network.setupNetwork(2, 1, trainingSet, testSymbols);
