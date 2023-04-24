@@ -14,7 +14,7 @@ import java.util.Arrays;
 import java.util.Collections;
 
 public class StocksMain {
-    public static Stock[] jsonToStockArray;
+    public static Stock[] stockDailyData;
     static int sampleExtractionSize = 10;
     Stock[] jsonToStockArray_cgc;
     Stock[] jsonToStockArray_msft;
@@ -26,18 +26,26 @@ public class StocksMain {
     StockGroup[] stockGroups_CGC;
     int periodSize_Input = 10;
     int outputDay = 1;
-    int arrayLengthIfoutputDayNext = -1;
+    int arrayLengthIfOutputDayNext = -1;
 
     public StocksMain() {
     }
 
-    ////WHAT A FREAKING MESS
+    /**
+     * main function is way too heavy. Need to refactor and abstract what I can
+     *
+     * This is really rough
+     *
+     * @param args
+     * @throws IOException
+     */
     public static void main(String[] args) throws IOException {
         Dotenv.configure().systemProperties().load();
 
         StocksMain stocksMain = new StocksMain();
-        stocksMain.parseJSON();
-
+        stockDailyData = stocksMain.parseJSON("CRON.json");
+        //jsonToStockArray_cgc = objectMapper.readValue(new File("src/FinalProjStocks/CGC.json"), Stock[].class);
+        //jsonToStockArray_msft = objectMapper.readValue(new File("src/FinalProjStocks/MSFT.json"), Stock[].class);
         stocksMain.prepareCRON(1);
 
         Stock.highest = 0;
@@ -47,7 +55,7 @@ public class StocksMain {
 
         //shuffle to randomize order
         //Collections.shuffle(Arrays.asList(stocksMain.stockGroups_CRON));
-        Collections.shuffle(Arrays.asList(stocksMain.jsonToStockArray));
+        Collections.shuffle(Arrays.asList(stocksMain.stockDailyData));
         //Collections.shuffle(Arrays.asList(stocksMain.jsonToStockArray_cgc));
         stocksMain.createStockTesting_TrainingLists();
         //stocksMain.createStockGroupTesting_TrainingLists();
@@ -75,7 +83,7 @@ public class StocksMain {
 //        //network.predictOutput(stocks);
 
         stocksMain.prepareFinalTestArrays();
-        jsonToStockArray = stocksMain.reverseArray(jsonToStockArray);
+        stockDailyData = stocksMain.reverseArray(stockDailyData);
         //stocksMain.prepareFinalTestArrays();
         stocksMain.createStockTesting_TrainingLists();
         System.out.println("PREDICTING OUTCOME==========================================================");
@@ -83,6 +91,150 @@ public class StocksMain {
         networkTester.testNetwork(stocksMain.testingGroup);
         System.currentTimeMillis();
 
+        stocksMain.consoleReport(stocksMain.testingGroup);
+    }
+
+    public static Stock[] reverseArray(Stock[] stocks) {
+        Stock[] temp = new Stock[stocks.length];
+
+        int counter = 0;
+        for (int i = stocks.length - 1; i >= 0; i--) {
+            temp[i] = stocks[counter];
+            counter++;
+        }
+        return temp;
+    }
+
+    public static Stock[] parseJSON(String filename) throws IOException {
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
+
+        Stock[] stocks = objectMapper.readValue(
+                new File("src/main/java/implementations/FinalProjStocks/data/" + filename),
+                Stock[].class
+        );
+
+        return stocks;
+    }
+
+    public void prepareFinalTestArrays() throws IOException {
+        stockDailyData = parseJSON("CRON.json");
+        prepareCRON(stockDailyData.length - 31);
+
+        //jsonToStockArray = updateArray_PredictNextDay_UsingCurrentClose(jsonToStockArray);
+    }
+
+    private Stock[] updateArray_PredictNextDay_UsingCurrentClose(Stock[] stocks) {
+        stocks = reverseArray(stocks);
+
+        for (int i = 0; i < stocks.length - 2; i++) {
+            Stock stock = stocks[i];
+            double currentDayVal = stocks[i + 1].close;
+            stock.previousDayClose = stocks[i].close;
+            stock.closePrediction = currentDayVal;
+            stock.normalizeUpdatedVals();
+        }
+        return Arrays.copyOf(stocks, stocks.length - 1);
+    }
+
+    private void createStockTesting_TrainingLists() {
+        testingGroup = new Stock[sampleExtractionSize];
+        int counter = 0;
+        for (int i = StocksMain.sampleExtractionSize; i >= 1; i--) {
+            testingGroup[counter] = stockDailyData[i];
+            counter++;
+        }
+        trainingGroup = Arrays.copyOf(stockDailyData, stockDailyData.length - 15);
+    }
+
+    private void createStockGroupTesting_TrainingLists() {
+        testingStockGroups = new StockGroup[sampleExtractionSize];
+        int counter = 0;
+        for (int i = StocksMain.sampleExtractionSize; i >= 1; i--) {
+            testingStockGroups[counter] = stockGroups_CRON[i];
+            counter++;
+        }
+        trainingStockGroups = Arrays.copyOf(stockGroups_CRON, stockGroups_CRON.length - 10);
+    }
+
+    private void prepareCGC() {
+        for (Stock stock : jsonToStockArray_cgc) {
+            stock.updatedVals();
+            stock.updateDesc();
+        }
+        for (Stock stock : jsonToStockArray_cgc) {
+            stock.normalizeUpdatedVals();
+        }
+        for (int i = 0; i < jsonToStockArray_cgc.length - 1; i++) {
+            Stock stock = jsonToStockArray_cgc[i];
+            double nextDayVal = jsonToStockArray_cgc[i + 1].close;
+            stock.previousDayClose = nextDayVal;
+            stock.normalizeUpdatedVals();
+        }
+        jsonToStockArray_cgc = Arrays.copyOf(jsonToStockArray_cgc, jsonToStockArray_cgc.length - 1);
+    }
+
+    private void prepareCRON(int dayReduction) {
+        for (Stock stock : stockDailyData) {
+            stock.updatedVals();
+            stock.updateDesc();
+        }
+        for (int i = 1; i < stockDailyData.length + arrayLengthIfOutputDayNext; i++) {
+            Stock stock = stockDailyData[i];
+            double nextDayVal = stockDailyData[i + outputDay].close;
+            stock.previousDayClose = nextDayVal;//SETS PREVIOUS DAY AS NEXT DAY
+            stock.closePrediction = stockDailyData[i - 1].close;
+            stock.normalizeUpdatedVals();
+        }
+        stockDailyData = Arrays.copyOf(stockDailyData, stockDailyData.length - (dayReduction));
+        stockDailyData = reverseArray(stockDailyData);
+        stockDailyData = Arrays.copyOf(stockDailyData, stockDailyData.length - 1);
+
+        stockGroups_CRON = createStockGroups(stockDailyData, new int[]{periodSize_Input});
+    }
+
+    /**
+     * Create groupings of daily data nodes
+     *
+     * @param stockData
+     * @param groupSizes
+     * @return
+     */
+    public StockGroup[] createStockGroups(Stock[] stockData, int[] groupSizes) {
+        int size = 0;
+        for (int i : groupSizes) {
+            size = size + (stockData.length - i);
+        }
+        StockGroup[] stockGroups = new StockGroup[size];
+
+        for (int i = 0; i < groupSizes.length; i++) {
+            int periodSize = groupSizes[i];
+
+            int count = 0;
+            int stockCount = 0;
+
+
+            for (int j = 0; j < stockData.length - periodSize; j++) {
+                count = 0;
+                if (stockCount > periodSize - 1) {
+                    stockCount = stockCount - (periodSize - 1);
+                }
+                Stock[] tempList = new Stock[periodSize];
+                while (count % periodSize != 0 || count == 0) {
+                    tempList[count] = stockData[stockCount];
+                    stockCount++;
+                    count++;
+                }
+                stockGroups[j] = new StockGroup(tempList);
+            }
+        }
+
+
+        return stockGroups;
+    }
+
+    private void consoleReport(Stock[] testingGroup){
         int count = 0;
         double avg_Error = 0.0;
         int sugSharesTotal = 10;
@@ -96,7 +248,9 @@ public class StocksMain {
         double startingCapital = 285;
         String prevState = "S";
         String prevStateIdeal = "S";
-        System.out.println("Starting capital: " + startingCapital + " \tStarting portfolio value: " + totalIdealPortfolioVal);
+        System.out.println("Starting capital: " + startingCapital
+                + " \tStarting portfolio value: " + totalIdealPortfolioVal
+        );
 
         System.out.printf("%-22s%-22s%-22s%-22s%-22s%-22s%-22s%-22s%-22s%-22s%-22s%-22s%-22s%-22s%-22s\n",
                 "Date"
@@ -118,7 +272,7 @@ public class StocksMain {
                 , "Ideal Cash"
                 , "Ideal Total Capital"
         );
-        for (Stock stock : stocksMain.testingGroup) {
+        for (Stock stock : testingGroup) {
             double predictedNextPrice = NNMath.reverseSimpleLine(Stock.lowest, Stock.highest, stock.predictedPrice);
             double difResult = (predictedNextPrice - stock.closePrediction);
             double predictedPriceChange = (predictedNextPrice - stock.close) / stock.close;
@@ -208,143 +362,5 @@ public class StocksMain {
         System.out.println("Predicted portfolio value = " + (totalSugPortfolioVal + sugCash));
         System.out.println("Ideal portfolio value = " + (totalIdealPortfolioVal + idealCash));
         System.out.println("Average Error of Predicted Price: " + String.format("%.2f", (avg_Error / count)));
-    }
-
-    public static Stock[] reverseArray(Stock[] stocks) {
-        Stock[] temp = new Stock[stocks.length];
-
-        int counter = 0;
-        for (int i = stocks.length - 1; i >= 0; i--) {
-            temp[i] = stocks[counter];
-            counter++;
-        }
-        return temp;
-    }
-
-    public static void parseJSON() throws IOException {
-
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
-
-        jsonToStockArray = objectMapper.readValue(
-                new File("src/main/java/implementations/FinalProjStocks/data/CRON.json"),
-                Stock[].class
-        );
-        //jsonToStockArray_cgc = objectMapper.readValue(new File("src/FinalProjStocks/CGC.json"), Stock[].class);
-        //jsonToStockArray_msft = objectMapper.readValue(new File("src/FinalProjStocks/MSFT.json"), Stock[].class);
-
-    }
-
-    public void prepareFinalTestArrays() throws IOException {
-        parseJSON();
-        prepareCRON(jsonToStockArray.length - 31);
-
-        //jsonToStockArray = updateArray_PredictNextDay_UsingCurrentClose(jsonToStockArray);
-    }
-
-    private Stock[] updateArray_PredictNextDay_UsingCurrentClose(Stock[] stocks) {
-        stocks = reverseArray(stocks);
-
-        for (int i = 0; i < stocks.length - 2; i++) {
-            Stock stock = stocks[i];
-            double currentDayVal = stocks[i + 1].close;
-            stock.previousDayClose = stocks[i].close;
-            stock.closePrediction = currentDayVal;
-            stock.normalizeUpdatedVals();
-        }
-        return Arrays.copyOf(stocks, stocks.length - 1);
-    }
-
-    private void createStockTesting_TrainingLists() {
-        testingGroup = new Stock[sampleExtractionSize];
-        int counter = 0;
-        for (int i = StocksMain.sampleExtractionSize; i >= 1; i--) {
-            testingGroup[counter] = jsonToStockArray[i];
-            counter++;
-        }
-        trainingGroup = Arrays.copyOf(jsonToStockArray, jsonToStockArray.length - 15);
-    }
-
-    private void createStockGroupTesting_TrainingLists() {
-        testingStockGroups = new StockGroup[sampleExtractionSize];
-        int counter = 0;
-        for (int i = StocksMain.sampleExtractionSize; i >= 1; i--) {
-            testingStockGroups[counter] = stockGroups_CRON[i];
-            counter++;
-        }
-        trainingStockGroups = Arrays.copyOf(stockGroups_CRON, stockGroups_CRON.length - 10);
-    }
-
-    private void prepareCGC() {
-        for (Stock stock : jsonToStockArray_cgc) {
-            stock.updatedVals();
-            stock.updateDesc();
-        }
-        for (Stock stock : jsonToStockArray_cgc) {
-            stock.normalizeUpdatedVals();
-        }
-        for (int i = 0; i < jsonToStockArray_cgc.length - 1; i++) {
-            Stock stock = jsonToStockArray_cgc[i];
-            double nextDayVal = jsonToStockArray_cgc[i + 1].close;
-            stock.previousDayClose = nextDayVal;
-            stock.normalizeUpdatedVals();
-        }
-        jsonToStockArray_cgc = Arrays.copyOf(jsonToStockArray_cgc, jsonToStockArray_cgc.length - 1);
-    }
-
-    private void prepareCRON(int dayReduction) {
-        for (Stock stock : jsonToStockArray) {
-            stock.updatedVals();
-            stock.updateDesc();
-        }
-        for (int i = 1; i < jsonToStockArray.length + arrayLengthIfoutputDayNext; i++) {
-            Stock stock = jsonToStockArray[i];
-            double nextDayVal = jsonToStockArray[i + outputDay].close;
-            stock.previousDayClose = nextDayVal;//SETS PREVIOUS DAY AS NEXT DAY
-            stock.closePrediction = jsonToStockArray[i - 1].close;
-            stock.normalizeUpdatedVals();
-        }
-        jsonToStockArray = Arrays.copyOf(jsonToStockArray, jsonToStockArray.length - (dayReduction));
-        jsonToStockArray = reverseArray(jsonToStockArray);
-        jsonToStockArray = Arrays.copyOf(jsonToStockArray, jsonToStockArray.length - 1);
-
-        stockGroups_CRON = createStockGroups(jsonToStockArray, new int[]{periodSize_Input});
-
-    }
-
-    public StockGroup[] createStockGroups(Stock[] stocks, int[] groupSizes) {
-        int size = 0;
-        for (int i : groupSizes) {
-            size = size + (stocks.length - i);
-        }
-        StockGroup[] stockGroups = new StockGroup[size];
-
-        for (int i = 0; i < groupSizes.length; i++) {
-            int periodSize = groupSizes[i];
-
-            int count = 0;
-            int stockCount = 0;
-
-
-            for (int j = 0; j < stocks.length - periodSize; j++) {
-                count = 0;
-                if (stockCount > periodSize - 1) {
-                    stockCount = stockCount - (periodSize - 1);
-                }
-                Stock[] tempList = new Stock[periodSize];
-                while (count % periodSize != 0 || count == 0) {
-                    tempList[count] = stocks[stockCount];
-                    stockCount++;
-                    count++;
-                }
-                stockGroups[j] = new StockGroup(tempList);
-            }
-        }
-
-
-        return stockGroups;
-    }
-
-    public void createGenericSimpleExample() {
     }
 }

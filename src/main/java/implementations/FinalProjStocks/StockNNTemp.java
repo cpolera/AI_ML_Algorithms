@@ -27,8 +27,8 @@ public class StockNNTemp {
     static ObjectNN[] unknownObjects;
 
     public static void main(String[] args) throws IOException {
-        StocksMain.parseJSON();
-        Stock[] newStocks = Arrays.copyOf(StocksMain.jsonToStockArray, StocksMain.jsonToStockArray.length - 1);
+        Stock[] parsedStocks = StocksMain.parseJSON("CRON.json");
+        Stock[] newStocks = Arrays.copyOf(parsedStocks, parsedStocks.length - 1);
         newStocks = StocksMain.reverseArray(newStocks);
         int count = 0;
         yVals = new double[newStocks.length];
