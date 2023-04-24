@@ -1,7 +1,7 @@
 package Feedforward.LoggerTests;
 
 
-import models.FeedForward.*;
+import models.FeedForward.Logger;
 import models.FeedForward.components.NNObj;
 import models.FeedForward.components.Network;
 import models.FeedForward.components.Node;
