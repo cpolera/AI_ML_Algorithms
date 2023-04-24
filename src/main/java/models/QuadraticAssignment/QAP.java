@@ -25,18 +25,22 @@ import static models.QuadraticAssignment.QAPUtility.generateMatrix;
  */
 public class QAP {
 
-    int[][] flowMatrix; // required flow between facilities
-    int[][] distanceMatrix; // distance between locations
-    String file; // Put at root of project for now //qap20.txt is all facilities go to all other facilities
+    private int[][] flowMatrix; // required flow between facilities
+    private int[][] distanceMatrix; // distance between locations
+    private String file; // Put at root of project for now //qap20.txt is all facilities go to all other facilities
 
-    HashMap<Integer, ArrayList<int[]>> results = new HashMap<Integer, ArrayList<int[]>>();
-    int[] currentFacilityPermutation; // Location values start at 1; 0 is used for special case
-    int nextFacilityId = -2; // Needs to start at -2
+    private final HashMap<Integer, ArrayList<int[]>> results = new HashMap<Integer, ArrayList<int[]>>();
+    private int[] currentFacilityPermutation;
+    private int nextFacilityId = -2; // Needs to start at -2
 
-    int min = 0;
-    int max = 0;
+    private int min = 0;
+    private int max = 0;
 
-    long estimatedTime;
+    private long estimatedTime;
+
+    public QAP(String filename){
+        this.file = filename;
+    }
 
     public void runSolution() throws IOException {
         long startTime = System.nanoTime();
@@ -56,17 +60,14 @@ public class QAP {
     }
 
     /**
-     * This was not documented before so the following is my best understanding after staring at the code
+     * Generates permutations and processes them as it goes
      *
      *  This updates the currentFacilityPermutation
-     *  K index indicates the value to be set to nextFacilityId
-     *  At the end sets k index back to 0 and decrements nextFacilityId
-     *
-     *  A value of -1 at any index indicates it needs the nextFacilityId
+     *  A value of -1 at any index  of the permutation indicates it needs the nextFacilityId
      *
      * @param k index to place nextFacilityId
      */
-    public void generateAndProcessPermutations(int k) {
+    private void generateAndProcessPermutations(int k) {
         log("Starting nextFacilityId: " + nextFacilityId + "\t\t", 4);
         nextFacilityId++;
         log("Pre-interim permutation:\t " + getPermutationString(currentFacilityPermutation) + "\tk: " + k + "\tnextFacilityId: " + nextFacilityId, 4);
@@ -90,23 +91,14 @@ public class QAP {
         currentFacilityPermutation[k] = -1;
     }
 
-    /**
-     * Calculates the cost of each permutation
-     */
-    public void processPermutation(int[] permutation) {
+    private void processPermutation(int[] permutation) {
         int permutationCost = calculateCost(permutation);
 
         int permutationCount = countResults(getResults());
         log(permutationCount + " ** " + getPermutationString(permutation) + " : " + permutationCost + "**", 2);
     }
 
-    /**
-     * Updates related variables as needed based on the latest permutation cost
-     *
-     * @param permutation
-     * @param permutationCost
-     */
-    private void handleCost(int[] permutation, int permutationCost) {
+    private void updateCostMetrics(int[] permutation, int permutationCost) {
         if (min == 0 || min >= permutationCost) {
             min = permutationCost;
         }
@@ -152,7 +144,7 @@ public class QAP {
                 thisLocationVisited.add(locationJ);
             }
         }
-        handleCost(permutation, cost);
+        updateCostMetrics(permutation, cost);
         return cost;
     }
 
