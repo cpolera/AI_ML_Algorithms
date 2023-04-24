@@ -1,6 +1,6 @@
 # AI and ML Implementations
 
-Java 8 / Maven Project
+Java 17 / Maven Project
 
 This was a playground to try out implementing different AI/ML paradigms early in my coding career.  
 
