@@ -1,17 +1,17 @@
 package Feedforward.LoggerTests;
 
 
-import models.FeedForward.Logger;
-import models.FeedForward.components.NNObj;
-import models.FeedForward.components.Network;
-import models.FeedForward.components.Node;
-import models.FeedForward.components.OutputNode;
+import common.implementations.models.FeedForward.Logger;
+import common.implementations.models.FeedForward.components.NNObj;
+import common.implementations.models.FeedForward.components.Network;
+import common.implementations.models.FeedForward.components.Node;
+import common.implementations.models.FeedForward.components.OutputNode;
 import com.google.gson.Gson;
 
 import java.io.IOException;
 
-import static models.FeedForward.FeedForwardExampleGenerator.createTrainingSymbolList;
-import static models.FeedForward.FeedForwardExampleGenerator.createTestSymbolList;
+import static common.implementations.models.FeedForward.FeedForwardExampleGenerator.createTrainingSymbolList;
+import static common.implementations.models.FeedForward.FeedForwardExampleGenerator.createTestSymbolList;
 
 public class LoggerMainTest {
 

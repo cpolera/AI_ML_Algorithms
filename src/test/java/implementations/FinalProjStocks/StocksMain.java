@@ -1,12 +1,14 @@
 package implementations.FinalProjStocks;
 
+import common.implementations.FinalProjStocks.Stock;
+import common.implementations.FinalProjStocks.StockGroup;
 import io.github.cdimascio.dotenv.Dotenv;
-import models.FeedForward.NNMath;
-import models.FeedForward.components.Network;
-import models.FeedForward.components.NetworkTester;
+import common.implementations.models.FeedForward.NNMath;
+import common.implementations.models.FeedForward.components.Network;
+import common.implementations.models.FeedForward.components.NetworkTester;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import implementations.FinalProjStocks.utils.TradesUtil;
+import common.implementations.FinalProjStocks.utils.TradesUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -130,8 +132,8 @@ public class StocksMain {
 
         for (int i = 0; i < stocks.length - 2; i++) {
             Stock stock = stocks[i];
-            double currentDayVal = stocks[i + 1].close;
-            stock.previousDayClose = stocks[i].close;
+            double currentDayVal = stocks[i + 1].getClose();
+            stock.previousDayClose = stocks[i].getClose();
             stock.closePrediction = currentDayVal;
             stock.normalizeUpdatedVals();
         }
@@ -168,7 +170,7 @@ public class StocksMain {
         }
         for (int i = 0; i < jsonToStockArray_cgc.length - 1; i++) {
             Stock stock = jsonToStockArray_cgc[i];
-            double nextDayVal = jsonToStockArray_cgc[i + 1].close;
+            double nextDayVal = jsonToStockArray_cgc[i + 1].getClose();
             stock.previousDayClose = nextDayVal;
             stock.normalizeUpdatedVals();
         }
@@ -182,9 +184,9 @@ public class StocksMain {
         }
         for (int i = 1; i < stockDailyData.length + arrayLengthIfOutputDayNext; i++) {
             Stock stock = stockDailyData[i];
-            double nextDayVal = stockDailyData[i + outputDay].close;
+            double nextDayVal = stockDailyData[i + outputDay].getClose();
             stock.previousDayClose = nextDayVal;//SETS PREVIOUS DAY AS NEXT DAY
-            stock.closePrediction = stockDailyData[i - 1].close;
+            stock.closePrediction = stockDailyData[i - 1].getClose();
             stock.normalizeUpdatedVals();
         }
         stockDailyData = Arrays.copyOf(stockDailyData, stockDailyData.length - (dayReduction));
@@ -275,9 +277,9 @@ public class StocksMain {
         for (Stock stock : testingGroup) {
             double predictedNextPrice = NNMath.reverseSimpleLine(Stock.lowest, Stock.highest, stock.predictedPrice);
             double difResult = (predictedNextPrice - stock.closePrediction);
-            double predictedPriceChange = (predictedNextPrice - stock.close) / stock.close;
-            double nominalPriceChange = stock.closePrediction - stock.close;
-            double percentChangeActual = nominalPriceChange / stock.close;
+            double predictedPriceChange = (predictedNextPrice - stock.getClose()) / stock.getClose();
+            double nominalPriceChange = stock.closePrediction - stock.getClose();
+            double percentChangeActual = nominalPriceChange / stock.getClose();
             double priceChangeError = difResult - nominalPriceChange;
             double priceChangePercentError = priceChangeError / nominalPriceChange;
             double error = percentChangeActual - predictedPriceChange;
@@ -338,7 +340,7 @@ public class StocksMain {
             averageShareCostIdeal = totalIdealPortfolioVal / idealSharesTotal;
 
             System.out.printf("%-22s%-22s%-22s%-22s%-22s%-22s%-22s%-22s%-22s%-22s%-22s%-22s%-22s%-22s%-22s\n",
-                    stock.date
+                    stock.getDate()
                     //,String.format( "%.2f", stock.close) +
                     , String.format("%.3f", predictedNextPrice) + "---" + String.format("%.2f", stock.closePrediction)
                     //,Dif Act. Next And Pred: " + String.format( "%.3f", difResult)

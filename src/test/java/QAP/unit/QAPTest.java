@@ -1,7 +1,7 @@
 package QAP.unit;
 
 import io.github.cdimascio.dotenv.Dotenv;
-import models.QuadraticAssignment.QAP;
+import common.implementations.models.QuadraticAssignment.QAP;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
@@ -12,10 +12,10 @@ import java.io.FileNotFoundException;
 @Test()
 public class QAPTest {
     @DataProvider
-    public Object[] data() throws Exception {
+    public Object[][] data() throws Exception {
         QAP QAP1 = new QAP("src/test/java/QAP/resources/qap4.txt");
         QAP1.runSolution();
-        return new QAP[]{QAP1};
+        return new QAP[][]{new QAP[]{QAP1}};
     }
 
     @BeforeClass

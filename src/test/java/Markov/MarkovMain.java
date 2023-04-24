@@ -1,6 +1,6 @@
 package Markov;
 
-import models.Markov.MarkovModel;
+import common.implementations.models.Markov.MarkovModel;
 
 import java.util.ArrayList;
 import java.util.Random;

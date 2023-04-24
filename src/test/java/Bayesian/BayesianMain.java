@@ -1,7 +1,7 @@
 package Bayesian;
 
 import common.Vector;
-import models.Bayesian.BayesianClassifier;
+import common.implementations.models.Bayesian.BayesianClassifier;
 
 public class BayesianMain {
 

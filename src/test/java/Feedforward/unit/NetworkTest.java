@@ -2,13 +2,13 @@ package Feedforward.unit;
 
 import io.github.cdimascio.dotenv.Dotenv;
 
-import models.FeedForward.components.Connection;
-import models.FeedForward.components.HiddenNode;
-import models.FeedForward.components.InputNode;
-import models.FeedForward.components.NNObj;
-import models.FeedForward.components.Network;
-import models.FeedForward.components.NetworkTrainer;
-import models.FeedForward.components.OutputNode;
+import common.implementations.models.FeedForward.components.Connection;
+import common.implementations.models.FeedForward.components.HiddenNode;
+import common.implementations.models.FeedForward.components.InputNode;
+import common.implementations.models.FeedForward.components.NNObj;
+import common.implementations.models.FeedForward.components.Network;
+import common.implementations.models.FeedForward.components.NetworkTrainer;
+import common.implementations.models.FeedForward.components.OutputNode;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
@@ -21,7 +21,7 @@ import java.math.RoundingMode;
 @Test()
 public class NetworkTest {
     @DataProvider
-    public Object[] data() {
+    public Object[][] data() {
         return new NNObj[][][]{
               new NNObj[][]{xorTrainingList(), xorTestingList()}
         };

@@ -1,7 +1,7 @@
 package NearestNeighbor;
 
 import io.github.cdimascio.dotenv.Dotenv;
-import models.NearestNeighbor.ObjectNN;
+import common.implementations.models.NearestNeighbor.ObjectNN;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
@@ -10,13 +10,13 @@ import org.testng.annotations.Test;
 import java.util.ArrayList;
 
 import static NearestNeighbor.NearestNeighborTestHelper.initDataSpecific;
-import static models.NearestNeighbor.NearestNeighborClassifier.classifyNeighbors;
+import static common.implementations.models.NearestNeighbor.NearestNeighborClassifier.classifyNeighbors;
 
 @Test()
 public class NearestNeighborTest {
     @DataProvider
-    public Object[] data() {
-        return new Object[]{initDataSpecific()};
+    public Object[][] data() {
+        return (Object[][]) new Object[]{initDataSpecific()};
     }
 
     @BeforeClass

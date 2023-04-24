@@ -1,13 +1,13 @@
 package Feedforward;
 
-import models.FeedForward.Logger;
-import models.FeedForward.components.NNObj;
-import models.FeedForward.components.Network;
+import common.implementations.models.FeedForward.Logger;
+import common.implementations.models.FeedForward.components.NNObj;
+import common.implementations.models.FeedForward.components.Network;
 
 import java.io.IOException;
 
-import static models.FeedForward.FeedForwardExampleGenerator.createTrainingSymbolList;
-import static models.FeedForward.FeedForwardExampleGenerator.createTestSymbolList;
+import static common.implementations.models.FeedForward.FeedForwardExampleGenerator.createTrainingSymbolList;
+import static common.implementations.models.FeedForward.FeedForwardExampleGenerator.createTestSymbolList;
 
 import io.github.cdimascio.dotenv.Dotenv;
 
