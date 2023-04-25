@@ -1,7 +1,7 @@
 package NearestNeighbor;
 
-import common.Vector;
-import common.implementations.models.NearestNeighbor.ObjectNN;
+import com.implementations.models.common.Vector;
+import com.implementations.models.NearestNeighbor.ObjectNN;
 
 import java.util.ArrayList;
 import java.util.Arrays;

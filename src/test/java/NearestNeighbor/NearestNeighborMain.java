@@ -1,12 +1,12 @@
 package NearestNeighbor;
 
-import common.Vector;
-import common.implementations.models.NearestNeighbor.ObjectNN;
+import com.implementations.models.common.Vector;
+import com.implementations.models.NearestNeighbor.ObjectNN;
 
 import java.io.IOException;
 import java.util.ArrayList;
 
-import static common.implementations.models.NearestNeighbor.NearestNeighborClassifier.classifyNeighbors;
+import static com.implementations.models.NearestNeighbor.NearestNeighborClassifier.classifyNeighbors;
 
 /**
  * Classification algorithm also known as k-nearest neighbors algorithm

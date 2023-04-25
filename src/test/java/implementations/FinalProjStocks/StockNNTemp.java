@@ -1,7 +1,7 @@
 package implementations.FinalProjStocks;
 
-import common.implementations.FinalProjStocks.Stock;
-import common.implementations.models.NearestNeighbor.ObjectNN;
+import com.implementations.FinalProjStocks.Stock;
+import com.implementations.models.NearestNeighbor.ObjectNN;
 
 import java.io.IOException;
 import java.util.ArrayList;
