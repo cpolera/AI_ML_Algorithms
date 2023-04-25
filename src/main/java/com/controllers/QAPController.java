@@ -25,7 +25,7 @@ public class QAPController {
 
     @PostMapping("/qap/create/{filename}")
     QAPEntity newQAPEntity(@PathVariable String filename) throws FileNotFoundException {
-        QAPEntity qapEntity = new QAPEntity("src/test/java/QAP/resources/" + filename + ".txt");
+        QAPEntity qapEntity = new QAPEntity("src/main/resources/" + filename + ".txt");
         return repository.save(qapEntity);
     }
 
