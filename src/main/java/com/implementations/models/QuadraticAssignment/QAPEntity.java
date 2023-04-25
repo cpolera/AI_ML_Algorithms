@@ -1,5 +1,6 @@
 package com.implementations.models.QuadraticAssignment;
 
+import com.controllers.Status;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
@@ -22,6 +23,8 @@ public class QAPEntity {
     private int[] lowestCostPermutation;
     private int[] highestCostPermutation;
     private long runSolutionDuration;
+
+    private Status status = Status.NOT_RUN;
 
     @Transient
     private QAPSolver qapSolver;
@@ -107,6 +110,15 @@ public class QAPEntity {
     public long getRunSolutionDuration() {
         return runSolutionDuration;
     }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
+    }
+
 
     @Override
     public int hashCode() {
