@@ -1,4 +1,4 @@
-package com.controllers;
+package com.controllers.QuadraticAssignment;
 
 public class QAPEntityNotFoundException extends RuntimeException {
     public QAPEntityNotFoundException(Long id) {

@@ -11,9 +11,10 @@ Update Notes:
 April 3, 2023: I am currently revisiting the project to resolve some of those issues. This includes bug fixes, applying better coding standards, and most importantly leveraging better DSA implementations for performance and maintainability
 
 April 21, 2023: I've refactored quite a bit. Most models and algorithms are now readable as well as less complex in their logic. I've also fixed several bugs along the way and abstracted where necessary. It was both pleasant to see how far I've come since writing this code originally whilst also being groan-inducing to see what I had coded those years ago. 
+
+April 25, 2023: Add Spring Boot and started developing APIs
 ## Models
-Model implementations can be found at src > main > java > models
-Documentation on how to run these is forthcoming. 
+Model implementations can be found at src > main > java > com > implementations > models
 
 ### Bayesian Classifier
 Refactored Apr 2023
@@ -33,10 +34,28 @@ Refactored Apr 2023
 ### Particle Swarm Optimization
 WIP - Needs implementation
 
-## Development
-Requires Java 8 and Maven. Developed with IntelliJ primarily. 
+## Running project
+This project is still being developed
 
-If adding a dependency while using IntelliJ, add dependency to pom file, right click the file, go to Maven, then Reload Project 
+However you can now start the application with Spring Boot as begin to access models.
+To start the application:
+` $ mvn clean spring-boot:run `
+
+Only the QAP model is ready at this time with limited functionality.
+
+Create (only the provided file here can be used for now):
+` $ curl -X POST localhost:8081/qap/create/qap4 `
+
+Get:
+` $ curl -X GET localhost:8081/qap/{ID} `
+or
+` $ curl -X GET localhost:8081/qap `
+
+Solve QAP:
+` $ curl -X GET localhost:8081/qap/solve/{ID} `
+
+## Development
+Requires Java 17 and Maven. Developed with IntelliJ primarily. 
 
 ## Environment Variables
 

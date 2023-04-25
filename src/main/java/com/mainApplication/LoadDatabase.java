@@ -1,6 +1,6 @@
 package com.mainApplication;
 
-import com.controllers.QAPRepository;
+import com.controllers.QuadraticAssignment.QAPRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
