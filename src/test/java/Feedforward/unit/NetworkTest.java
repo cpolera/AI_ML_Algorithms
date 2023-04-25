@@ -2,13 +2,13 @@ package Feedforward.unit;
 
 import io.github.cdimascio.dotenv.Dotenv;
 
-import common.implementations.models.FeedForward.components.Connection;
-import common.implementations.models.FeedForward.components.HiddenNode;
-import common.implementations.models.FeedForward.components.InputNode;
-import common.implementations.models.FeedForward.components.NNObj;
-import common.implementations.models.FeedForward.components.Network;
-import common.implementations.models.FeedForward.components.NetworkTrainer;
-import common.implementations.models.FeedForward.components.OutputNode;
+import com.implementations.models.FeedForward.components.Connection;
+import com.implementations.models.FeedForward.components.HiddenNode;
+import com.implementations.models.FeedForward.components.InputNode;
+import com.implementations.models.FeedForward.components.NNObj;
+import com.implementations.models.FeedForward.components.Network;
+import com.implementations.models.FeedForward.components.NetworkTrainer;
+import com.implementations.models.FeedForward.components.OutputNode;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;

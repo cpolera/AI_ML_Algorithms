@@ -1,14 +1,14 @@
 package implementations.FinalProjStocks;
 
-import common.implementations.FinalProjStocks.Stock;
-import common.implementations.FinalProjStocks.StockGroup;
+import com.implementations.FinalProjStocks.Stock;
+import com.implementations.FinalProjStocks.StockGroup;
 import io.github.cdimascio.dotenv.Dotenv;
-import common.implementations.models.FeedForward.NNMath;
-import common.implementations.models.FeedForward.components.Network;
-import common.implementations.models.FeedForward.components.NetworkTester;
+import com.implementations.models.FeedForward.NNMath;
+import com.implementations.models.FeedForward.components.Network;
+import com.implementations.models.FeedForward.components.NetworkTester;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import common.implementations.FinalProjStocks.utils.TradesUtil;
+import com.implementations.FinalProjStocks.utils.TradesUtil;
 
 import java.io.File;
 import java.io.IOException;
