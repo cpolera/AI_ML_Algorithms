@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body>
+
+<div th:fragment="copy">
+    <ul>
+        <li><a th:href="@{/}">Home</a></li>
+        <li><a>Projects</a></li>
+        <ul>
+            <li><a th:href="@{view-qap}">Quadratic Assignment</a></li>
+            <li><a th:href="@{bayesian}">Bayesian</a></li>
+            <li><a th:href="@{feedforward}">Feedforward Network</a></li>
+            <li><a th:href="@{markov}">Markov</a></li>
+            <li><a th:href="@{nearest-neighbor}">Nearest Neighbor</a></li>
+        </ul>
+        <li><a>Experience</a></li>
+        <li><a>Contact</a></li>
+    </ul>
+</div>
+
+</body>
+
+</html>

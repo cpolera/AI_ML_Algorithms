@@ -1,7 +1,8 @@
 target
 /src/main/logs/
-/.idea/
+.idea/
 /src/logs/
 /.env
 /BackPropogationProject.iml
 /results.txt
+/*.iml

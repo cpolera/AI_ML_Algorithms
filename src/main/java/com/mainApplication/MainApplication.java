@@ -15,10 +15,10 @@ import org.springframework.web.bind.annotation.RestController;
 @EntityScan("com.implementations")
 public class MainApplication {
 
-    @RequestMapping("/")
-    String home() {
-        return "Hello World!";
-    }
+//    @RequestMapping("/")
+//    String home() {
+//        return "Hello World!";
+//    }
 
     public static void main(String[] args) {
         SpringApplication.run(MainApplication.class, args);
