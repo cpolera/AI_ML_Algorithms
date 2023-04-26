@@ -4,5 +4,6 @@ public enum Status {
 
     IN_PROGRESS,
     COMPLETED,
-    NOT_RUN
+    NOT_RUN,
+    EXCEPTION
 }

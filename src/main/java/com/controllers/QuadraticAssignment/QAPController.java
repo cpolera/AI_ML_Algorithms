@@ -7,12 +7,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.IanaLinkRelations;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.async.DeferredResult;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.io.FileNotFoundException;
 import java.util.List;
@@ -81,26 +83,42 @@ public class QAPController {
 
     @GetMapping("/qap/solve-deferredresult/{id}")
     public DeferredResult<ResponseEntity<?>> solveQAPDeferredResult(@PathVariable Long id) {
-        QAPEntity qapEntity = repository.findById(id)
-                .orElseThrow(() -> new QAPEntityNotFoundException(id));
-
-        qapEntity.setStatus(Status.IN_PROGRESS);
-        repository.save(qapEntity);
-
         log.info("Received async-deferredresult request");
         DeferredResult<ResponseEntity<?>> output = new DeferredResult<>();
 
+        final QAPEntity qapEntity = repository.findById(id)
+                .orElseThrow(() -> new QAPEntityNotFoundException(id));
+
         output.onCompletion(() -> {
+            log.info("onCompletion called");
             qapEntity.setStatus(Status.COMPLETED);
+            repository.save(qapEntity);
+        });
+
+        output.onError((Throwable t) -> {
+            output.setErrorResult(
+                    ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                            .body("An error occurred."));
+            qapEntity.setStatus(Status.EXCEPTION);
+            repository.save(qapEntity);
         });
 
         ForkJoinPool.commonPool().submit(() -> {
             log.info("Processing in separate thread");
-            try {
-                Thread.sleep(6000);
-            } catch (InterruptedException e) {
+            if(qapEntity.getStatus()!= Status.IN_PROGRESS){
+                try {
+                    qapEntity.setStatus(Status.IN_PROGRESS);
+                    repository.save(qapEntity);
+                    Thread.sleep(6000);
+                    qapEntity.solve();
+                } catch (InterruptedException e) {
+                } catch (Exception e) {
+//                throw new RuntimeException(e);
+                }
+                output.setResult(ResponseEntity.ok("ok"));
+            } else {
+                throw new ResponseStatusException(HttpStatus.FORBIDDEN);
             }
-            output.setResult(ResponseEntity.ok("ok"));
         });
 
         log.info("servlet thread freed");
