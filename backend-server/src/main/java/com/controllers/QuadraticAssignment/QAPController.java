@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.IanaLinkRelations;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -44,7 +45,7 @@ public class QAPController {
                 .map(assembler::toModel)
                 .collect(Collectors.toList());
 
-        return CollectionModel.of(qapEntities, linkTo(methodOn(QAPController.class).all()).withSelfRel());
+        return CollectionModel.of(qapEntities, WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(QAPController.class).all()).withSelfRel());
     }
 
     @PostMapping("/qap/create/{filename}")
