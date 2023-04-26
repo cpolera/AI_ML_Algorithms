@@ -1,11 +1,13 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset = "ISO-8859-1" />
     <link href = "css/styles.css" rel = "stylesheet"/>
     <title>Polera</title>
 </head>
 <body>
+<div th:insert="~{nav :: copy}"></div>
+
 <h4>
     <p>Welcome to my portfolio website.</p>
     <p>I built this site to showcase various project I've worked on.<br>
@@ -14,5 +16,7 @@
 </h4>
 
 <h4> This page is a placeholder for navigation and more</h4>
+
+<div th:insert="~{footer :: copy}"></div>
 </body>
 </html>
