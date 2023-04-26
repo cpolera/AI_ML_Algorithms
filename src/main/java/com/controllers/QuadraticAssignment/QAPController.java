@@ -83,7 +83,7 @@ public class QAPController {
 
     @GetMapping("/qap/solve-deferredresult/{id}")
     public DeferredResult<ResponseEntity<?>> solveQAPDeferredResult(@PathVariable Long id) {
-        log.info("Received async-deferredresult request");
+        log.info("Received /qap/solve-deferredresult request");
         DeferredResult<ResponseEntity<?>> output = new DeferredResult<>();
 
         final QAPEntity qapEntity = repository.findById(id)
@@ -109,15 +109,14 @@ public class QAPController {
                 try {
                     qapEntity.setStatus(Status.IN_PROGRESS);
                     repository.save(qapEntity);
-                    Thread.sleep(6000);
+                    // Thread.sleep(6000); // Uncomment for testing
                     qapEntity.solve();
-                } catch (InterruptedException e) {
                 } catch (Exception e) {
-//                throw new RuntimeException(e);
                 }
                 output.setResult(ResponseEntity.ok("ok"));
             } else {
-                throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+                log.info("QAPEntity solution is already in progress");
+                output.setResult(new ResponseEntity<>(HttpStatus.FORBIDDEN));
             }
         });
 
