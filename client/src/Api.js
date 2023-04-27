@@ -41,7 +41,7 @@ const createApi = (auth) => {
 
     // (D)elete
     removeForId(id) {
-      return instance.delete('api/qap/remove/' + id)
+      return instance.delete('api/qap/' + id)
     }
   }
 }
