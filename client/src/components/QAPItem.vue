@@ -1,5 +1,6 @@
 <template>
-  <q-item-section v-if="!editing">{{ this.item.title }}</q-item-section>
+  <q-item-section v-if="!editing">{{ this.item.filename }}</q-item-section>
+  <q-item-section v-if="!editing">{{ this.item.status }}</q-item-section>
   <q-item-section avatar class="hide-icon close-icon" @click="handleClickDelete">
     <q-icon color="red" name="close"/>
   </q-item-section>
