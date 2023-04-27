@@ -33,9 +33,6 @@ public class QAPSolver {
     private int[][] flowMatrix; // required flow between facilities
     private int[][] distanceMatrix; // distance between locations
 
-    private int[] flowMatrixFlattened;
-    private int[] distanceMatrixFlattened;
-
     private String file; // Put at root of project for now
 
     private final HashMap<Integer, ArrayList<int[]>> results = new HashMap<>();
@@ -51,11 +48,12 @@ public class QAPSolver {
         this.file = filename;
     }
 
-    public void runSolution() throws Exception {
+    public void runSolution(int[] flows, int[] distances) throws Exception {
         long startTime = System.nanoTime();
         log("Starting evaluation...", 1);
 
-        readInData();
+        flowMatrix = QAPUtility.generateMatrix(flows);
+        distanceMatrix = QAPUtility.generateMatrix(distances);
         if(getLocationCount() > FACILITY_LIMIT) {
             throw new Exception("File facility count limit exceeded");
         }
@@ -167,49 +165,8 @@ public class QAPSolver {
         return returnString;
     }
 
-    /**
-     * Setup the flow and distance matrices
-     * File should be txt with data as so:
-     * --
-     * 2
-     *
-     * 0 1
-     * 1 0
-     *
-     * 3 5
-     * 3 9
-     * --
-     * @throws FileNotFoundException
-     */
-    public void readInData() throws FileNotFoundException {
-        Scanner sc = new Scanner(new File(this.file));
-        int size = sc.nextInt();
-        int[][] inputs = new int[2][size * size];
-        for (int i = 0; i < 2; i++) {
-            for (int j = 0; j < size * size; j++) {
-                inputs[i][j] = sc.nextInt();
-            }
-        }
-
-        this.flowMatrixFlattened = inputs[1];
-        this.distanceMatrixFlattened = inputs[0];
-
-        flowMatrix = QAPUtility.generateMatrix(inputs[1]);
-        distanceMatrix = QAPUtility.generateMatrix(inputs[0]);
-
-        sc.close();
-    }
-
     public void setFilename(String filePath) {
         this.file = filePath;
-    }
-
-    public int[] getFlowMatrixFlattened(){
-        return this.flowMatrixFlattened;
-    }
-
-    public int[] getDistanceMatrixFlattened() {
-        return this.distanceMatrixFlattened;
     }
 
     public HashMap<Integer, ArrayList<int[]>> getResults() {

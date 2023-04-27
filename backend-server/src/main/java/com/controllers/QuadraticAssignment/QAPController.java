@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.async.DeferredResult;
@@ -46,9 +47,10 @@ public class QAPController {
         return CollectionModel.of(qapEntities, WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(QAPController.class).all()).withSelfRel());
     }
 
-    @PostMapping("/create/{filename}")
-    ResponseEntity<?> newQAPEntity(@PathVariable String filename) throws FileNotFoundException {
-        QAPEntity qapEntity = new QAPEntity("src/main/resources/" + filename + ".txt");
+    @PostMapping("/create")
+    ResponseEntity<?> newQAPEntity(@RequestBody QAPEntity qapEntity) throws FileNotFoundException {
+        // QAPEntity qapEntity = new QAPEntity("src/main/resources/" + filename + ".txt");
+        qapEntity.readInData();
         repository.save(qapEntity);
 
         EntityModel<QAPEntity> entityModel = assembler.toModel(qapEntity);

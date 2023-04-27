@@ -6,8 +6,10 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Transient;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Objects;
+import java.util.Scanner;
 
 import static com.implementations.models.QuadraticAssignment.QAPReporter.consoleReport;
 
@@ -26,33 +28,56 @@ public class QAPEntity {
 
     private Status status = Status.NOT_RUN;
 
-    @Transient
-    private QAPSolver qapSolver;
-
     public QAPEntity(){};
 
     public QAPEntity(String filename) throws FileNotFoundException {
         this.filename = filename;
-        this.qapSolver = new QAPSolver(this.filename);
-        this.qapSolver.readInData();
-        this.flowMatrixFlattened = this.qapSolver.getFlowMatrixFlattened();
-        this.distanceMatrixFlattened = this.qapSolver.getDistanceMatrixFlattened();
+        this.readInData();
+    }
+
+    /**
+     * Setup the flow and distance matrices
+     * File should be txt with data as so:
+     * --
+     * 2
+     *
+     * 0 1
+     * 1 0
+     *
+     * 3 5
+     * 3 9
+     * --
+     * @throws FileNotFoundException
+     */
+    public void readInData() throws FileNotFoundException {
+        Scanner sc = new Scanner(new File(this.filename));
+        int size = sc.nextInt();
+        int[][] inputs = new int[2][size * size];
+        for (int i = 0; i < 2; i++) {
+            for (int j = 0; j < size * size; j++) {
+                inputs[i][j] = sc.nextInt();
+            }
+        }
+
+        this.flowMatrixFlattened = inputs[1];
+        this.distanceMatrixFlattened = inputs[0];
+
+        sc.close();
     }
 
     public void solve() throws Exception {
-        if(this.qapSolver == null){
-            this.qapSolver = new QAPSolver(this.filename);
-        }
-        this.qapSolver.runSolution();
-        consoleReport(this.qapSolver);
-        setRunData();
+        QAPSolver qapSolver = new QAPSolver(this.filename);
+        
+        qapSolver.runSolution(flowMatrixFlattened, distanceMatrixFlattened);
+        consoleReport(qapSolver);
+        setRunData(qapSolver);
     }
 
     // Method to set data to be stored that we dont want to generate every time
-    private void setRunData(){
-        this.runSolutionDuration = this.qapSolver.getRunSolutionDuration();
-        this.lowestCostPermutation = this.qapSolver.getBestPermutation();
-        this.highestCostPermutation = this.qapSolver.getWorstPermutation();
+    private void setRunData(QAPSolver qapSolver){
+        this.runSolutionDuration = qapSolver.getRunSolutionDuration();
+        this.lowestCostPermutation = qapSolver.getBestPermutation();
+        this.highestCostPermutation = qapSolver.getWorstPermutation();
     }
 
     public void setId(Long id) {
