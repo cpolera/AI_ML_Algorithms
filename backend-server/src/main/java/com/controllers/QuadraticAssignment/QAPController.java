@@ -68,21 +68,8 @@ public class QAPController {
     }
 
     @GetMapping("/solve/{id}")
-    EntityModel<QAPEntity> solveQAP(@PathVariable Long id) throws Exception {
-
-        QAPEntity qapEntity = repository.findById(id)
-                .orElseThrow(() -> new QAPEntityNotFoundException(id));
-
-        qapEntity.solve();
-
-        repository.save(qapEntity);
-
-        return assembler.toModel(qapEntity);
-    }
-
-    @GetMapping("/solve-deferredresult/{id}")
     public DeferredResult<ResponseEntity<?>> solveQAPDeferredResult(@PathVariable Long id) {
-        log.info("Received /qap/solve-deferredresult request");
+        log.info("Received /qap/solve request");
         DeferredResult<ResponseEntity<?>> output = new DeferredResult<>();
 
         final QAPEntity qapEntity = repository.findById(id)

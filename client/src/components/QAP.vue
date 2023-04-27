@@ -16,7 +16,7 @@
                 :deleteMe="handleClickDelete"
                 :showError="handleShowError"
                 :setTitle="handleSetTitle"
-                v-if="filter === 'all' || (filter === 'incomplete' && !item.completed) || (filter === 'complete' && item.completed)"
+                v-if="filter === 'all' || (filter === 'incomplete' && item.status !== 'COMPLETED' ) || (filter === 'complete' && item.status === 'COMPLETED')"
             ></QAPItem>
           </q-item>
         </q-list>
@@ -36,8 +36,6 @@
         </q-item>
       </q-card-section>
       <q-card-section style="text-align: center">
-        <q-btn color="amber" text-color="black" label="Remove Completed" style="margin-right: 10px"
-               @click="handleDeleteCompleted"></q-btn>
         <q-btn-group>
           <q-btn glossy :color="filter === 'all' ? 'primary' : 'white'" text-color="black" label="All"
                  @click="handleSetFilter('all')"/>
@@ -102,8 +100,8 @@ export default {
   computed: {
     filteredQAPItems() {
       if (this.filter === 'all') return this.qapItems
-      else if (this.filter === 'complete') return this.qapItems.filter(qapItem => qapItem.completed)
-      else if (this.filter === 'incomplete') return this.qapItems.filter(qapItem => !qapItem.completed)
+      else if (this.filter === 'complete') return this.qapItems.filter(qapItem => qapItem.status === 'COMPLETED')
+      else if (this.filter === 'incomplete') return this.qapItems.filter(qapItem => qapItem.status !== 'COMPLETED')
       else return []
     }
   },
