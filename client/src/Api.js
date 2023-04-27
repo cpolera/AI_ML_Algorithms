@@ -21,12 +21,12 @@ const createApi = (auth) => {
 
     // (C)reate
     createNew(text, completed) {
-      return instance.post('/todos', {title: text, completed: completed})
+      return instance.post('/api/qap/create/qap4', {title: text, completed: completed})
     },
 
     // (R)ead
     getAll() {
-      return instance.get('/todos', {
+      return instance.get('/api/qap/all', {
         transformResponse: [function (data) {
           return data ? JSON.parse(data)._embedded.todos : data;
         }]
@@ -40,7 +40,7 @@ const createApi = (auth) => {
 
     // (D)elete
     removeForId(id) {
-      return instance.delete('todos/' + id)
+      return instance.delete('api/qap/remove/' + id)
     }
   }
 }

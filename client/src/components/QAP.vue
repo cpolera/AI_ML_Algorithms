@@ -2,23 +2,22 @@
   <div class="column justify-center items-center" id="row-container">
     <q-card class="my-card">
       <q-card-section>
-        <div class="text-h4">Todos</div>
+        <div class="text-h4">QAP</div>
         <q-list padding>
           <q-item
-              v-for="item in filteredTodos" :key="item.id"
+              v-for="item in filteredQAP" :key="item.id"
               clickable
               v-ripple
               rounded
-              class="todo-item"
+              class="qap-item"
           >
-            <TodoItem
+            <QAPItem
                 :item="item"
                 :deleteMe="handleClickDelete"
                 :showError="handleShowError"
-                :setCompleted="handleSetCompleted"
                 :setTitle="handleSetTitle"
                 v-if="filter === 'all' || (filter === 'incomplete' && !item.completed) || (filter === 'complete' && item.completed)"
-            ></TodoItem>
+            ></QAPItem>
           </q-item>
         </q-list>
       </q-card-section>
@@ -30,10 +29,8 @@
           <q-item-section>
             <input
                 type="text"
-                ref="newTodoInput"
-                v-model="newTodoTitle"
-                @change="handleDoneEditingNewTodo"
-                @blur="handleCancelEditingNewTodo"
+                ref="newQAPItem"
+                v-model="newqapItemTitle"
             />
           </q-item-section>
         </q-item>
@@ -49,7 +46,7 @@
           <q-btn glossy :color="filter === 'incomplete' ? 'primary' : 'white'" text-color="black" label="Incomplete"
                  @click="handleSetFilter('incomplete')"/>
           <q-tooltip>
-            Filter the todos
+            Filter the QAP items
           </q-tooltip>
         </q-btn-group>
       </q-card-section>
@@ -64,19 +61,19 @@
 
 <script>
 
-import TodoItem from '@/components/TodoItem';
+import QAPItem from '@/components/QAPItem';
 import { ref } from 'vue'
 
 export default {
   name: 'LayoutDefault',
   components: {
-    TodoItem
+    QAPItem
   },
 
   data: function() {
     return {
-      todos: [],
-      newTodoTitle: '',
+      qapItems: [],
+      newQAPTitle: '',
       visibility: 'all',
       loading: true,
       error: '',
@@ -93,20 +90,20 @@ export default {
     this.$api.getAll()
         .then(response => {
           this.$log.debug('Data loaded: ', response.data)
-          this.todos = response.data
+          this.qapItems = response.data
         })
         .catch(error => {
           this.$log.debug(error)
-          this.error = 'Failed to load todos'
+          this.error = 'Failed to load QAP items'
         })
         .finally(() => this.loading = false)
   },
 
   computed: {
-    filteredTodos() {
-      if (this.filter === 'all') return this.todos
-      else if (this.filter === 'complete') return this.todos.filter(todo => todo.completed)
-      else if (this.filter === 'incomplete') return this.todos.filter(todo => !todo.completed)
+    filteredQAPItems() {
+      if (this.filter === 'all') return this.qapItems
+      else if (this.filter === 'complete') return this.qapItems.filter(qapItem => qapItem.completed)
+      else if (this.filter === 'incomplete') return this.qapItems.filter(qapItem => !qapItem.completed)
       else return []
     }
   },
@@ -117,61 +114,61 @@ export default {
     },
 
     handleClickDelete(id) {
-      const todoToRemove = this.todos.find(todo => todo.id === id)
+      const qapItemToRemove = this.qapItems.find(qapItem => qapItem.id === id)
       this.$api.removeForId(id).then(() => {
-        this.$log.debug('Item removed:', todoToRemove);
-        this.todos.splice(this.todos.indexOf(todoToRemove), 1)
+        this.$log.debug('Item removed:', qapItemToRemove);
+        this.qapItems.splice(this.qapItems.indexOf(qapItemToRemove), 1)
       }).catch((error) => {
         this.$log.debug(error);
-        this.error = 'Failed to remove todo'
+        this.error = 'Failed to remove qap item'
       });
     },
 
     handleDeleteCompleted() {
-      const completed = this.todos.filter(todo => todo.completed)
-      Promise.all(completed.map(todoToRemove => {
-        return this.$api.removeForId(todoToRemove.id).then(() => {
-          this.$log.debug('Item removed:', todoToRemove);
-          this.todos.splice(this.todos.indexOf(todoToRemove), 1)
+      const completed = this.qapItems.filter(qapItem => qapItem.completed)
+      Promise.all(completed.map(qapItemToRemove => {
+        return this.$api.removeForId(qapItemToRemove.id).then(() => {
+          this.$log.debug('Item removed:', qapItemToRemove);
+          this.qapItems.splice(this.qapItems.indexOf(qapItemToRemove), 1)
         }).catch((error) => {
           this.$log.debug(error);
-          this.error = 'Failed to remove todo'
+          this.error = 'Failed to remove qapItem'
           return error
         })
       }))
     },
 
-    handleDoneEditingNewTodo() {
-      const value = this.newTodoTitle && this.newTodoTitle.trim()
+    handleDoneEditingNewQapItem() {
+      const value = this.newQapItemTitle && this.newQapItemTitle.trim()
       if (!value) {
         return
       }
       this.$api.createNew(value, false).then((response) => {
         this.$log.debug('New item created:', response)
-        this.newTodoTitle = ''
-        this.todos.push({
+        this.newQapItemTitle = ''
+        this.qapItems.push({
           id: response.data.id,
           title: value,
           completed: false
         })
-        this.$refs.newTodoInput.blur()
+        this.$refs.newQapItemInput.blur()
       }).catch((error) => {
         this.$log.debug(error);
-        this.error = 'Failed to add todo'
+        this.error = 'Failed to add qapItem'
       });
     },
-    handleCancelEditingNewTodo() {
-      this.newTodoTitle = ''
+    handleCancelEditingNewQapItem() {
+      this.newqapItemTitle = ''
     },
 
     handleSetCompleted(id, value) {
-      let todo = this.todos.find(todo => id === todo.id)
-      todo.completed = value
+      let qapItem = this.qapItems.find(qapItem => id === qapItem.id)
+      qapItem.completed = value
     },
 
     handleSetTitle(id, value) {
-      let todo = this.todos.find(todo => id === todo.id)
-      todo.title = value
+      let qapItem = this.qapItems.find(qapItem => id === qapItem.id)
+      qapItem.title = value
     },
 
     handleShowError(message) {

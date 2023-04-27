@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { navigationGuard } from '@okta/okta-vue'
-import Todos from '@/components/Todos';
 import Home from '@/components/Home';
+import QAP from '@/components/QAP';
 import { LoginCallback } from '@okta/okta-vue'
 
 const routes = [
@@ -9,14 +9,17 @@ const routes = [
     path: '/',
     component: Home
   },
+  { 
+    path: '/callback', 
+    component: LoginCallback 
+  },
   {
-    path: '/todos',
-    component: Todos,
+    path: '/qap',
+    component: QAP,
     meta: {
-      requiresAuth: true
+      requiresAuth: false
     }
   },
-  { path: '/callback', component: LoginCallback },
 ]
 
 const router = createRouter({
