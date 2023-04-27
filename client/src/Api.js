@@ -28,7 +28,8 @@ const createApi = (auth) => {
     getAll() {
       return instance.get('/api/qap/all', {
         transformResponse: [function (data) {
-          return data ? JSON.parse(data)._embedded.todos : data;
+          // return JSON.parse(data)._embedded;
+          return data ? JSON.parse(data)._embedded.qAPEntityList : data;
         }]
       })
     },

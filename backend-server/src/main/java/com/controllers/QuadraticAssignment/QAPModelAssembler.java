@@ -14,6 +14,6 @@ class QAPModelAssembler implements RepresentationModelAssembler<QAPEntity, Entit
 
         return EntityModel.of(qapEntity, //
                 WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(QAPController.class).getQAPEntity(qapEntity.getId())).withSelfRel(),
-                WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(QAPController.class).all()).withRel("employees"));
+                WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(QAPController.class).all()).withRel("allQAP"));
     }
 }

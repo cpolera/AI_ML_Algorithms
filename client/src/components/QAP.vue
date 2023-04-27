@@ -5,7 +5,7 @@
         <div class="text-h4">QAP</div>
         <q-list padding>
           <q-item
-              v-for="item in filteredQAP" :key="item.id"
+              v-for="item in filteredQAPItems" :key="item.id"
               clickable
               v-ripple
               rounded
@@ -30,7 +30,7 @@
             <input
                 type="text"
                 ref="newQAPItem"
-                v-model="newqapItemTitle"
+                v-model="newQapItemTitle"
             />
           </q-item-section>
         </q-item>
@@ -73,7 +73,7 @@ export default {
   data: function() {
     return {
       qapItems: [],
-      newQAPTitle: '',
+      newQapItemTitle: '',
       visibility: 'all',
       loading: true,
       error: '',
@@ -158,7 +158,7 @@ export default {
       });
     },
     handleCancelEditingNewQapItem() {
-      this.newqapItemTitle = ''
+      this.newQapItemTitle = ''
     },
 
     handleSetCompleted(id, value) {
