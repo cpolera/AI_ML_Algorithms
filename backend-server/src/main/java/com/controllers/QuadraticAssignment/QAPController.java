@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.async.DeferredResult;
 
@@ -22,6 +23,7 @@ import java.util.concurrent.ForkJoinPool;
 import java.util.stream.Collectors;
 
 @RestController
+@RequestMapping("/api/qap")
 public class QAPController {
 
     private final QAPRepository repository;
@@ -35,7 +37,7 @@ public class QAPController {
         this.assembler = assembler;
     }
 
-    @GetMapping("/qap")
+    @GetMapping("/all")
     CollectionModel<EntityModel<QAPEntity>> all() {
         List<EntityModel<QAPEntity>> qapEntities = repository.findAll().stream()
                 .map(assembler::toModel)
@@ -44,7 +46,7 @@ public class QAPController {
         return CollectionModel.of(qapEntities, WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(QAPController.class).all()).withSelfRel());
     }
 
-    @PostMapping("/qap/create/{filename}")
+    @PostMapping("/create/{filename}")
     ResponseEntity<?> newQAPEntity(@PathVariable String filename) throws FileNotFoundException {
         QAPEntity qapEntity = new QAPEntity("src/main/resources/" + filename + ".txt");
         repository.save(qapEntity);
@@ -56,7 +58,7 @@ public class QAPController {
                 .body(entityModel);
     }
 
-    @GetMapping("/qap/{id}")
+    @GetMapping("/{id}")
     EntityModel<QAPEntity> getQAPEntity(@PathVariable Long id) {
 
         QAPEntity qapEntity = repository.findById(id)
@@ -65,7 +67,7 @@ public class QAPController {
         return assembler.toModel(qapEntity);
     }
 
-    @GetMapping("/qap/solve/{id}")
+    @GetMapping("/solve/{id}")
     EntityModel<QAPEntity> solveQAP(@PathVariable Long id) throws Exception {
 
         QAPEntity qapEntity = repository.findById(id)
@@ -78,7 +80,7 @@ public class QAPController {
         return assembler.toModel(qapEntity);
     }
 
-    @GetMapping("/qap/solve-deferredresult/{id}")
+    @GetMapping("/solve-deferredresult/{id}")
     public DeferredResult<ResponseEntity<?>> solveQAPDeferredResult(@PathVariable Long id) {
         log.info("Received /qap/solve-deferredresult request");
         DeferredResult<ResponseEntity<?>> output = new DeferredResult<>();
