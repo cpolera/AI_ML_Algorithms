@@ -7,7 +7,7 @@
           <q-avatar>
             <q-icon name="kayaking" size="30px"></q-icon>
           </q-avatar>
-          Todo App
+          Machine Learning App
         </q-toolbar-title>
         {{ this.claims && this.claims.email ? claims.email : '' }}
         <q-btn flat round dense icon="logout" v-if='authState && authState.isAuthenticated' @click="logout"/>
@@ -46,7 +46,7 @@ export default {
       }
     },
     async login() {
-      await this.$auth.signInWithRedirect({ originalUri: '/todos' })
+      await this.$auth.signInWithRedirect({ originalUri: '/qap' })
     },
     async logout() {
       await this.$auth.signOut()
