@@ -21,15 +21,17 @@ const createApi = (auth) => {
 
     // (C)reate
     createNew(text, completed) {
-      return instance.post('/api/qap/create/qap4', {title: text, completed: completed})
+      return instance.post('/api/qap/create', {title: text, completed: completed})
     },
 
     // (R)ead
     getAll() {
       return instance.get('/api/qap/all', {
         transformResponse: [function (data) {
+          console.log(data)
+          console.log(data._embedded)
           // return JSON.parse(data)._embedded;
-          return data ? JSON.parse(data)._embedded.qAPEntityList : data;
+          return (data && JSON.parse(data)._embedded) ? JSON.parse(data)._embedded.qAPEntityList : [];
         }]
       })
     },

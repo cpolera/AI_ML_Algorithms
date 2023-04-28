@@ -115,6 +115,14 @@ public class QAPController {
 
     @DeleteMapping("/{id}")
     void deleteEmployee(@PathVariable Long id) {
-      repository.deleteById(id);
+
+        final QAPEntity qapEntity = repository.findById(id)
+        .orElseThrow(() -> new QAPEntityNotFoundException(id));
+
+        if(qapEntity.getStatus()!= Status.IN_PROGRESS){
+            repository.deleteById(id);
+        }else{
+            throw new RuntimeException("Cannot delete QAP Item with solution in progress");
+        }
     }
 }

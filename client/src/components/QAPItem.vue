@@ -1,7 +1,7 @@
 <template>
   <q-item-section v-if="!editing">{{ this.item.filename }}</q-item-section>
   <q-item-section v-if="!editing">{{ this.item.status }}</q-item-section>
-  <q-item-section avatar class="hide-icon close-icon" @click="handleClickDelete">
+  <q-item-section v-if="!running" avatar class="hide-icon close-icon" @click="handleClickDelete">
     <q-icon color="red" name="close"/>
   </q-item-section>
 </template>
@@ -19,6 +19,7 @@ export default {
   data: function () {
     return {
       editing: false,
+      running: this.item.status === "IN_PROGRESS",
       editingTitle: this.item.title,
     }
   },

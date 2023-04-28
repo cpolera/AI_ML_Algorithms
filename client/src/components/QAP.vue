@@ -118,7 +118,7 @@ export default {
         this.qapItems.splice(this.qapItems.indexOf(qapItemToRemove), 1)
       }).catch((error) => {
         this.$log.debug(error);
-        this.error = 'Failed to remove qap item'
+        this.error = 'Failed to remove qap item' // TODO: if fail due to status requery this one item?
       });
     },
 
