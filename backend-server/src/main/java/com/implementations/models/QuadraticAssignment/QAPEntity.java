@@ -18,7 +18,7 @@ public class QAPEntity {
 
     private @Id @GeneratedValue Long id;
 
-    private String filename;
+    private String filename = "";
     private int[] flowMatrixFlattened;
     private int[] distanceMatrixFlattened;
 

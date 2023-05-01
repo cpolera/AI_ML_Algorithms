@@ -30,6 +30,7 @@ Refactored Apr 2023
 
 ### Quadratic Assignment Problem
 Refactored Apr 2023
+Started frontend Apr 2023
 
 ### Particle Swarm Optimization
 WIP - Needs implementation
@@ -54,12 +55,15 @@ or
 Solve QAP:
 ` $ curl -X GET localhost:9000/api/qap/solve/{ID} `
 
+To spin up the UI, you'll need to cd into client, and run
+` $ npm run serve `
+
 ## Development
 Requires Java 17 and Maven. Developed with IntelliJ primarily. 
 
 ## Environment Variables
 
-Utilizing a .env file temporarily to set certain flags until a config structure is built
+Utilizing a .env file temporarily to set certain flags until a config structure is built for the backend
 
 Add a .env file to project root and set the following:
 ```

@@ -51,7 +51,9 @@ public class QAPController {
     @PostMapping("/create")
     ResponseEntity<?> newQAPEntity(@RequestBody QAPEntity qapEntity) throws FileNotFoundException {
         // QAPEntity qapEntity = new QAPEntity("src/main/resources/" + filename + ".txt");
-        qapEntity.readInData();
+        if(qapEntity.getFilename() != ""){
+            qapEntity.readInData();
+        }
         repository.save(qapEntity);
 
         EntityModel<QAPEntity> entityModel = assembler.toModel(qapEntity);
