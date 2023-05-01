@@ -44,15 +44,15 @@ To start the application:
 Only the QAP model is ready at this time with limited functionality.
 
 Create (only the provided file here can be used for now):
-` $ curl -X POST localhost:8081/qap/create/qap4 `
+` $ curl -X POST localhost:9000/api/qap/create -H 'Content-type:application/json' -d '{"filename": "src/main/resources/qap4.txt"}' `
 
 Get:
-` $ curl -X GET localhost:8081/qap/{ID} `
+` $ curl -X GET localhost:9000/api/qap/{ID} `
 or
-` $ curl -X GET localhost:8081/qap `
+` $ curl -X GET localhost:9000/api/qap `
 
 Solve QAP:
-` $ curl -X GET localhost:8081/qap/solve/{ID} `
+` $ curl -X GET localhost:9000/api/qap/solve/{ID} `
 
 ## Development
 Requires Java 17 and Maven. Developed with IntelliJ primarily. 
