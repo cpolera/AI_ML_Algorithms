@@ -20,8 +20,8 @@ const createApi = (auth) => {
   return {
 
     // (C)reate
-    createNew(text, completed) {
-      return instance.post('/api/qap/create', {title: text, completed: completed})
+    createNew(flowMatrixFlattened, distanceMatrixFlattened) {
+      return instance.post('/api/qap/create', {flowMatrixFlattened: flowMatrixFlattened, distanceMatrixFlattened: distanceMatrixFlattened})
     },
 
     // (R)ead
@@ -44,6 +44,11 @@ const createApi = (auth) => {
     // (D)elete
     removeForId(id) {
       return instance.delete('api/qap/' + id)
+    },
+
+    // (D)elete
+    solveForId(id) {
+      return instance.get('api/qap/solve/' + id)
     }
   }
 }

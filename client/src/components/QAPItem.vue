@@ -1,7 +1,12 @@
 <template>
   <q-item-section v-if="!editing">{{ this.item.filename }}</q-item-section>
+  <q-item-section v-if="!editing">{{ this.item.flowMatrixFlattened }}</q-item-section>
+  <q-item-section v-if="!editing">{{ this.item.distanceMatrixFlattened }}</q-item-section>
   <q-item-section v-if="!editing">{{ this.item.status }}</q-item-section>
-  <q-item-section v-if="!running" avatar class="hide-icon close-icon" @click="handleClickDelete">
+  <q-item-section v-if="!editing" avatar class="hide-icon close-icon" @click="handleClickDelete">
+    <q-icon color="red" name="close"/>
+  </q-item-section>
+  <q-item-section v-if="!editing" avatar class="hide-icon close-icon" @click="handleRunSolution">
     <q-icon color="red" name="close"/>
   </q-item-section>
 </template>
@@ -12,6 +17,7 @@ export default {
   props: {
     item: Object,
     deleteMe: Function,
+    solveMe: Function,
     showError: Function,
     setCompleted: Function,
     setTitle: Function
@@ -26,6 +32,9 @@ export default {
   methods: {
     handleClickDelete() {
       this.deleteMe(this.item.id)
+    },
+    handleRunSoltion() {
+      this.solveMe(this.item.id)
     }
   }
 }

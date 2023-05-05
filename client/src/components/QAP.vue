@@ -29,8 +29,17 @@
           <q-item-section>
             <input
                 type="text"
-                ref="newQAPItem"
-                v-model="newQapItemTitle"
+                ref="newQAPItemInput"
+                v-model="newQapItemFlows"
+                @change="handleDoneEditingNewQapItem"
+            />
+          </q-item-section>
+          <q-item-section>
+            <input
+                type="text"
+                ref="newQAPItemInput2"
+                v-model="newQapItemDistances"
+                @change="handleDoneEditingNewQapItem"
             />
           </q-item-section>
         </q-item>
@@ -71,7 +80,8 @@ export default {
   data: function() {
     return {
       qapItems: [],
-      newQapItemTitle: '',
+      newQapItemFlows: '',
+      newQapItemDistances: '',
       visibility: 'all',
       loading: true,
       error: '',
@@ -111,6 +121,16 @@ export default {
       this.filter = value
     },
 
+    handleClickSolve(id) {
+      const qapItemToSolve = this.qapItems.find(qapItem => qapItem.id === id)
+      this.$api.solveForId(id).then(() => {
+        this.$log.debug('Item solved:', qapItemToSolve);
+      }).catch((error) => {
+        this.$log.debug(error);
+        this.error = 'Failed to solve qap item' // TODO: if fail due to status requery this one item?
+      });
+    },
+
     handleClickDelete(id) {
       const qapItemToRemove = this.qapItems.find(qapItem => qapItem.id === id)
       this.$api.removeForId(id).then(() => {
@@ -137,16 +157,20 @@ export default {
     },
 
     handleDoneEditingNewQapItem() {
-      const value = this.newQapItemTitle && this.newQapItemTitle.trim()
-      if (!value) {
+      const valueFlows = this.newQapItemFlows && this.newQapItemFlows.trim()
+      const valueDistances = this.newQapItemDistances && this.newQapItemDistances.trim()
+      if (!valueFlows || !valueDistances) {
         return
       }
-      this.$api.createNew(value, false).then((response) => {
+      this.$api.createNew(valueFlows.split(','), valueDistances.split(',')).then((response) => {
         this.$log.debug('New item created:', response)
-        this.newQapItemTitle = ''
+        this.newQapItemFlows = ''
+        this.newQapItemDistances = ''
         this.qapItems.push({
           id: response.data.id,
-          title: value,
+          title: valueFlows,
+          flows: valueFlows,
+          distances: valueDistances,
           completed: false
         })
         this.$refs.newQapItemInput.blur()
@@ -156,7 +180,7 @@ export default {
       });
     },
     handleCancelEditingNewQapItem() {
-      this.newQapItemTitle = ''
+      this.newQapItemFlows = ''
     },
 
     handleSetCompleted(id, value) {

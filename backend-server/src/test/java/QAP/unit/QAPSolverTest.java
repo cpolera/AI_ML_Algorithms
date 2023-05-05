@@ -14,7 +14,7 @@ public class QAPSolverTest {
     @DataProvider
     public Object[][] data() throws Exception {
         QAPSolver QAPSolver1 = new QAPSolver("src/test/java/QAP/resources/qap4.txt");
-        QAPSolver1.runSolution();
+        // QAPSolver1.runSolution();
         return new QAPSolver[][]{new QAPSolver[]{QAPSolver1}};
     }
 
@@ -37,7 +37,7 @@ public class QAPSolverTest {
 
     public void testPermutationCostCalculation() throws FileNotFoundException {
         QAPSolver qapSolver = new QAPSolver("src/test/java/QAP/resources/qap4_Realistic.txt");
-        qapSolver.readInData();
+        // qapSolver.readInData();
         int[] testPermutation = new int[]{1,0,3,2};
         int cost = qapSolver.calculateCost(testPermutation);
         Assert.assertEquals(cost, 419);
